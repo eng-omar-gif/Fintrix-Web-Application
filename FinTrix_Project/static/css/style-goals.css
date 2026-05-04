@@ -1,0 +1,641 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Manrope, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f5f7fa;
+    color: #1a202c;
+    display: flex;
+    min-height: 150vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #0047AB;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text .brand {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.logo-text .tagline {
+    font-size: 0.625rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0;
+    overflow-y: auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+    background: #f9fafb;
+    color: #1a202c;
+}
+
+.nav-item.active {
+    background: #eff6ff;
+    color: #0047AB;
+    border-left-color: #0047AB;
+}
+
+.nav-icon {
+    font-size: 1.25rem;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.logout-btn:hover {
+    background: #f9fafb;
+    color: #ef4444;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 240px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Header */
+.top-header {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.125rem;
+}
+
+.header-icon:hover {
+    background: #e5e7eb;
+    color: #1a202c;
+}
+
+/* SVG hover: paths use hardcoded fills in markup — override with CSS */
+.nav-icon svg,
+.header-icon svg,
+.card-header-icon svg,
+.table-icon svg,
+.action-btn svg {
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.nav-item .nav-icon svg path,
+.logout-btn .nav-icon svg path {
+    fill: currentColor;
+    transition: fill 0.2s ease;
+}
+
+.nav-item:hover .nav-icon svg {
+    transform: scale(1.06);
+}
+
+.nav-item.active .nav-icon svg path {
+    fill: currentColor;
+}
+
+.logout-btn:hover .nav-icon svg {
+    transform: translateX(2px);
+}
+
+.header-icon svg path {
+    fill: currentColor;
+    transition: fill 0.2s ease;
+}
+
+.header-icon:hover svg {
+    transform: scale(1.05);
+}
+
+.card-header-icon svg path {
+    fill: currentColor;
+    transition: fill 0.2s ease;
+}
+
+.card-header:hover .card-header-icon svg path {
+    fill: #003580;
+}
+
+.card-header:hover .card-header-icon svg {
+    transform: scale(1.05);
+}
+
+.goals-table-header h2 .table-icon svg path {
+    fill: #0047ab;
+    transition: fill 0.2s ease;
+}
+
+.goals-table-header:hover h2 .table-icon svg path {
+    fill: #003580;
+}
+
+.goals-table-header:hover h2 .table-icon svg {
+    transform: scale(1.05);
+}
+
+.action-btn svg path {
+    fill: #94a3b8;
+    transition: fill 0.2s ease;
+}
+
+.action-btn:hover svg path {
+    fill: #0047ab;
+}
+
+.action-btn.delete:hover svg path {
+    fill: #ef4444;
+}
+
+.action-btn:hover svg {
+    transform: scale(1.08);
+}
+
+.sidebar-logo .logo-icon svg path {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-logo:hover .logo-icon svg {
+    transform: scale(1.04);
+}
+
+/* Page Content */
+.page-content {
+    flex: 1;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.page-header p {
+    color: #6b7280;
+    font-size: 0.9375rem;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-header-icon {
+    width: 32px;
+    height: 32px;
+    background: #eff6ff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0047AB;
+    font-size: 1.125rem;
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+/* Form */
+.form-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.form-group input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+    background: white;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0047AB;
+    box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.btn-create {
+    margin-top: 15px;
+    padding: 0.8rem 1.5rem;
+    background: #0047AB;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+}
+
+.btn-create:hover {
+    background: #003580;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3);
+}
+
+.btn-create:active {
+    transform: translateY(0);
+}
+
+/* Goals Table */
+.goals-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.goals-table-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.table-icon {
+    font-size: 1.25rem;
+}
+
+.active-badge {
+    background: #dbeafe;
+    color: #0047AB;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.goals-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.goals-table thead {
+    background: #f9fafb;
+}
+
+.goals-table th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.goals-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.2s;
+}
+
+.goals-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.goals-table td {
+    padding: 1.25rem 1rem;
+    font-size: 0.9375rem;
+}
+
+.goal-name {
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.goal-name.completed {
+    color: #9ca3af;
+}
+
+.goal-amount {
+    color: #1a202c;
+    font-weight: 500;
+}
+
+.goal-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Progress Bar */
+.progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #0047AB;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-bar-fill.high {
+    background: #10b981;
+}
+
+.progress-bar-fill.complete {
+    background: #10b981;
+}
+
+.progress-percentage {
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-width: 45px;
+    text-align: right;
+}
+
+.progress-percentage.low {
+    color: #0047AB;
+}
+
+.progress-percentage.high {
+    color: #f59e0b;
+}
+
+.progress-percentage.complete {
+    color: #10b981;
+}
+
+/* Action Buttons */
+.goal-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.5rem;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.action-btn:hover {
+    background: #f3f4f6;
+    color: #1a202c;
+}
+
+.action-btn.delete:hover {
+    background: #fee;
+    color: #ef4444;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #9ca3af;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Success Message */
+.success-message {
+    background: #d1fae5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.success-message.show {
+    display: flex;
+}
+
+.success-icon {
+    font-size: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .goals-table {
+        font-size: 0.875rem;
+    }
+
+    .goals-table th,
+    .goals-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        padding: 1rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .goals-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .goals-table {
+        min-width: 600px;
+    }
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 56px;
+    height: 56px;
+    background: #0047AB;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.4);
+    z-index: 200;
+}
+
+@media (max-width: 1024px) {
+    .menu-toggle {
+        display: block;
+    }
+}

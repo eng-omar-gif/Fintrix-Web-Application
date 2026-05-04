@@ -1,6 +1,5 @@
-from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.db import models
 
 class Goal(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -13,6 +12,11 @@ class Goal(models.Model):
         if self.target_amount == 0:
             return 0
         return min(int((self.current_savings / self.target_amount) * 100), 100)
+
+    @property
+    def progress(self):
+        """Integer 0–100 for templates (avoids calling a method with `()` in Django templates)."""
+        return self.progress_percentage()
 
     def __str__(self):
         return self.name
