@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budgets</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../templates/style - budget.css">
+<script src="../templates/script - Budget.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">FinTrix</div>
+    <nav>
+      <a>Dashboard</a>
+      <a>Transactions</a>
+      <a class="active">Budgets</a>
+      <a>Goals</a>
+      <a>Reports</a>
+      <a>Notifications</a>
+    </nav>
+    <div class="logout">Logout</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="header">
+      <input placeholder="Search budgets or categories...">
+      <div class="header-actions">
+        <button class="btn secondary">Export</button>
+        <button class="btn primary">+ New Budget</button>
+      </div>
+    </div>
+
+    <h1>Budgets</h1>
+    <p>Manage your monthly spending limits and financial health.</p>
+
+    <div class="alert">
+      <div class="alert-left">
+        ⚠️
+        <div>
+          <strong>Budget Warning</strong>
+          <p>Dining & Entertainment — Only $84 remaining</p>
+        </div>
+      </div>
+      <button class="btn secondary">Adjust Limit</button>
+    </div>
+
+    <div class="stats">
+      <div class="card stat">
+        <p>Total Monthly Budget</p>
+        <h2>$12,500</h2>
+        <div class="progress"><span style="width:68%"></span></div>
+      </div>
+
+      <div class="card stat">
+        <p>Est. Savings</p>
+        <h2>$3,420</h2>
+      </div>
+
+      <div class="card stat">
+        <p>Days Remaining</p>
+        <h2>12 Days</h2>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- LEFT -->
+      <div>
+        <h3>Category Breakdowns</h3>
+
+        <div class="category-grid">
+
+          <div class="card category">
+            <div class="category-header">
+              <div class="icon"></div>
+              <div>
+                <p class="cat-title">Housing</p>
+                <span class="cat-type">NORMAL</span>
+              </div>
+            </div>
+            <h4>$3,200 / $3,500</h4>
+            <div class="progress"><span style="width:91%"></span></div>
+            <div class="category-footer">
+              <span>Remaining</span>
+              <span>$300</span>
+            </div>
+          </div>
+
+          <div class="card category danger">
+            <div class="category-header">
+              <div class="icon"></div>
+              <div>
+                <p class="cat-title">Food & Dining</p>
+                <span class="cat-type">CRITICAL</span>
+              </div>
+            </div>
+            <h4>$1,116 / $1,200</h4>
+            <div class="progress"><span style="width:93%"></span></div>
+            <div class="category-footer">
+              <span>Remaining</span>
+              <span>$84</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="card form">
+        <h3>Create Budget</h3>
+
+        <label>Category Name</label>
+        <input placeholder="Select category">
+
+        <label>Monthly Limit</label>
+        <input type="number">
+
+        <label>Alert Threshold</label>
+        <div class="threshold">
+          <span>50%</span>
+          <span>75%</span>
+          <span class="active">90%</span>
+        </div>
+
+        <div class="checkbox">
+          <input type="checkbox"> Auto-adjust based on income
+        </div>
+
+        <div class="checkbox">
+          <input type="checkbox"> Rollover surplus to next month
+        </div>
+
+        <button class="btn primary full">Confirm Budget</button>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>
