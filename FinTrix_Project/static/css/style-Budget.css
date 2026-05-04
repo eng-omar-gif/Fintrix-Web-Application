@@ -1,0 +1,288 @@
+:root {
+  --primary: #003d9b;
+  --secondary: #00687a;
+  --background: #faf8ff;
+  --surface: #ffffff;
+  --surface-2: #ededf8;
+  --text: #191b23;
+  --text-muted: #434654;
+  --border: #c3c6d6;
+  --error: #ba1a1a;
+  --error-bg: #ffdad6;
+  --success: #0a7a3f;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  font-family: "Work Sans", sans-serif;
+  color: var(--text);
+}
+
+/* Layout */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--surface);
+  padding: 24px;
+  border-right: 1px solid var(--border);
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.logo {
+  font-family: "Manrope";
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.sidebar nav a.active {
+  background: var(--surface-2);
+  color: var(--primary);
+}
+
+.logout {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.logout:hover {
+  background: var(--surface-2);
+  color: var(--primary);
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header input {
+  width: 320px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* Typography */
+h1 {
+  font-family: "Manrope";
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+h2 {
+  font-family: "Manrope";
+  font-size: 24px;
+}
+
+h3 {
+  font-family: "Manrope";
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn.secondary {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--primary);
+}
+
+.btn.full {
+  width: 100%;
+}
+
+/* Alert */
+.alert {
+  background: var(--error-bg);
+  color: var(--error);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.trend {
+  font-size: 12px;
+}
+
+.trend.positive {
+  color: var(--success);
+}
+
+/* Progress */
+.progress {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  margin-top: 10px;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+/* Content */
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.category h4 {
+  margin: 6px 0;
+}
+
+.category small {
+  color: var(--text-muted);
+}
+
+.category.danger .progress span {
+  background: var(--error);
+}
+
+/* Form */
+
+
+.form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* Table */
+.activity {
+  margin-top: 24px;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: left;
+  padding-bottom: 8px;
+}
+
+td {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.right {
+  text-align: right;
+}
+
+/* Tags */
+.tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 12px;
+}
+
+.tag.danger {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+/* Status */
+.status.success {
+  color: var(--success);
+}
+
+.status.error {
+  color: var(--error);
+}
