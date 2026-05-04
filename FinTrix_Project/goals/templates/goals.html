@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Objectives - FinTrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Manrope, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #1a202c;
+            display: flex;
+            min-height: 150vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #0047AB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text .brand {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .logo-text .tagline {
+            font-size: 0.625rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f9fafb;
+            color: #1a202c;
+        }
+
+        .nav-item.active {
+            background: #eff6ff;
+            color: #0047AB;
+            border-left-color: #0047AB;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        .logout-btn:hover {
+            background: #f9fafb;
+            color: #ef4444;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.125rem;
+        }
+
+        .header-icon:hover {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+
+        /* SVG hover: paths use hardcoded fills in markup — override with CSS */
+        .nav-icon svg,
+        .header-icon svg,
+        .card-header-icon svg,
+        .table-icon svg,
+        .action-btn svg {
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item .nav-icon svg path,
+        .logout-btn .nav-icon svg path {
+            fill: currentColor;
+            transition: fill 0.2s ease;
+        }
+
+        .nav-item:hover .nav-icon svg {
+            transform: scale(1.06);
+        }
+
+        .nav-item.active .nav-icon svg path {
+            fill: currentColor;
+        }
+
+        .logout-btn:hover .nav-icon svg {
+            transform: translateX(2px);
+        }
+
+        .header-icon svg path {
+            fill: currentColor;
+            transition: fill 0.2s ease;
+        }
+
+        .header-icon:hover svg {
+            transform: scale(1.05);
+        }
+
+        .card-header-icon svg path {
+            fill: currentColor;
+            transition: fill 0.2s ease;
+        }
+
+        .card-header:hover .card-header-icon svg path {
+            fill: #003580;
+        }
+
+        .card-header:hover .card-header-icon svg {
+            transform: scale(1.05);
+        }
+
+        .goals-table-header h2 .table-icon svg path {
+            fill: #0047ab;
+            transition: fill 0.2s ease;
+        }
+
+        .goals-table-header:hover h2 .table-icon svg path {
+            fill: #003580;
+        }
+
+        .goals-table-header:hover h2 .table-icon svg {
+            transform: scale(1.05);
+        }
+
+        .action-btn svg path {
+            fill: #94a3b8;
+            transition: fill 0.2s ease;
+        }
+
+        .action-btn:hover svg path {
+            fill: #0047ab;
+        }
+
+        .action-btn.delete:hover svg path {
+            fill: #ef4444;
+        }
+
+        .action-btn:hover svg {
+            transform: scale(1.08);
+        }
+
+        .sidebar-logo .logo-icon svg path {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .sidebar-logo:hover .logo-icon svg {
+            transform: scale(1.04);
+        }
+
+        /* Page Content */
+        .page-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1a202c;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 0.9375rem;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-icon {
+            width: 32px;
+            height: 32px;
+            background: #eff6ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0047AB;
+            font-size: 1.125rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0047AB;
+            box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .btn-create {
+            padding: 0.75rem 1.5rem;
+            background: #0047AB;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .btn-create:hover {
+            background: #003580;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3);
+        }
+
+        .btn-create:active {
+            transform: translateY(0);
+        }
+
+        /* Goals Table */
+        .goals-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .goals-table-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .table-icon {
+            font-size: 1.25rem;
+        }
+
+        .active-badge {
+            background: #dbeafe;
+            color: #0047AB;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .goals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .goals-table thead {
+            background: #f9fafb;
+        }
+
+        .goals-table th {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .goals-table tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.2s;
+        }
+
+        .goals-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .goals-table td {
+            padding: 1.25rem 1rem;
+            font-size: 0.9375rem;
+        }
+
+        .goal-name {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .goal-name.completed {
+            color: #9ca3af;
+        }
+
+        .goal-amount {
+            color: #1a202c;
+            font-weight: 500;
+        }
+
+        .goal-date {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Progress Bar */
+        .progress-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #0047AB;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-bar-fill.high {
+            background: #10b981;
+        }
+
+        .progress-bar-fill.complete {
+            background: #10b981;
+        }
+
+        .progress-percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .progress-percentage.low {
+            color: #0047AB;
+        }
+
+        .progress-percentage.high {
+            color: #f59e0b;
+        }
+
+        .progress-percentage.complete {
+            color: #10b981;
+        }
+
+        /* Action Buttons */
+        .goal-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            color: #1a202c;
+        }
+
+        .action-btn.delete:hover {
+            background: #fee;
+            color: #ef4444;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .success-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .goals-table {
+                font-size: 0.875rem;
+            }
+
+            .goals-table th,
+            .goals-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .goals-table-wrapper {
+                overflow-x: auto;
+            }
+
+            .goals-table {
+                min-width: 600px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: #0047AB;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 71, 171, 0.4);
+            z-index: 200;
+        }
+
+        @media (max-width: 1024px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <div class="logo-icon"><svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 16V2C2 2 2 2.37083 2 3.1125C2 3.85417 2 4.81667 2 6V12C2 13.1833 2 14.1458 2 14.8875C2 15.6292 2 16 2 16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V4.5H16V2H2V16H16V13.5H18V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM17 12V6H10V12H17ZM13 10.5C13.4167 10.5 13.7708 10.3542 14.0625 10.0625C14.3542 9.77083 14.5 9.41667 14.5 9C14.5 8.58333 14.3542 8.22917 14.0625 7.9375C13.7708 7.64583 13.4167 7.5 13 7.5C12.5833 7.5 12.2292 7.64583 11.9375 7.9375C11.6458 8.22917 11.5 8.58333 11.5 9C11.5 9.41667 11.6458 9.77083 11.9375 10.0625C12.2292 10.3542 12.5833 10.5 13 10.5Z" fill="white"/>
+                    </svg>
+                    </div>
+                <div class="logo-text">
+                    <span class="brand">FinTrix</span>
+                    <span class="tagline">Institutional Trust</span>
+                </div>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item">
+                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 6V0H18V6H10ZM0 10V0H8V10H0ZM10 18V8H18V18H10ZM0 18V12H8V18H0ZM2 8H6V2H2V8ZM12 16H16V10H12V16ZM12 4H16V2H12V4ZM2 16H6V14H2V16Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon"><svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 20C2.16667 20 1.45833 19.7083 0.875 19.125C0.291667 18.5417 0 17.8333 0 17V14H3V0L4.5 1.5L6 0L7.5 1.5L9 0L10.5 1.5L12 0L13.5 1.5L15 0L16.5 1.5L18 0V17C18 17.8333 17.7083 18.5417 17.125 19.125C16.5417 19.7083 15.8333 20 15 20H3ZM15 18C15.2833 18 15.5208 17.9042 15.7125 17.7125C15.9042 17.5208 16 17.2833 16 17V3H5V14H14V17C14 17.2833 14.0958 17.5208 14.2875 17.7125C14.4792 17.9042 14.7167 18 15 18ZM6 7V5H12V7H6ZM6 10V8H12V10H6ZM14 7C13.7167 7 13.4792 6.90417 13.2875 6.7125C13.0958 6.52083 13 6.28333 13 6C13 5.71667 13.0958 5.47917 13.2875 5.2875C13.4792 5.09583 13.7167 5 14 5C14.2833 5 14.5208 5.09583 14.7125 5.2875C14.9042 5.47917 15 5.71667 15 6C15 6.28333 14.9042 6.52083 14.7125 6.7125C14.5208 6.90417 14.2833 7 14 7ZM14 10C13.7167 10 13.4792 9.90417 13.2875 9.7125C13.0958 9.52083 13 9.28333 13 9C13 8.71667 13.0958 8.47917 13.2875 8.2875C13.4792 8.09583 13.7167 8 14 8C14.2833 8 14.5208 8.09583 14.7125 8.2875C14.9042 8.47917 15 8.71667 15 9C15 9.28333 14.9042 9.52083 14.7125 9.7125C14.5208 9.90417 14.2833 10 14 10ZM3 18H12V16H2V17C2 17.2833 2.09583 17.5208 2.2875 17.7125C2.47917 17.9042 2.71667 18 3 18ZM2 18C2 18 2 17.9042 2 17.7125C2 17.5208 2 17.2833 2 17V16V18Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Transactions</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon"><svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 16V2C2 2 2 2.37083 2 3.1125C2 3.85417 2 4.81667 2 6V12C2 13.1833 2 14.1458 2 14.8875C2 15.6292 2 16 2 16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V4.5H16V2H2V16H16V13.5H18V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM17 12V6H10V12H17ZM13 10.5C13.4167 10.5 13.7708 10.3542 14.0625 10.0625C14.3542 9.77083 14.5 9.41667 14.5 9C14.5 8.58333 14.3542 8.22917 14.0625 7.9375C13.7708 7.64583 13.4167 7.5 13 7.5C12.5833 7.5 12.2292 7.64583 11.9375 7.9375C11.6458 8.22917 11.5 8.58333 11.5 9C11.5 9.41667 11.6458 9.77083 11.9375 10.0625C12.2292 10.3542 12.5833 10.5 13 10.5Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Budgets</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0H11V8.275C11.3 8.45833 11.5417 8.69583 11.725 8.9875C11.9083 9.27917 12 9.61667 12 10C12 10.55 11.8042 11.0208 11.4125 11.4125C11.0208 11.8042 10.55 12 10 12C9.45 12 8.97917 11.8042 8.5875 11.4125C8.19583 11.0208 8 10.55 8 10C8 9.61667 8.09167 9.275 8.275 8.975C8.45833 8.675 8.7 8.44167 9 8.275V6.125C8.13333 6.35833 7.41667 6.82917 6.85 7.5375C6.28333 8.24583 6 9.06667 6 10C6 11.1 6.39167 12.0417 7.175 12.825C7.95833 13.6083 8.9 14 10 14C11.1 14 12.0417 13.6083 12.825 12.825C13.6083 12.0417 14 11.1 14 10C14 9.4 13.8792 8.84583 13.6375 8.3375C13.3958 7.82917 13.0667 7.38333 12.65 7L14.075 5.575C14.6583 6.125 15.125 6.77917 15.475 7.5375C15.825 8.29583 16 9.11667 16 10C16 11.6667 15.4167 13.0833 14.25 14.25C13.0833 15.4167 11.6667 16 10 16C8.33333 16 6.91667 15.4167 5.75 14.25C4.58333 13.0833 4 11.6667 4 10C4 8.5 4.475 7.19583 5.425 6.0875C6.375 4.97917 7.56667 4.30833 9 4.075V2.05C7.01667 2.3 5.35417 3.175 4.0125 4.675C2.67083 6.175 2 7.95 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 8.85 17.775 7.775 17.325 6.775C16.875 5.775 16.2583 4.90833 15.475 4.175L16.9 2.75C17.85 3.66667 18.6042 4.74583 19.1625 5.9875C19.7208 7.22917 20 8.56667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Goals</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16V9H16V16H12ZM6 16V0H10V16H6ZM0 16V5H4V16H0Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon"><svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20ZM4 15H12V8C12 6.9 11.6083 5.95833 10.825 5.175C10.0417 4.39167 9.1 4 8 4C6.9 4 5.95833 4.39167 5.175 5.175C4.39167 5.95833 4 6.9 4 8V15Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Notifications</span>
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="login.html" class="logout-btn">
+                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="#64748B"/>
+                    </svg>
+                    </span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-icon" title="Notifications"><svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20ZM4 15H12V8C12 6.9 11.6083 5.95833 10.825 5.175C10.0417 4.39167 9.1 4 8 4C6.9 4 5.95833 4.39167 5.175 5.175C4.39167 5.95833 4 6.9 4 8V15Z" fill="#64748B"/>
+                </svg>
+                </div>
+            <div class="header-icon" title="Toggle Dark Mode"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.4625 0.00833333 9.6875 0.025C9.9125 0.0416667 10.1333 0.0666667 10.35 0.1C9.66667 0.583333 9.12083 1.2125 8.7125 1.9875C8.30417 2.7625 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69583 16.025 9.2875C16.7917 8.87917 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.0875 17.975 8.3125C17.9917 8.5375 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.5958 12.95 14.7875C14.1167 13.9792 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.70417 11.1792 8.2625 9.7375C6.82083 8.29583 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.02083 3.88333 3.2125 5.05C2.40417 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z" fill="#64748B"/>
+                </svg>
+                </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Financial Objectives</h1>
+                <p>Track and manage your long-term wealth milestones with institutional precision.</p>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <span class="success-icon">✓</span>
+                <span id="successText">Goal created successfully!</span>
+            </div>
+
+            <!-- Add New Goal Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.0833 0 12.1083 0.158333 13.075 0.475C14.0417 0.791667 14.9333 1.23333 15.75 1.8L14.3 3.275C13.6667 2.875 12.9917 2.5625 12.275 2.3375C11.5583 2.1125 10.8 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 12.2167 2.77917 14.1042 4.3375 15.6625C5.89583 17.2208 7.78333 18 10 18C10.5333 18 11.05 17.95 11.55 17.85C12.05 17.75 12.5333 17.6083 13 17.425L14.5 18.95C13.8167 19.2833 13.1 19.5417 12.35 19.725C11.6 19.9083 10.8167 20 10 20ZM17 18V15H14V13H17V10H19V13H22V15H19V18H17ZM8.6 14.6L4.35 10.35L5.75 8.95L8.6 11.8L18.6 1.775L20 3.175L8.6 14.6Z" fill="#003D9B"/>
+                        </svg>
+                        </div>
+                    <h2>Add New Goal</h2>
+                </div>
+
+                <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Goal Name</label>
+                 {{ form.name }}
+                 </div>
+
+                    <div class="form-group">
+                    <label for="{{ form.target_amount.id_for_label }}">Target Amount</label>
+                    {{ form.target_amount }}
+                   </div>
+
+                    <div class="form-group">
+                    <label for="{{ form.current_savings.id_for_label }}">Current Savings (Optional)</label>
+                    {{ form.current_savings }}
+                    </div>
+
+
+                    <div class="form-group">
+                    <label for="{{ form.deadline.id_for_label }}">Deadline Date</label>
+                    {{ form.deadline }}
+                    </div>
+
+                    <button type="submit" class="btn-create">Create Goal</button>
+                </form>
+            </div>
+
+            <!-- Financial Goals Table Card -->
+            <div class="card">
+                <div class="goals-table-header">
+                    <h2>
+                        <span class="table-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 18H2C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18ZM2 5H16V2H2V5ZM4.5 7H2V16H4.5V7ZM13.5 7V16H16V7H13.5ZM11.5 7H6.5V16H11.5V7Z" fill="#003D9B"/>
+                            </svg>
+                            </span>
+                        Financial Goals
+                    </h2>
+                    <div class="active-badge"><span id="activeCount">4</span> ACTIVE</div>
+                </div>
+
+                <div class="goals-table-wrapper">
+                    <table class="goals-table">
+                        <thead>
+                            <tr>
+                                <th>Goal Name</th>
+                                <th>Target</th>
+                                <th>Current Savings</th>
+                                <th>Progress</th>
+                                <th>Deadline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="goalsTableBody">
+                            <!-- Goals will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+
+    <script>
+        // Sample goals data
+        let goals = [
+            {
+                id: 1,
+                name: 'Real Estate Portfolio',
+                target: 120000,
+                currentSavings: 85400,
+                deadline: '2024-12-15'
+            },
+            {
+                id: 2,
+                name: 'European Tour',
+                target: 25000,
+                currentSavings: 24150,
+                deadline: '2024-09-01'
+            },
+            {
+                id: 3,
+                name: 'Education Fund',
+                target: 50000,
+                currentSavings: 50000,
+                deadline: '2024-05-12'
+            },
+            {
+                id: 4,
+                name: 'EV Upgrade',
+                target: 65000,
+                currentSavings: 3200,
+                deadline: '2026-06-30'
+            }
+        ];
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Calculate progress percentage
+        function calculateProgress(current, target) {
+            const percentage = (current / target) * 100;
+            return Math.min(Math.round(percentage), 100);
+        }
+
+        // Get progress class
+        function getProgressClass(percentage) {
+            if (percentage >= 100) return 'complete';
+            if (percentage >= 80) return 'high';
+            return 'low';
+        }
+
+        // Render goals table
+        function renderGoals() {
+            const tbody = document.getElementById('goalsTableBody');
+            
+            if (goals.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🎯</div>
+                                <p>No goals yet. Create your first financial objective above!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = goals.map(goal => {
+                const progress = calculateProgress(goal.currentSavings, goal.target);
+                const progressClass = getProgressClass(progress);
+                const isCompleted = progress >= 100;
+
+                return `
+                    <tr data-id="${goal.id}">
+                        <td>
+                            <div class="goal-name ${isCompleted ? 'completed' : ''}">${goal.name}</div>
+                        </td>
+                        <td>
+                            <div class="goal-amount">${formatCurrency(goal.target)}</div>
+                        </td>
+                        <td>
+                            <div class="goal-amount">${formatCurrency(goal.currentSavings)}</div>
+                        </td>
+                        <td>
+                            <div class="progress-cell">
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill ${progressClass}" style="width: ${progress}%"></div>
+                                </div>
+                                <span class="progress-percentage ${progressClass}">${progress}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="goal-date">${formatDate(goal.deadline)}</div>
+                        </td>
+                        <td>
+                            <div class="goal-actions">
+                                <button class="action-btn" onclick="editGoal(${goal.id})" title="Edit"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.66667 13.3333H2.85417L11 5.1875L9.8125 4L1.66667 12.1458V13.3333V13.3333M0 15V11.4583L11 0.479167C11.1667 0.326389 11.3507 0.208333 11.5521 0.125C11.7535 0.0416667 11.9653 0 12.1875 0C12.4097 0 12.625 0.0416667 12.8333 0.125C13.0417 0.208333 13.2222 0.333333 13.375 0.5L14.5208 1.66667C14.6875 1.81944 14.809 2 14.8854 2.20833C14.9618 2.41667 15 2.625 15 2.83333C15 3.05556 14.9618 3.26736 14.8854 3.46875C14.809 3.67014 14.6875 3.85417 14.5208 4.02083L3.54167 15H0V15M13.3333 2.83333V2.83333L12.1667 1.66667V1.66667L13.3333 2.83333V2.83333M10.3958 4.60417L9.8125 4V4L11 5.1875V5.1875L10.3958 4.60417V4.60417" fill="#94A3B8"/>
+</svg>
+</button>
+                                <button class="action-btn delete" onclick="deleteGoal(${goal.id})" title="Delete"><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.5 15C2.04167 15 1.64931 14.8368 1.32292 14.5104C0.996528 14.184 0.833333 13.7917 0.833333 13.3333V2.5H0V0.833333H4.16667V0H9.16667V0.833333H13.3333V2.5H12.5V13.3333C12.5 13.7917 12.3368 14.184 12.0104 14.5104C11.684 14.8368 11.2917 15 10.8333 15H2.5V15M10.8333 2.5H2.5V13.3333V13.3333V13.3333H10.8333V13.3333V13.3333V2.5V2.5M4.16667 11.6667H5.83333V4.16667H4.16667V11.6667V11.6667M7.5 11.6667H9.16667V4.16667H7.5V11.6667V11.6667M2.5 2.5V2.5V13.3333V13.3333V13.3333V13.3333V13.3333V13.3333V2.5V2.5" fill="#94A3B8"/>
+</svg>
+</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateActiveCount();
+        }
+
+        // Update active count
+        function updateActiveCount() {
+            const activeGoals = goals.filter(g => calculateProgress(g.currentSavings, g.target) < 100);
+            document.getElementById('activeCount').textContent = activeGoals.length;
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle form submission
+        document.getElementById('goalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                id: Date.now(),
+                name: document.getElementById('goalName').value,
+                target: parseFloat(document.getElementById('targetAmount').value),
+                currentSavings: parseFloat(document.getElementById('currentSavings').value) || 0,
+                deadline: document.getElementById('deadline').value
+            };
+
+            // Add goal to array
+            goals.push(formData);
+
+            // Re-render table
+            renderGoals();
+
+            // Show success message
+            showSuccess(`Goal "${formData.name}" created successfully!`);
+
+            // Reset form
+            this.reset();
+
+            // For Django integration, you would send this to your backend:
+            // fetch('/api/goals/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRFToken': getCookie('csrftoken')
+            //     },
+            //     body: JSON.stringify(formData)
+            // }).then(response => response.json())
+            //   .then(data => {
+            //       goals.push(data);
+            //       renderGoals();
+            //       showSuccess('Goal created successfully!');
+            //   });
+        });
+
+        // Edit goal
+        function editGoal(id) {
+            const goal = goals.find(g => g.id === id);
+            if (!goal) return;
+
+            // Populate form with goal data
+            document.getElementById('goalName').value = goal.name;
+            document.getElementById('targetAmount').value = goal.target;
+            document.getElementById('currentSavings').value = goal.currentSavings;
+            document.getElementById('deadline').value = goal.deadline;
+
+            // Scroll to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Delete the old goal (in a real app, you'd update it)
+            deleteGoal(id, true);
+
+            showSuccess('Update the goal details and click Create Goal');
+        }
+
+        // Delete goal
+        function deleteGoal(id, silent = false) {
+            if (!silent && !confirm('Are you sure you want to delete this goal?')) {
+                return;
+            }
+
+            goals = goals.filter(g => g.id !== id);
+            renderGoals();
+
+            if (!silent) {
+                showSuccess('Goal deleted successfully');
+            }
+
+            // For Django integration:
+            // fetch(`/api/goals/${id}/`, {
+            //     method: 'DELETE',
+            //     headers: {
+            //         'X-CSRFToken': getCookie('csrftoken')
+            //     }
+            // }).then(() => {
+            //     goals = goals.filter(g => g.id !== id);
+            //     renderGoals();
+            // });
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !menuToggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Helper function for Django CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Initialize page
+        renderGoals();
+
+        // Set minimum date to today
+        document.getElementById('deadline').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
