@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTrix - Intuitive Wealth Management</title>
+    <link rel="stylesheet" href="{% static 'css/style-home.css' %}">
+    <script src="{% static 'js/script-home.js' %}" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo"><span class="logo-fin">Fin</span><span class="logo-trix">Trix</span></a>
+            <div class="nav-center">
+                <a href="{% url 'home' %}" class="nav-link nav-link-active">Home</a>
+            </div>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <span class="nav-link">{{ user.name }}</span>
+                    <a href="{% url 'logout' %}" class="nav-link">Log out</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <p class="hero-eyebrow">Intuitive wealth management</p>
+                <h1>Master Your Money with <span class="highlight">Institutional Trust.</span></h1>
+                <p class="hero-lede">FinTrix transforms complex financial data into a streamlined, high-end digital utility. Experience personal budgeting redesigned for transparency, efficiency, and long-term growth.</p>
+                <div class="hero-buttons">
+                    <a href="{% url 'signup' %}" class="btn btn-primary">Get Started</a>
+                    <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-frame">
+                    <img src="{% static 'images/vecteezy_illustration-of-financial-graph-chart-stock-market_.jpg' %}" alt="FinTrix dashboard on a desktop monitor">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features features-overview" aria-labelledby="features-heading">
+        <div class="features-inner">
+            <header class="features-header">
+                <h2 id="features-heading">A New Standard in Personal Finance</h2>
+                <p class="features-subtitle">Our systems provide the clarity you need to make informed financial decisions without unnecessary visual noise.</p>
+            </header>
+            <div class="features-grid" role="list">
+                <article class="features-col" role="listitem">
+                    <div class="feature-icon-wrap" aria-hidden="true">
+                        <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.3333 26.6667C11.4889 26.6667 9.75556 26.3167 8.13333 25.6167C6.51111 24.9167 5.1 23.9667 3.9 22.7667C2.7 21.5667 1.75 20.1556 1.05 18.5333C0.35 16.9111 0 15.1778 0 13.3333C0 11.4889 0.35 9.75556 1.05 8.13333C1.75 6.51111 2.7 5.1 3.9 3.9C5.1 2.7 6.51111 1.75 8.13333 1.05C9.75556 0.35 11.4889 0 13.3333 0H14.6667V11.0333C15.0667 11.2778 15.3889 11.5944 15.6333 11.9833C15.8778 12.3722 16 12.8222 16 13.3333C16 14.0667 15.7389 14.6944 15.2167 15.2167C14.6944 15.7389 14.0667 16 13.3333 16C12.6 16 11.9722 15.7389 11.45 15.2167C10.9278 14.6944 10.6667 14.0667 10.6667 13.3333C10.6667 12.8222 10.7889 12.3667 11.0333 11.9667C11.2778 11.5667 11.6 11.2556 12 11.0333V8.16667C10.8444 8.47778 9.88889 9.10556 9.13333 10.05C8.37778 10.9944 8 12.0889 8 13.3333C8 14.8 8.52222 16.0556 9.56667 17.1C10.6111 18.1444 11.8667 18.6667 13.3333 18.6667C14.8 18.6667 16.0556 18.1444 17.1 17.1C18.1444 16.0556 18.6667 14.8 18.6667 13.3333C18.6667 12.5333 18.5056 11.7944 18.1833 11.1167C17.8611 10.4389 17.4222 9.84444 16.8667 9.33333L18.7667 7.43333C19.5444 8.16667 20.1667 9.03889 20.6333 10.05C21.1 11.0611 21.3333 12.1556 21.3333 13.3333C21.3333 15.5556 20.5556 17.4444 19 19C17.4444 20.5556 15.5556 21.3333 13.3333 21.3333C11.1111 21.3333 9.22222 20.5556 7.66667 19C6.11111 17.4444 5.33333 15.5556 5.33333 13.3333C5.33333 11.3333 5.96667 9.59444 7.23333 8.11667C8.5 6.63889 10.0889 5.74444 12 5.43333V2.73333C9.35556 3.06667 7.13889 4.23333 5.35 6.23333C3.56111 8.23333 2.66667 10.6 2.66667 13.3333C2.66667 16.3111 3.7 18.8333 5.76667 20.9C7.83333 22.9667 10.3556 24 13.3333 24C16.3111 24 18.8333 22.9667 20.9 20.9C22.9667 18.8333 24 16.3111 24 13.3333C24 11.8 23.7 10.3667 23.1 9.03333C22.5 7.7 21.6778 6.54444 20.6333 5.56667L22.5333 3.66667C23.8 4.88889 24.8056 6.32778 25.55 7.98333C26.2944 9.63889 26.6667 11.4222 26.6667 13.3333C26.6667 15.1778 26.3167 16.9111 25.6167 18.5333C24.9167 20.1556 23.9667 21.5667 22.7667 22.7667C21.5667 23.9667 20.1556 24.9167 18.5333 25.6167C16.9111 26.3167 15.1778 26.6667 13.3333 26.6667V26.6667" fill="#003D9B"/>
+                            </svg>
+                            
+                    </div>
+                    <h3>Precision Budgeting</h3>
+                    <p>Automate your expense tracking with institutional-grade accuracy. Our algorithms categorize transactions in real-time, giving you an immediate view of spending.</p>
+                </article>
+                <span class="features-divider" aria-hidden="true"></span>
+                <article class="features-col" role="listitem">
+                    <div class="feature-icon-wrap" aria-hidden="true">
+                        <svg width="22" height="27" viewBox="0 0 22 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.6667 26.6667C7.57778 25.8889 5.02778 24.1167 3.01667 21.35C1.00556 18.5833 0 15.5111 0 12.1333V4L10.6667 0L21.3333 4V12.1333C21.3333 15.5111 20.3278 18.5833 18.3167 21.35C16.3056 24.1167 13.7556 25.8889 10.6667 26.6667V26.6667M10.6667 23.8667C12.8222 23.2 14.6222 21.8833 16.0667 19.9167C17.5111 17.95 18.3556 15.7556 18.6 13.3333H10.6667V2.83333L2.66667 5.83333V12.1333C2.66667 12.3778 2.66667 12.5778 2.66667 12.7333C2.66667 12.8889 2.68889 13.0889 2.73333 13.3333H10.6667V23.8667V23.8667" fill="#003D9B"/>
+                            </svg>
+                            
+                    </div>
+                    <h3>Bank-Level Security</h3>
+                    <p>Your data is protected by 256-bit encryption and multi-factor authentication, ensuring your privacy remains a top priority.</p>
+                </article>
+                <span class="features-divider" aria-hidden="true"></span>
+                <article class="features-col" role="listitem">
+                    <div class="feature-icon-wrap" aria-hidden="true">
+                        <svg width="22" height="27" viewBox="0 0 22 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.73333 21.6L15.6333 13.3333H10.3L11.2667 5.76667L5.1 14.6667H9.73333L8.73333 21.6V21.6M5.33333 26.6667L6.66667 17.3333H0L12 0H14.6667L13.3333 10.6667H21.3333L8 26.6667H5.33333V26.6667M10.3667 13.6667V13.6667V13.6667V13.6667V13.6667V13.6667V13.6667V13.6667" fill="#003D9B"/>
+                            </svg>
+                            
+                    </div>
+                    <h3>Real-Time Insights</h3>
+                    <p>Receive instant notifications for unusual spending or when you're approaching your monthly budget limits with surgical precision.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="value-section" aria-labelledby="value-heading">
+        <div class="value-inner">
+            <div class="value-copy">
+                <h2 id="value-heading">Clarity is the New Currency</h2>
+                <ul class="value-list">
+                    <li>
+                        <span class="check-icon" aria-hidden="true"><svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.6 18.6L15.65 11.55L14.25 10.15L8.6 15.8L5.75 12.95L4.35 14.35L8.6 18.6V18.6M10 24C8.61667 24 7.31667 23.7375 6.1 23.2125C4.88333 22.6875 3.825 21.975 2.925 21.075C2.025 20.175 1.3125 19.1167 0.7875 17.9C0.2625 16.6833 0 15.3833 0 14C0 12.6167 0.2625 11.3167 0.7875 10.1C1.3125 8.88333 2.025 7.825 2.925 6.925C3.825 6.025 4.88333 5.3125 6.1 4.7875C7.31667 4.2625 8.61667 4 10 4C11.3833 4 12.6833 4.2625 13.9 4.7875C15.1167 5.3125 16.175 6.025 17.075 6.925C17.975 7.825 18.6875 8.88333 19.2125 10.1C19.7375 11.3167 20 12.6167 20 14C20 15.3833 19.7375 16.6833 19.2125 17.9C18.6875 19.1167 17.975 20.175 17.075 21.075C16.175 21.975 15.1167 22.6875 13.9 23.2125C12.6833 23.7375 11.3833 24 10 24V24M10 22C12.2333 22 14.125 21.225 15.675 19.675C17.225 18.125 18 16.2333 18 14C18 11.7667 17.225 9.875 15.675 8.325C14.125 6.775 12.2333 6 10 6C7.76667 6 5.875 6.775 4.325 8.325C2.775 9.875 2 11.7667 2 14C2 16.2333 2.775 18.125 4.325 19.675C5.875 21.225 7.76667 22 10 22V22M10 14V14V14V14V14V14V14V14V14V14" fill="#003D9B"/>
+                            </svg>
+                            </span>
+                        <div>
+                            <strong>Layered information architecture</strong>
+                            <span>Scan summaries first, drill down only when you need detail.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" aria-hidden="true"><svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.6 18.6L15.65 11.55L14.25 10.15L8.6 15.8L5.75 12.95L4.35 14.35L8.6 18.6V18.6M10 24C8.61667 24 7.31667 23.7375 6.1 23.2125C4.88333 22.6875 3.825 21.975 2.925 21.075C2.025 20.175 1.3125 19.1167 0.7875 17.9C0.2625 16.6833 0 15.3833 0 14C0 12.6167 0.2625 11.3167 0.7875 10.1C1.3125 8.88333 2.025 7.825 2.925 6.925C3.825 6.025 4.88333 5.3125 6.1 4.7875C7.31667 4.2625 8.61667 4 10 4C11.3833 4 12.6833 4.2625 13.9 4.7875C15.1167 5.3125 16.175 6.025 17.075 6.925C17.975 7.825 18.6875 8.88333 19.2125 10.1C19.7375 11.3167 20 12.6167 20 14C20 15.3833 19.7375 16.6833 19.2125 17.9C18.6875 19.1167 17.975 20.175 17.075 21.075C16.175 21.975 15.1167 22.6875 13.9 23.2125C12.6833 23.7375 11.3833 24 10 24V24M10 22C12.2333 22 14.125 21.225 15.675 19.675C17.225 18.125 18 16.2333 18 14C18 11.7667 17.225 9.875 15.675 8.325C14.125 6.775 12.2333 6 10 6C7.76667 6 5.875 6.775 4.325 8.325C2.775 9.875 2 11.7667 2 14C2 16.2333 2.775 18.125 4.325 19.675C5.875 21.225 7.76667 22 10 22V22M10 14V14V14V14V14V14V14V14V14V14" fill="#003D9B"/>
+                            </svg>
+                            </span>
+                        <div>
+                            <strong>Minimalist design language</strong>
+                            <span>Typography and spacing do the heavy lifting—not clutter.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <aside class="stat-card" aria-label="Sample net worth overview">
+                <div class="stat-card-header">
+                    <span class="stat-label">Total net worth</span>
+                    <span class="trend-chip">+4.2%</span>
+                </div>
+                <p class="stat-value">$128,450.00</p>
+                <div class="stat-progress">
+                    <div class="stat-progress-labels">
+                        <span>Monthly budget</span>
+                        <span class="stat-progress-used">Used 75%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-split">
+                    <div class="stat-split-item">
+                        <span class="stat-split-label">Assets</span>
+                        <span class="stat-split-num stat-assets">$142,000</span>
+                    </div>
+                    <div class="stat-split-item">
+                        <span class="stat-split-label">Liabilities</span>
+                        <span class="stat-split-num stat-liabilities">$13,550</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="cta-inner">
+            <h2>Ready to take control?</h2>
+            <p>Open your institutional-grade dashboard and see your full picture in one composed view.</p>
+            <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Start Your Journey</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <p class="logo footer-logo"><span class="logo-fin">Fin</span><span class="logo-trix">Trix</span></p>
+                <p>Institutional-grade personal finance tools for the modern professional.</p>
+                
+            </div>
+            <div class="footer-newsletter">
+                <h3>Updates</h3>
+                <p>Sign up for our financial newsletter.</p>
+                <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                    <input type="email" placeholder="Email address" required aria-label="Email for newsletter">
+                    <button type="submit" aria-label="Subscribe"><span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.175 9H0V7H12.175L6.575 1.4L8 0L16 8L8 16L6.575 14.6L12.175 9Z" fill="white"/>
+                        </svg>
+                        </span></button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 FinTrix Inc. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
