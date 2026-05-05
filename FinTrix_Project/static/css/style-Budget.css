@@ -7,11 +7,16 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: 'DM Sans', sans-serif;
   background: #f6f7fb;
   color: #111827;
   font-size: 14px;
+  margin: 0;
 }
 
 /* ================= LAYOUT ================= */
@@ -76,6 +81,7 @@ body {
   font-size: 13.5px;
   color: #6b7280;
   font-weight: 500;
+  text-decoration: none;
 }
 
 .nav-item.active {
@@ -84,17 +90,18 @@ body {
   font-weight: 600;
 }
 
-/* logout bottom */
 .logout {
   margin-top: auto;
   padding: 10px 12px;
   font-size: 13px;
   color: #6b7280;
+  text-decoration: none;
 }
 
 /* ================= MAIN ================= */
 .main {
   flex: 1;
+  background: #f6f7fb;
 }
 
 .main-inner {
@@ -107,7 +114,14 @@ body {
 .topbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 18px;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .search-wrap input {
@@ -125,6 +139,7 @@ body {
   border-radius: 50%;
   border: 1px solid #e6e8ef;
   background: white;
+  cursor: pointer;
 }
 
 /* ================= TITLE ================= */
@@ -145,12 +160,21 @@ body {
   color: #6b7280;
 }
 
+.title-actions {
+  display: flex;
+  gap: 10px;
+}
+
 /* ================= BUTTONS ================= */
 .btn {
   font-size: 12.5px;
   padding: 8px 14px;
   border-radius: 8px;
   font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
 }
 
 .btn.primary {
@@ -161,6 +185,12 @@ body {
 .btn.secondary {
   background: #fff;
   border: 1px solid #e6e8ef;
+  color: #111827;
+}
+
+.btn.full {
+  width: 100%;
+  margin-top: 10px;
 }
 
 /* ================= ALERT ================= */
@@ -176,6 +206,25 @@ body {
   align-items: center;
 }
 
+.alert-content {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.alert-icon {
+  font-size: 18px;
+}
+
+.adjust-btn {
+  background: #0b3c91;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 /* ================= STATS ================= */
 .stats-row {
   display: grid;
@@ -188,7 +237,13 @@ body {
   background: #fff;
   border: 1px solid #eef0f5;
   border-radius: 14px;
-  padding: 18px 18px;
+  padding: 18px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 6px;
 }
 
 .stat-big {
@@ -197,16 +252,24 @@ body {
   font-weight: 800;
 }
 
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.small-text {
+  font-size: 20px;
+}
+
 .trend {
   font-size: 12px;
   color: #16a34a;
 }
 
-.util-row {
-  display: flex;
-  justify-content: space-between;
+.on-track {
   font-size: 12px;
-  margin: 10px 0 6px;
+  color: #16a34a;
 }
 
 /* progress */
@@ -214,6 +277,7 @@ body {
   height: 5px;
   background: #eef2f7;
   border-radius: 999px;
+  margin-top: 8px;
 }
 
 .progress-fill {
@@ -274,6 +338,7 @@ body {
 .right-col {
   position: sticky;
   top: 20px;
+  align-self: flex-start;
 }
 
 .form-card {
@@ -302,31 +367,27 @@ body {
   border: 1px solid #e6e8ef;
 }
 
-/* threshold */
-.threshold-toggle {
-  display: flex;
-  background: #f1f5f9;
-  border-radius: 999px;
-  padding: 3px;
-}
-
-.threshold-toggle span {
-  flex: 1;
-  text-align: center;
-  font-size: 11px;
-  padding: 6px;
-  border-radius: 999px;
-}
-
-.threshold-toggle .active {
-  background: white;
-  color: #0b3c91;
-  font-weight: 700;
-}
-
 /* ================= TABLE ================= */
 .activity-section {
   margin-top: 22px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0 10px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.view-all {
+  font-size: 12px;
+  color: #0b3c91;
+  text-decoration: none;
 }
 
 .activity-table {
@@ -347,4 +408,22 @@ body {
 .activity-table td {
   padding: 12px 10px;
   border-bottom: 1px solid #f3f4f6;
+}
+
+/* ================= BADGES ================= */
+.badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge.food {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.badge.trans {
+  background: #dcfce7;
+  color: #166534;
 }
