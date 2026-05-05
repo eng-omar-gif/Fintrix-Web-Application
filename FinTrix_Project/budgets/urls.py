@@ -17,13 +17,4 @@ urlpatterns = [
     # Expense — BudgetController.addExpense() + updateBudget()
     path("<int:budget_id>/add-expense/",
          views.add_expense, name="add_expense"),
-
-    # Notifications — SD2
-    path("notifications/",
-         views.notification_center, name="notification_center"),
-    path("notifications/<int:notification_id>/read/",
-         views.mark_as_read, name="mark_as_read"),
-    path("notifications/<int:notification_id>/navigate/",
-         views.navigate_to_budget_from_notification,
-         name="navigate_to_budget_from_notification"),
 ]
