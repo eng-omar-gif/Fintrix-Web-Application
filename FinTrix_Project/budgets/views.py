@@ -72,11 +72,11 @@ def create_budget(request):
         return redirect("budget_detail", budget_id=budget.id)
 
     # GET — render BudgetUI input form (inputBudgetData())
-    return render(request, "budgets/create_budget.html")
+    return render(request, "budgets/Budget.html")
 
 def budget_list(request):
     budgets = Budget.objects.all().order_by("-year", "-month")
-    return render(request, "budgets/budget_list.html", {"budgets": budgets})
+    return render(request, "budgets/Budget.html", {"budgets": budgets})
 
 
 def budget_detail(request, budget_id):
@@ -137,7 +137,7 @@ def budget_detail(request, budget_id):
         "days_remaining":      days_remaining,
     }
 
-    return render(request, "budgets/budget_detail.html", context)
+    return render(request, "budgets/Budget.html", context)
 
 
 def add_category_limit(request, budget_id):
@@ -169,7 +169,7 @@ def add_category_limit(request, budget_id):
 
         return redirect("budget_detail", budget_id=budget.id)
 
-    return render(request, "budgets/add_category.html", {"budget": budget})
+    return render(request, "budgets/Budget.html", {"budget": budget})
 
 
 def add_expense(request, budget_id):
@@ -221,7 +221,7 @@ def add_expense(request, budget_id):
 
     # GET — show expense form pre-filtered to this budget's categories
     category_budgets = budget.category_budgets.select_related("category")
-    return render(request, "budgets/add_expense.html", {
+    return render(request, "budgets/Budget.html", {
         "budget": budget,
         "category_budgets": category_budgets,
     })
@@ -240,7 +240,7 @@ def budget_dashboard(request):
 
     unread_count = Notification.objects.filter(is_read=False).count()
 
-    return render(request, "budgets/budget_dashboard.html", {
+    return render(request, "budgets/Budget.html", {
         "dashboard_data": dashboard_data,
         "unread_count":   unread_count,
     })
