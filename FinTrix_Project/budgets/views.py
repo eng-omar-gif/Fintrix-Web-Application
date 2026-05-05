@@ -1,15 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Budget, Category, CategoryBudget
+from .models import Budget, Category
 from django.contrib import messages
-from datetime import date
+from datetime import date, datetime
 from calendar import monthrange
 
 
 # 🔹 Create Budget
 def create_budget(request):
     if request.method == "POST":
-        month = request.POST.get("month")
+        month_str = request.POST.get("month")  # format: YYYY-MM-DD
         year = request.POST.get("year")
+
+        try:
+            month = datetime.strptime(month_str, "%Y-%m-%d").date()
+            year = int(year)
+        except:
+            messages.error(request, "Invalid date")
+            return redirect("create_budget")
 
         if Budget.check_budget_exists(month, year):
             messages.error(request, "Budget already exists for this month")
@@ -19,13 +26,13 @@ def create_budget(request):
         messages.success(request, "Budget created successfully")
         return redirect("budget_list")
 
-    return render(request, "create_budget.html")
+    return render(request, "budgets/create_budget.html")
 
 
 # 🔹 List Budgets
 def budget_list(request):
     budgets = Budget.objects.all()
-    return render(request, "budget_list.html", {"budgets": budgets})
+    return render(request, "budgets/budget_list.html", {"budgets": budgets})
 
 
 # 🔹 Budget Details
@@ -47,22 +54,22 @@ def budget_detail(request, budget_id):
             "spent_amount": cb.spent_amount,
             "remaining": remaining,
             "percentage": round(percentage, 1),
-            "category_type": "Fixed"  # optional (since your HTML uses it)
+            "category_type": "Fixed"
         })
 
         total_limit += cb.limit
         total_spent += cb.spent_amount
 
-    # Global utilization
     global_utilization = (total_spent / total_limit * 100) if total_limit > 0 else 0
-
-    # Estimated savings
     estimated_savings = total_limit - total_spent
 
-    # Days remaining
     today = date.today()
     last_day = monthrange(budget.year, budget.month.month)[1]
-    days_remaining = last_day - today.day if today.month == budget.month.month else 0
+
+    if today.month == budget.month.month and today.year == budget.year:
+        days_remaining = last_day - today.day
+    else:
+        days_remaining = 0
 
     context = {
         "budget": budget,
@@ -73,7 +80,7 @@ def budget_detail(request, budget_id):
         "days_remaining": days_remaining,
     }
 
-    return render(request, "budget.html", context)
+    return render(request, "budgets/Budget.html", context)
 
 
 # 🔹 Add Category Limit
@@ -81,8 +88,18 @@ def add_category_limit(request, budget_id):
     budget = get_object_or_404(Budget, id=budget_id)
 
     if request.method == "POST":
-        category_name = request.POST.get("category")
-        limit = float(request.POST.get("limit"))
+        category_name = request.POST.get("category_name")  # ✅ FIXED
+        limit_str = request.POST.get("limit")
+
+        try:
+            limit = float(limit_str)
+        except:
+            messages.error(request, "Invalid limit value")
+            return redirect("budget_detail", budget_id=budget.id)
+
+        if not category_name:
+            messages.error(request, "Category is required")
+            return redirect("budget_detail", budget_id=budget.id)
 
         category, _ = Category.objects.get_or_create(name=category_name)
 
@@ -94,4 +111,4 @@ def add_category_limit(request, budget_id):
 
         return redirect("budget_detail", budget_id=budget.id)
 
-    return render(request, "add_category.html", {"budget": budget})
+    return render(request, "budgets/add_category.html", {"budget": budget})
