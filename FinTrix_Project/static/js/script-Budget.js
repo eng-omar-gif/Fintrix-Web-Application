@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const newBtn = document.getElementById("newBtn");
   const exportBtn = document.getElementById("exportBtn");
 
+  document.querySelectorAll(".progress-bar").forEach(el => {
+    const width = el.getAttribute("data-width") || 0;
+    el.style.width = width + "%";
+  });
+
   // ✅ Smooth scroll to form
   if (newBtn) {
     newBtn.onclick = (e) => {

@@ -73,7 +73,7 @@
                 <p>Total Monthly Budget</p>
                 <h2 id="totalBudget">${{ total_limit|default:0|floatformat:0 }}</h2>
                 <div class="progress">
-                    <span style="width:{{ global_utilization|default:0 }}%"></span>
+                    <span class="progress-bar" data-width="{{ global_utilization|default:0 }}"></span>
                 </div>
                 <small>{{ global_utilization|default:0 }}% utilized</small>
             </div>
@@ -116,7 +116,7 @@
                         </h4>
 
                         <div class="progress">
-                            <span style="width:{{ cat.percentage|default:0 }}%"></span>
+                            <span class="progress-bar" data-width="{{ cat.percentage|default:0 }}"></span>
                         </div>
 
                         <div class="category-footer">
