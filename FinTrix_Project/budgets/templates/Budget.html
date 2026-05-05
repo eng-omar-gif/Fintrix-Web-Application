@@ -4,19 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budgets FinTrix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Budgets - FinTrix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style-Budget.css' %}">
-    <script src="{% static 'js/script-Budget.js' %}"></script>
 </head>
 <body>
 
 <div class="app">
-
-    <!-- ═══════════════ SIDEBAR ═══════════════ -->
     <aside class="sidebar">
         <div class="logo">
-            <span class="logo-icon">F</span>
+            <div class="logo-icon">F</div>
             <div>
                 <div class="logo-name">FinTrix</div>
                 <div class="logo-sub">INSTITUTIONAL TRUST</div>
@@ -24,427 +21,183 @@
         </div>
 
         <nav class="nav">
-            <a href="/" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                Dashboard
-            </a>
-            <a href="/transactions/" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-                Transactions
-            </a>
-            <a href="{% url 'budget_dashboard' %}" class="nav-item active">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                Budgets
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                Goals
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Reports
-            </a>
-            <a href="#" class="nav-item">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                Notifications
-            </a>
+            <a href="/" class="nav-item">Dashboard</a>
+            <a href="/transactions/" class="nav-item">Transactions</a>
+            <a href="{% url 'budget_dashboard' %}" class="nav-item active">Budgets</a>
+            <a href="#" class="nav-item">Goals</a>
+            <a href="#" class="nav-item">Reports</a>
+            <a href="#" class="nav-item">Notifications</a>
         </nav>
 
-        <a href="#" class="logout">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            Logout
-        </a>
+        <a href="#" class="logout">Logout</a>
     </aside>
 
-    <!-- ═══════════════ MAIN ═══════════════ -->
     <main class="main">
+        <div class="main-inner">
+            <div class="topbar">
+                <div class="search-wrap">
+                    <input type="text" placeholder="Search budgets or categories...">
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn">🔔</button>
+                    <button class="icon-btn">🌙</button>
+                </div>
+            </div>
 
-        <!-- Top Bar -->
-        <div class="topbar">
-            <div class="search-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="text" placeholder="Search budgets or categories...">
+            <div class="page-title">
+                <div>
+                    <h1>Budgets</h1>
+                    <p class="subtitle">Manage your monthly spending limits and financial health.</p>
+                </div>
+                <div class="title-actions">
+                    <button class="btn secondary">Export</button>
+                    <a href="{% url 'create_budget' %}" class="btn primary">+ New Budget</a>
+                </div>
             </div>
-            <div class="topbar-right">
-                <button class="icon-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </button>
-                <button class="icon-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-                </button>
-            </div>
-        </div>
 
-        <!-- Page Title -->
-        <div class="page-title">
-            <div>
-                <h1>Budgets</h1>
-                <p class="subtitle">
-                    {% if budget %}
-                        Manage your spending for <strong>{{ budget.month|date:"F" }} {{ budget.year }}</strong>.
-                    {% else %}
-                        Manage your monthly spending limits and financial health.
-                    {% endif %}
-                </p>
-            </div>
-            <div class="title-actions">
-                <button class="btn secondary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                    Export
-                </button>
-                <a href="{% url 'create_budget' %}" class="btn primary">+ New Budget</a>
-            </div>
-        </div>
-
-        <!-- Django Messages -->
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="msg {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Budget Warning Alerts -->
-        {% for cat in categories %}
-            {% if cat.percentage >= 90 %}
             <div class="alert-banner">
-                <div class="alert-left">
-                    <div class="alert-icon">⚠</div>
+                <div class="alert-content">
+                    <span class="alert-icon">⚠️</span>
                     <div>
-                        <strong>Budget Warning – {{ cat.name }}</strong>
-                        <p>You have reached {{ cat.percentage }}% of your monthly limit. Only ${{ cat.remaining|floatformat:2 }} remaining.</p>
+                        <strong>Budget Warning: Dining & Entertainment</strong>
+                        <p>You have reached 92% of your monthly limit for this category. Only $84.00 remaining.</p>
                     </div>
                 </div>
-                <button class="btn secondary sm">Adjust Limit</button>
+                <button class="adjust-btn">ADJUST LIMIT</button>
             </div>
-            {% endif %}
-        {% endfor %}
 
-        <!-- ── DASHBOARD MODE (no specific budget selected) ── -->
-        {% if dashboard_data %}
-        <div class="dashboard-grid">
-            {% for item in dashboard_data %}
-            <a href="{% url 'budget_detail' item.budget.id %}" class="budget-card">
-                <div class="budget-card-header">
-                    <span class="budget-month">{{ item.budget.month|date:"F Y" }}</span>
-                    <span class="budget-badge">Active</span>
-                </div>
-                <div class="budget-card-stats">
-                    <div>
-                        <p class="stat-label">Spent</p>
-                        <p class="stat-value">${{ item.total_spent|floatformat:0 }}</p>
+            <div class="stats-row">
+                <div class="stat-card wide">
+                    <p class="stat-label">TOTAL MONTHLY BUDGET</p>
+                    <div class="stat-header">
+                        <h2 class="stat-big">$12,500.00</h2>
+                        <span class="trend">+12% vs last month</span>
                     </div>
-                    <div>
-                        <p class="stat-label">Remaining</p>
-                        <p class="stat-value green">${{ item.remaining|floatformat:0 }}</p>
+                    <div class="util-row">
+                        <span>Global Utilization</span>
+                        <span class="util-pct">68%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 68%;"></div>
                     </div>
                 </div>
-            </a>
-            {% empty %}
-            <div class="empty-state">
-                <p>No budgets yet.</p>
-                <a href="{% url 'create_budget' %}" class="btn primary">Create your first budget</a>
-            </div>
-            {% endfor %}
-        </div>
 
-        <!-- ── BUDGET DETAIL MODE ── -->
-        {% elif budget %}
-
-        <!-- Stats Row -->
-        <div class="stats-row">
-
-            <div class="stat-card wide">
-                <p class="stat-label">Total Monthly Budget</p>
-                <div class="stat-main">
-                    <h2 class="stat-big">${{ total_limit|floatformat:2 }}</h2>
+                <div class="stat-card">
+                    <div class="card-icon">🏥</div>
+                    <p class="stat-label">EST. SAVINGS</p>
+                    <h2 class="stat-big small-text">$3,420.50</h2>
+                    <span class="on-track">✓ On track</span>
                 </div>
-                <div class="util-row">
-                    <span>Global Utilization</span>
-                    <span>{{ global_utilization }}%</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill {% if global_utilization >= 90 %}danger{% elif global_utilization >= 75 %}warning{% endif %}"
-                         style="width: {{ global_utilization }}%"></div>
+
+                <div class="stat-card">
+                    <div class="card-icon">🕒</div>
+                    <p class="stat-label">DAYS REMAINING</p>
+                    <h2 class="stat-big">12 Days</h2>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <p class="stat-label">Est. Savings</p>
-                <h2 class="stat-big">${{ estimated_savings|floatformat:2 }}</h2>
-                <span class="on-track">✓ On track</span>
-            </div>
-
-            <div class="stat-card">
-                <p class="stat-label">Days Remaining</p>
-                <h2 class="stat-big">{{ days_remaining }}</h2>
-                <span class="stat-label">Days</span>
-            </div>
-
-        </div>
-
-        <!-- Content Grid -->
-        <div class="content-grid">
-
-            <!-- Left: Category Breakdowns -->
-            <div class="left-col">
-                <div class="section-header">
-                    <h3>Category Breakdowns</h3>
-                    <div class="view-toggle">
-                        <button class="toggle-btn active" id="gridView">
-                            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                        </button>
-                        <button class="toggle-btn" id="listView">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="cat-grid" id="catContainer">
-                    {% for cat in categories %}
-                    <div class="cat-card {% if cat.percentage >= 90 %}danger{% elif cat.is_limited %}over{% endif %}">
-                        <div class="cat-top">
-                            <div class="cat-icon-wrap">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                            </div>
-                            <div class="cat-meta">
-                                <p class="cat-name">{{ cat.name }}</p>
-                                <span class="cat-type {% if cat.percentage >= 90 %}type-danger{% endif %}">
-                                    {% if cat.percentage >= 90 %}CRITICAL{% else %}FIXED EXPENSE{% endif %}
-                                </span>
-                            </div>
-                            <button class="more-btn">⋯</button>
-                        </div>
-
-                        <div class="cat-amounts">
-                            <span>${{ cat.spent_amount|floatformat:0 }} / ${{ cat.limit|floatformat:0 }}</span>
-                            <span class="pct {% if cat.percentage >= 90 %}pct-danger{% endif %}">{{ cat.percentage }}%</span>
-                        </div>
-
-                        <div class="progress-track">
-                            <div class="progress-fill {% if cat.percentage >= 90 %}danger{% elif cat.percentage >= 75 %}warning{% endif %}"
-                                 style="width: {{ cat.percentage }}%"></div>
-                        </div>
-
-                        <div class="cat-footer">
-                            <span class="footer-label">Remaining</span>
-                            <span class="footer-val {% if cat.percentage >= 90 %}footer-danger{% endif %}">
-                                ${{ cat.remaining|floatformat:2 }}
-                            </span>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="empty-cats">
-                        <p>No categories added yet. Use the form to add one.</p>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Activity Over Budget -->
-                <div class="activity-section">
+            <div class="content-grid">
+                <div>
                     <div class="section-header">
-                        <h3>Activity Over Budget</h3>
-                        <a href="{% url 'add_expense' budget.id %}" class="link-btn">View All</a>
+                        <h3 class="section-title">Category Breakdowns</h3>
+                        <div class="grid-toggle">🔲 📋</div>
                     </div>
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Category</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cat in categories %}
-                                {# Access expenses via category budget — requires template tag or view update #}
-                            {% empty %}
-                            <tr><td colspan="4" class="empty-row">No activity yet.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+
+                    <div class="cat-grid">
+                        <div class="cat-card">
+                            <div class="cat-header"><span>🏠 Housing</span> <span class="dots">...</span></div>
+                            <div class="cat-amount"><strong>$3,200</strong> / $3,500 <span class="pct blue">91%</span></div>
+                            <div class="progress-track"><div class="progress-fill" style="width: 91%;"></div></div>
+                            <div class="cat-footer">Remaining <span>$300.00</span></div>
+                        </div>
+
+                        <div class="cat-card danger-card">
+                            <div class="cat-header"><span>🍴 Food & Dining</span> <span class="dots">...</span></div>
+                            <div class="cat-amount"><strong>$1,116</strong> / $1,200 <span class="pct red">93%</span></div>
+                            <div class="progress-track"><div class="progress-fill danger" style="width: 93%;"></div></div>
+                            <div class="cat-footer">Remaining <span class="red">$84.00</span></div>
+                        </div>
+
+                        <div class="cat-card">
+                            <div class="cat-header"><span>🚗 Transportation</span> <span class="dots">...</span></div>
+                            <div class="cat-amount"><strong>$450</strong> / $800 <span class="pct teal">56%</span></div>
+                            <div class="progress-track"><div class="progress-fill teal" style="width: 56%;"></div></div>
+                            <div class="cat-footer">Remaining <span>$350.00</span></div>
+                        </div>
+
+                        <div class="cat-card">
+                            <div class="cat-header"><span>📱 Subscriptions</span> <span class="dots">...</span></div>
+                            <div class="cat-amount"><strong>$195</strong> / $250 <span class="pct teal">78%</span></div>
+                            <div class="progress-track"><div class="progress-fill teal" style="width: 78%;"></div></div>
+                            <div class="cat-footer">Remaining <span>$55.00</span></div>
+                        </div>
+                    </div>
+
+                    <div class="activity-section">
+                        <div class="section-header">
+                            <h3 class="section-title">Activity Over Budget</h3>
+                            <a href="#" class="view-all">VIEW ALL</a>
+                        </div>
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>CATEGORY</th>
+                                    <th>AMOUNT</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Oct 12, 2023</td>
+                                    <td><strong>The Capital Grille</strong></td>
+                                    <td><span class="badge food">FOOD & DINING</span></td>
+                                    <td>$245.80</td>
+                                    <td>🔴</td>
+                                </tr>
+                                <tr>
+                                    <td>Oct 11, 2023</td>
+                                    <td><strong>Shell Station #412</strong></td>
+                                    <td><span class="badge trans">TRANSPORTATION</span></td>
+                                    <td>$64.20</td>
+                                    <td>🟢</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Right: Add Category Form -->
-            <div class="right-col">
-                <div class="form-card">
-                    <h3>Add Category Budget</h3>
-                    <p class="form-subtitle">Set a spending limit for a category</p>
-
-                    <form action="{% url 'add_category_limit' budget.id %}" method="POST">
-                        {% csrf_token %}
-
+                <aside class="right-col">
+                    <div class="form-card">
+                        <h3>Create Budget</h3>
                         <div class="field">
-                            <label>Category Name</label>
-                            <select name="category_name" required>
-                                <option value="" disabled selected>Select category</option>
-                                <option value="Housing">Housing</option>
-                                <option value="Food & Dining">Food &amp; Dining</option>
-                                <option value="Transportation">Transportation</option>
-                                <option value="Subscriptions">Subscriptions</option>
-                                <option value="Healthcare">Healthcare</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Savings">Savings</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <label>CATEGORY NAME</label>
+                            <select><option>Select category</option></select>
                         </div>
-
                         <div class="field">
-                            <label>Monthly Limit</label>
-                            <div class="input-prefix">
-                                <span>$</span>
-                                <input type="number" name="limit" step="0.01" min="0.01" placeholder="0.00" required>
-                            </div>
+                            <label>MONTHLY LIMIT</label>
+                            <input type="text" placeholder="$ 0.00">
                         </div>
-
                         <div class="field">
-                            <label>Alert Threshold</label>
+                            <label>ALERT THRESHOLD</label>
                             <div class="threshold-toggle">
-                                <span class="threshold-opt">50%</span>
-                                <span class="threshold-opt">75%</span>
-                                <span class="threshold-opt active">90% (Default)</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span class="active">90% (DEFAULT)</span>
                             </div>
                         </div>
-
-                        <div class="field">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="auto_adjust">
-                                <span>Auto-adjust based on income</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="rollover">
-                                <span>Rollover surplus to next month</span>
-                            </label>
+                        <div class="checkboxes">
+                            <label><input type="checkbox"> Auto-adjust based on income</label>
+                            <label><input type="checkbox"> Rollover surplus to next month</label>
                         </div>
-
-                        <button type="submit" class="btn primary full">Confirm Budget</button>
-                    </form>
-
-                    <hr class="divider">
-
-                    <!-- Add Expense shortcut -->
-                    <h3>Log an Expense</h3>
-                    <p class="form-subtitle">Record spending against a category</p>
-
-                    <form action="{% url 'add_expense' budget.id %}" method="POST">
-                        {% csrf_token %}
-
-                        <div class="field">
-                            <label>Category</label>
-                            <select name="category_name" required>
-                                <option value="" disabled selected>Select category</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.name }}">{{ cat.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label>Amount</label>
-                            <div class="input-prefix">
-                                <span>$</span>
-                                <input type="number" name="amount" step="0.01" min="0.01" placeholder="0.00" required>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <label>Date</label>
-                            <input type="date" name="date" required>
-                        </div>
-
-                        <button type="submit" class="btn secondary full">Add Expense</button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- ── CREATE BUDGET MODE ── -->
-        {% else %}
-        <div class="create-centered">
-            <div class="form-card standalone">
-                <h3>Create a New Budget</h3>
-                <p class="form-subtitle">Set up your monthly budget to start tracking</p>
-
-                <form action="{% url 'create_budget' %}" method="POST">
-                    {% csrf_token %}
-
-                    <div class="field">
-                        <label>Month</label>
-                        <input type="date" name="month" required>
+                        <button class="btn primary full">CONFIRM BUDGET</button>
                     </div>
-
-                    <div class="field">
-                        <label>Category Name</label>
-                        <select name="category_name" required>
-                            <option value="" disabled selected>Select category</option>
-                            <option value="Housing">Housing</option>
-                            <option value="Food & Dining">Food &amp; Dining</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Subscriptions">Subscriptions</option>
-                            <option value="Healthcare">Healthcare</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Savings">Savings</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label>Monthly Limit</label>
-                        <div class="input-prefix">
-                            <span>$</span>
-                            <input type="number" name="limit" step="0.01" min="0.01" placeholder="0.00" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn primary full">Create Budget</button>
-                </form>
+                </aside>
             </div>
         </div>
-        {% endif %}
-
     </main>
 </div>
-
-<script>
-    // Progress bars animate on load
-    document.querySelectorAll('.progress-fill').forEach(bar => {
-        const w = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => { bar.style.width = w; }, 100);
-    });
-
-    // Grid / List toggle
-    const gridBtn  = document.getElementById('gridView');
-    const listBtn  = document.getElementById('listView');
-    const container = document.getElementById('catContainer');
-
-    if (gridBtn && listBtn && container) {
-        gridBtn.addEventListener('click', () => {
-            container.classList.remove('list-mode');
-            gridBtn.classList.add('active');
-            listBtn.classList.remove('active');
-        });
-        listBtn.addEventListener('click', () => {
-            container.classList.add('list-mode');
-            listBtn.classList.add('active');
-            gridBtn.classList.remove('active');
-        });
-    }
-
-    // Threshold toggle
-    document.querySelectorAll('.threshold-opt').forEach(opt => {
-        opt.addEventListener('click', () => {
-            opt.closest('.threshold-toggle').querySelectorAll('.threshold-opt')
-               .forEach(o => o.classList.remove('active'));
-            opt.classList.add('active');
-        });
-    });
-</script>
 
 </body>
 </html>
