@@ -1,152 +1,433 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budgets</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../templates/style - budget.css">
-<script src="../templates/script - Budget.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BudgetsFinTrix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style-budget.css' %}" />
 </head>
-
 <body>
-
 <div class="app">
 
-  <!-- SIDEBAR -->
+  <!-- ══════════════ SIDEBAR ══════════════ -->
   <aside class="sidebar">
-    <div class="logo">FinTrix</div>
-    <nav>
-      <a>Dashboard</a>
-      <a>Transactions</a>
-      <a class="active">Budgets</a>
-      <a>Goals</a>
-      <a>Reports</a>
-      <a>Notifications</a>
+
+    <div class="logo">
+      <div class="logo-icon">F</div>
+      <div>
+        <div class="logo-name">FinTrix</div>
+        <div class="logo-sub">INSTITUTIONAL TRUST</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="/" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Transactions
+      </a>
+      <a href="{% url 'budget_dashboard' %}" class="nav-item active">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Budgets
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Goals
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Reports
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notifications
+      </a>
     </nav>
-    <div class="logout">Logout</div>
+
+    <a href="#" class="sidebar-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+
   </aside>
 
-  <!-- MAIN -->
+  <!-- ══════════════ MAIN ══════════════ -->
   <main class="main">
 
-    <div class="header">
-      <input placeholder="Search budgets or categories...">
-      <div class="header-actions">
-        <button class="btn secondary">Export</button>
-        <button class="btn primary">+ New Budget</button>
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search budgets or categories..." />
+      </div>
+      <div class="topbar-icons">
+        <button class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="17" height="17"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+        <button class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="17" height="17"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></button>
       </div>
     </div>
 
-    <h1>Budgets</h1>
-    <p>Manage your monthly spending limits and financial health.</p>
-
-    <div class="alert">
-      <div class="alert-left">
-        ⚠️
-        <div>
-          <strong>Budget Warning</strong>
-          <p>Dining & Entertainment — Only $84 remaining</p>
-        </div>
-      </div>
-      <button class="btn secondary">Adjust Limit</button>
+    <!-- Django messages -->
+    {% if messages %}
+    <div class="dj-messages">
+      {% for m in messages %}
+      <div class="dj-msg {% if m.tags == 'error' %}dj-err{% else %}dj-ok{% endif %}">{{ m }}</div>
+      {% endfor %}
     </div>
+    {% endif %}
 
-    <div class="stats">
-      <div class="card stat">
-        <p>Total Monthly Budget</p>
-        <h2>$12,500</h2>
-        <div class="progress"><span style="width:68%"></span></div>
-      </div>
-
-      <div class="card stat">
-        <p>Est. Savings</p>
-        <h2>$3,420</h2>
-      </div>
-
-      <div class="card stat">
-        <p>Days Remaining</p>
-        <h2>12 Days</h2>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- LEFT -->
+    <!-- Page Header -->
+    <div class="page-header">
       <div>
-        <h3>Category Breakdowns</h3>
+        <h1 class="page-title">Budgets</h1>
+        <p class="page-sub">
+          {% if budget %}Manage your spending for <strong>{{ budget.month|date:"F" }} {{ budget.year }}</strong>.
+          {% else %}Manage your monthly spending limits and financial health.{% endif %}
+        </p>
+      </div>
+      <div class="header-btns">
+        <button class="btn-outline" id="exportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <a href="{% url 'create_budget' %}" class="btn-primary">+ New Budget</a>
+      </div>
+    </div>
 
-        <div class="category-grid">
-
-          <div class="card category">
-            <div class="category-header">
-              <div class="icon"></div>
-              <div>
-                <p class="cat-title">Housing</p>
-                <span class="cat-type">NORMAL</span>
-              </div>
-            </div>
-            <h4>$3,200 / $3,500</h4>
-            <div class="progress"><span style="width:91%"></span></div>
-            <div class="category-footer">
-              <span>Remaining</span>
-              <span>$300</span>
-            </div>
+    <!-- ── WARNING ALERTS ── -->
+    {% for cat in categories %}
+      {% if cat.percentage >= 90 %}
+      <div class="alert-bar" id="alertBar">
+        <div class="alert-inner">
+          <div class="alert-ico">⚠</div>
+          <div>
+            <strong>Budget Warning – {{ cat.name }}</strong>
+            <p>You have reached {{ cat.percentage }}% of your monthly limit for this category. Only ${{ cat.remaining|floatformat:2 }} remaining.</p>
           </div>
+        </div>
+        <button class="btn-outline sm" onclick="scrollToForm()">Adjust Limit</button>
+      </div>
+      {% endif %}
+    {% endfor %}
 
-          <div class="card category danger">
-            <div class="category-header">
-              <div class="icon"></div>
-              <div>
-                <p class="cat-title">Food & Dining</p>
-                <span class="cat-type">CRITICAL</span>
-              </div>
-            </div>
-            <h4>$1,116 / $1,200</h4>
-            <div class="progress"><span style="width:93%"></span></div>
-            <div class="category-footer">
-              <span>Remaining</span>
-              <span>$84</span>
-            </div>
+    <!-- ════════════════════════════════
+         DASHBOARD MODE
+    ════════════════════════════════ -->
+    {% if dashboard_data %}
+
+    <div class="dash-grid">
+      {% for item in dashboard_data %}
+      <a href="{% url 'budget_detail' item.budget.id %}" class="dash-card">
+        <div class="dash-card-top">
+          <span class="dash-month">{{ item.budget.month|date:"F Y" }}</span>
+          <span class="dash-badge">Active</span>
+        </div>
+        <div class="dash-nums">
+          <div>
+            <p class="lbl">Spent</p>
+            <p class="num">${{ item.total_spent|floatformat:0 }}</p>
           </div>
+          <div>
+            <p class="lbl">Remaining</p>
+            <p class="num green">${{ item.remaining|floatformat:0 }}</p>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <div class="no-budgets">
+        <p>No budgets yet.</p>
+        <a href="{% url 'create_budget' %}" class="btn-primary">Create your first budget</a>
+      </div>
+      {% endfor %}
+    </div>
 
+    <!-- ════════════════════════════════
+         BUDGET DETAIL MODE
+    ════════════════════════════════ -->
+    {% elif budget %}
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+
+      <div class="stat-card wide">
+        <p class="lbl">TOTAL MONTHLY BUDGET</p>
+        <div class="stat-main-row">
+          <h2 class="stat-num">${{ total_limit|floatformat:2 }}</h2>
+        </div>
+        <div class="util-row">
+          <span class="lbl">Global Utilization</span>
+          <span class="lbl bold">{{ global_utilization }}%</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill {% if global_utilization >= 90 %}fill-danger{% elif global_utilization >= 75 %}fill-warn{% endif %}"
+               style="width:{{ global_utilization }}%"></div>
         </div>
       </div>
 
-      <!-- FORM -->
-      <div class="card form">
-        <h3>Create Budget</h3>
-
-        <label>Category Name</label>
-        <input placeholder="Select category">
-
-        <label>Monthly Limit</label>
-        <input type="number">
-
-        <label>Alert Threshold</label>
-        <div class="threshold">
-          <span>50%</span>
-          <span>75%</span>
-          <span class="active">90%</span>
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         </div>
+        <p class="lbl">EST. SAVINGS</p>
+        <h2 class="stat-num">${{ estimated_savings|floatformat:2 }}</h2>
+        <span class="on-track">✓ On track</span>
+      </div>
 
-        <div class="checkbox">
-          <input type="checkbox"> Auto-adjust based on income
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-
-        <div class="checkbox">
-          <input type="checkbox"> Rollover surplus to next month
-        </div>
-
-        <button class="btn primary full">Confirm Budget</button>
+        <p class="lbl">DAYS REMAINING</p>
+        <h2 class="stat-num">{{ days_remaining }}</h2>
+        <span class="lbl">Days</span>
       </div>
 
     </div>
+
+    <!-- Content + Form -->
+    <div class="content-wrap">
+
+      <!-- LEFT: Category Breakdowns -->
+      <div class="content-left">
+
+        <div class="sec-header">
+          <h3 class="sec-title">Category Breakdowns</h3>
+          <div class="view-btns">
+            <button class="vbtn active" id="gridBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </button>
+            <button class="vbtn" id="listBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cat-grid" id="catGrid">
+          {% for cat in categories %}
+          <div class="cat-card {% if cat.percentage >= 90 %}cat-danger{% endif %}" data-name="{{ cat.name|lower }}">
+            <div class="cat-head">
+              <div class="cat-ico {% if cat.percentage >= 90 %}ico-danger{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div class="cat-meta">
+                <p class="cat-name">{{ cat.name }}</p>
+                <span class="cat-tag {% if cat.percentage >= 90 %}tag-red{% endif %}">
+                  {% if cat.percentage >= 90 %}CRITICAL{% else %}FIXED EXPENSE{% endif %}
+                </span>
+              </div>
+              <button class="more-btn" data-id="{{ cat.id }}" data-budget="{{ budget.id }}">⋯</button>
+            </div>
+
+            <div class="cat-row">
+              <span class="cat-spent">${{ cat.spent_amount|floatformat:0 }} / ${{ cat.limit|floatformat:0 }}</span>
+              <span class="cat-pct {% if cat.percentage >= 90 %}pct-red{% elif cat.percentage >= 75 %}pct-warn{% endif %}">{{ cat.percentage }}%</span>
+            </div>
+
+            <div class="prog-track">
+              <div class="prog-fill {% if cat.percentage >= 90 %}fill-danger{% elif cat.percentage >= 75 %}fill-warn{% elif cat.percentage >= 50 %}fill-ok{% endif %}"
+                   style="width:{{ cat.percentage }}%"></div>
+            </div>
+
+            <div class="cat-foot">
+              <span class="lbl">Remaining</span>
+              <span class="rem-val {% if cat.percentage >= 90 %}rem-red{% endif %}">${{ cat.remaining|floatformat:2 }}</span>
+            </div>
+          </div>
+          {% empty %}
+          <div class="cat-empty">No categories added yet. Use the form to get started.</div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Create Budget form -->
+      <div class="content-right" id="formSection">
+        <div class="form-card">
+          <h3 class="form-title">Create Budget</h3>
+
+          <form method="POST" action="{% url 'add_category_limit' budget.id %}" id="categoryForm">
+            {% csrf_token %}
+
+            <div class="field">
+              <label class="field-lbl">CATEGORY NAME</label>
+              <div class="select-wrap">
+                <select name="category_name" id="catSelect" required>
+                  <option value="" disabled selected>Select category</option>
+                  <option value="Housing">Housing</option>
+                  <option value="Food &amp; Dining">Food &amp; Dining</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Subscriptions">Subscriptions</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Savings">Savings</option>
+                  <option value="Other">Other</option>
+                </select>
+                <svg class="sel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-lbl">MONTHLY LIMIT</label>
+              <div class="money-input">
+                <span class="money-sym">$</span>
+                <input type="number" name="limit" id="limitInput" step="0.01" min="0.01" placeholder="0.00" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-lbl">ALERT THRESHOLD</label>
+              <div class="thresh-row">
+                <span class="thresh-opt" data-val="50">50%</span>
+                <span class="thresh-opt" data-val="75">75%</span>
+                <span class="thresh-opt active" data-val="90">90% (DEFAULT)</span>
+              </div>
+              <input type="hidden" name="threshold" id="thresholdVal" value="90" />
+            </div>
+
+            <div class="field checks">
+              <label class="chk-lbl"><input type="checkbox" name="auto_adjust" /> Auto-adjust based on income</label>
+              <label class="chk-lbl"><input type="checkbox" name="rollover" /> Rollover surplus to next month</label>
+            </div>
+
+            <button type="submit" class="btn-primary full">CONFIRM BUDGET</button>
+          </form>
+
+          <!-- Log Expense -->
+          <div class="divider"></div>
+          <h3 class="form-title">Log an Expense</h3>
+
+          <form method="POST" action="{% url 'add_expense' budget.id %}" id="expenseForm">
+            {% csrf_token %}
+
+            <div class="field">
+              <label class="field-lbl">CATEGORY</label>
+              <div class="select-wrap">
+                <select name="category_name" required>
+                  <option value="" disabled selected>Select category</option>
+                  {% for cat in categories %}
+                  <option value="{{ cat.name }}">{{ cat.name }}</option>
+                  {% endfor %}
+                </select>
+                <svg class="sel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-lbl">AMOUNT</label>
+              <div class="money-input">
+                <span class="money-sym">$</span>
+                <input type="number" name="amount" step="0.01" min="0.01" placeholder="0.00" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-lbl">DATE</label>
+              <input type="date" name="date" id="expenseDate" required />
+            </div>
+
+            <button type="submit" class="btn-outline full">ADD EXPENSE</button>
+          </form>
+
+        </div>
+      </div>
+
+    </div><!-- /content-wrap -->
+
+    <!-- Activity Over Budget -->
+    <div class="activity-card">
+      <div class="sec-header">
+        <h3 class="sec-title">Activity Over Budget</h3>
+        <a href="#" class="view-all">VIEW ALL</a>
+      </div>
+      <table class="act-table">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>DESCRIPTION</th>
+            <th>CATEGORY</th>
+            <th>AMOUNT</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+            {% for expense in cat.expenses %}
+            <tr>
+              <td class="act-date">{{ expense.date|date:"M d, Y" }}</td>
+              <td class="act-desc">{{ expense.description|default:"Expense" }}</td>
+              <td><span class="act-cat-tag">{{ cat.name }}</span></td>
+              <td class="act-amt">${{ expense.amount|floatformat:2 }}</td>
+              <td>
+                {% if cat.percentage >= 90 %}
+                  <span class="status-dot red"></span>
+                {% else %}
+                  <span class="status-dot green"></span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          {% empty %}
+          <tr><td colspan="5" class="act-empty">No expenses recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ════════════════════════════════
+         CREATE BUDGET MODE
+    ════════════════════════════════ -->
+    {% else %}
+    <div class="create-center">
+      <div class="form-card standalone">
+        <h3 class="form-title">Create a New Budget</h3>
+        <p class="form-sub">Set up your monthly budget to start tracking spending.</p>
+
+        <form method="POST" action="{% url 'create_budget' %}" id="createForm">
+          {% csrf_token %}
+
+          <div class="field">
+            <label class="field-lbl">MONTH</label>
+            <input type="date" name="month" required />
+          </div>
+
+          <div class="field">
+            <label class="field-lbl">CATEGORY NAME</label>
+            <div class="select-wrap">
+              <select name="category_name" required>
+                <option value="" disabled selected>Select category</option>
+                <option value="Housing">Housing</option>
+                <option value="Food &amp; Dining">Food &amp; Dining</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Subscriptions">Subscriptions</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Savings">Savings</option>
+                <option value="Other">Other</option>
+              </select>
+              <svg class="sel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-lbl">MONTHLY LIMIT</label>
+            <div class="money-input">
+              <span class="money-sym">$</span>
+              <input type="number" name="limit" step="0.01" min="0.01" placeholder="0.00" required />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary full">CREATE BUDGET</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
 
   </main>
-
 </div>
-
+<script src="{% static 'js/script-budget.js' %}" defer></script>
 </body>
 </html>
