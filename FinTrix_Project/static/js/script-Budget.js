@@ -188,43 +188,75 @@ document.addEventListener("DOMContentLoaded", () => {
   // ══════════════════════════════════════════
   //  11. MORE BUTTON (⋯) — contextual dropdown
   // ══════════════════════════════════════════
-  document.querySelectorAll(".more-btn").forEach(btn => {
+document.querySelectorAll(".more-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       e.stopPropagation();
-
-      // Close any open menus
       document.querySelectorAll(".ctx-menu").forEach(m => m.remove());
+
+      const cbId     = btn.dataset.id;
+      const budgetId = btn.dataset.budget;
 
       const menu = document.createElement("div");
       menu.className = "ctx-menu";
       menu.innerHTML = `
-        <button class="ctx-item">Edit Limit</button>
-        <button class="ctx-item ctx-danger">Remove Category</button>
+        <button class="ctx-item" data-action="edit">Edit Limit</button>
+        <button class="ctx-item ctx-danger" data-action="delete">Remove Category</button>
       `;
 
       const rect = btn.getBoundingClientRect();
       Object.assign(menu.style, {
-        position:    "fixed",
-        top:         `${rect.bottom + 4}px`,
-        left:        `${rect.left - 110}px`,
-        background:  "#fff",
-        border:      "1px solid #e2e5f0",
-        borderRadius:"8px",
-        boxShadow:   "0 4px 16px rgba(0,0,0,.12)",
-        zIndex:      "1000",
-        minWidth:    "140px",
-        overflow:    "hidden",
+        position: "fixed",
+        top:      `${rect.bottom + 4}px`,
+        left:     `${rect.left - 110}px`,
+        background: "#fff",
+        border:   "1px solid #e2e5f0",
+        borderRadius: "8px",
+        boxShadow: "0 4px 16px rgba(0,0,0,.12)",
+        zIndex:   "1000",
+        minWidth: "140px",
+        overflow: "hidden",
       });
 
       menu.querySelectorAll(".ctx-item").forEach(item => {
         Object.assign(item.style, {
-          display:"block", width:"100%", padding:"9px 14px",
-          fontSize:"12.5px", background:"none", border:"none",
-          textAlign:"left", cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+          display: "block", width: "100%", padding: "9px 14px",
+          fontSize: "12.5px", background: "none", border: "none",
+          textAlign: "left", cursor: "pointer",
+          fontFamily: "'DM Sans', sans-serif",
           color: item.classList.contains("ctx-danger") ? "#c0392b" : "#1a1d2e",
         });
+
         item.addEventListener("mouseenter", () => item.style.background = "#f0f2f8");
         item.addEventListener("mouseleave", () => item.style.background = "none");
+
+        item.addEventListener("click", () => {
+          menu.remove();
+
+          if (item.dataset.action === "delete") {
+            if (confirm("Remove this category from the budget?")) {
+              const form = document.createElement("form");
+              form.method = "POST";
+              form.action = `/budgets/${budgetId}/category/${cbId}/delete/`;
+              form.innerHTML = `<input type="hidden" name="csrfmiddlewaretoken" value="${getCSRF()}">`;
+              document.body.appendChild(form);
+              form.submit();
+            }
+
+          } else if (item.dataset.action === "edit") {
+            const newLimit = prompt("Enter new limit:");
+            if (newLimit !== null && parseFloat(newLimit) > 0) {
+              const form = document.createElement("form");
+              form.method = "POST";
+              form.action = `/budgets/${budgetId}/category/${cbId}/edit/`;
+              form.innerHTML = `
+                <input type="hidden" name="csrfmiddlewaretoken" value="${getCSRF()}">
+                <input type="hidden" name="limit" value="${parseFloat(newLimit)}">
+              `;
+              document.body.appendChild(form);
+              form.submit();
+            }
+          }
+        });
       });
 
       document.body.appendChild(menu);
@@ -232,6 +264,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+function getCSRF() {
+  return document.cookie.split(";")
+    .find(c => c.trim().startsWith("csrftoken="))
+    ?.split("=")[1] || "";
+}
 
   // ══════════════════════════════════════════
   //  HELPERS

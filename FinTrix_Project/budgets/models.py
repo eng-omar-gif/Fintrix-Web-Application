@@ -87,7 +87,7 @@ class Expense(models.Model):
     )
     amount = models.FloatField()
     date = models.DateField()
-
+    description     = models.CharField(max_length=200, blank=True, default="Expense")
     def __str__(self):
         return f"{self.amount} on {self.date}"
 

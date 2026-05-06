@@ -17,4 +17,10 @@ urlpatterns = [
     # Expense — BudgetController.addExpense() + updateBudget()
     path("<int:budget_id>/add-expense/",
          views.add_expense, name="add_expense"),
+
+     path("<int:budget_id>/category/<int:cb_id>/edit/",
+     views.edit_category_limit, name="edit_category_limit"),
+
+     path("<int:budget_id>/category/<int:cb_id>/delete/",
+     views.delete_category, name="delete_category"),
 ]

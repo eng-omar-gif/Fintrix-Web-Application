@@ -81,6 +81,8 @@ def budget_detail(request, budget_id):
 
     for cb in category_budgets:
         percentage = (cb.spent_amount / cb.limit * 100) if cb.limit > 0 else 0
+        expenses = list(cb.expenses.order_by("-date").values("id", "amount", "date"))
+
         categories.append({
             "id":           cb.id,
             "name":         cb.category.name,
@@ -89,6 +91,7 @@ def budget_detail(request, budget_id):
             "remaining":    cb.get_remaining(),
             "percentage":   round(percentage, 1),
             "is_limited":   cb.is_limited(),
+            "expenses":     expenses,
         })
         total_limit += cb.limit
         total_spent += cb.spent_amount
@@ -187,3 +190,37 @@ def add_expense(request, budget_id):
         "budget":           budget,
         "category_budgets": budget.category_budgets.select_related("category"),
     })
+
+# ── Edit Category Limit ───────────────────────────────────────────────────────
+def edit_category_limit(request, budget_id, cb_id):
+    cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
+
+    if request.method == "POST":
+        limit_str = request.POST.get("limit")
+        try:
+            limit = float(limit_str)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid limit value.")
+            return redirect("budget_detail", budget_id=budget_id)
+
+        if not cb.budget.validate(limit):
+            messages.error(request, "Limit must be greater than 0.")
+            return redirect("budget_detail", budget_id=budget_id)
+
+        cb.limit = limit
+        cb.save(update_fields=["limit"])
+        messages.success(request, f"Limit for '{cb.category.name}' updated.")
+
+    return redirect("budget_detail", budget_id=budget_id)
+
+
+# ── Delete Category ───────────────────────────────────────────────────────────
+def delete_category(request, budget_id, cb_id):
+    cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
+
+    if request.method == "POST":
+        name = cb.category.name
+        cb.delete()
+        messages.success(request, f"'{name}' removed from budget.")
+
+    return redirect("budget_detail", budget_id=budget_id)
