@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications FinTrix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style-notification.css' %}" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">F</div>
+      <div>
+        <div class="logo-name">FinTrix</div>
+        <div class="logo-sub">INSTITUTIONAL TRUST</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="/" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="/transactions/" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Transactions
+      </a>
+      <a href="{% url 'budget_dashboard' %}" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Budgets
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Goals
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Reports
+      </a>
+      <a href="{% url 'notification_center' %}" class="nav-item active">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notifications
+        {% if unread_count > 0 %}
+        <span class="nav-badge">{{ unread_count }}</span>
+        {% endif %}
+      </a>
+    </nav>
+
+    <a href="#" class="sidebar-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <main class="main">
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search insights..." />
+      </div>
+      <div class="topbar-right">
+        <button class="tb-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="17" height="17"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+    <div class="dj-messages">
+      {% for m in messages %}
+      <div class="dj-msg {% if m.tags == 'error' %}dj-err{% else %}dj-ok{% endif %}">{{ m }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Communication Center</h1>
+      <form method="POST" action="{% url 'mark_all_as_read' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-outline">MARK ALL AS READ</button>
+      </form>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <a href="?tab=all"
+         class="tab {% if active_tab == 'all' %}active{% endif %}">
+        ALL NOTIFICATIONS
+      </a>
+      <a href="?tab=unread"
+         class="tab {% if active_tab == 'unread' %}active{% endif %}">
+        UNREAD
+        {% if unread_count > 0 %}({{ unread_count }}){% endif %}
+      </a>
+      <a href="?tab=archived"
+         class="tab {% if active_tab == 'archived' %}active{% endif %}">
+        ARCHIVED
+      </a>
+    </div>
+
+    <!-- Notification List -->
+    <div class="notif-list" id="notifList">
+
+      {% if has_notifications %}
+
+        {% for notif in notifications %}
+        <div class="notif-item {% if not notif.is_read %}notif-unread{% endif %} notif-{{ notif.notification_type }}"
+             data-id="{{ notif.id }}"
+             data-title="{{ notif.title|lower }}">
+
+          <!-- Left accent bar (unread = colored) -->
+          <div class="notif-accent"></div>
+
+          <!-- Icon -->
+          <div class="notif-ico notif-ico-{{ notif.notification_type }}">
+            {% if notif.notification_type == "security" %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            {% elif notif.notification_type == "budget" %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            {% elif notif.notification_type == "transaction" %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {% endif %}
+          </div>
+
+          <!-- Content -->
+          <div class="notif-body">
+            <div class="notif-top">
+              <p class="notif-title">{{ notif.title }}</p>
+              <div class="notif-meta">
+                <span class="notif-time">{{ notif.time_label }}</span>
+                {% if not notif.is_read %}
+                <span class="notif-dot"></span>
+                {% endif %}
+              </div>
+            </div>
+
+            <p class="notif-msg">{{ notif.message }}</p>
+
+            <!-- Actions -->
+            <div class="notif-actions">
+
+              {% if notif.notification_type == "security" %}
+                <form method="POST" action="{% url 'mark_as_read' notif.id %}" style="display:inline">
+                  {% csrf_token %}
+                  <button type="submit" class="act-btn act-primary">SECURE ACCOUNT</button>
+                </form>
+                <form method="POST" action="{% url 'mark_as_read' notif.id %}" style="display:inline">
+                  {% csrf_token %}
+                  <button type="submit" class="act-btn act-ghost">I RECOGNIZE THIS</button>
+                </form>
+
+              {% elif notif.notification_type == "budget" and notif.category_budget %}
+                <a href="{% url 'navigate_to_budget' notif.id %}" class="act-btn act-primary">VIEW BUDGET</a>
+                <form method="POST" action="{% url 'archive_notification' notif.id %}" style="display:inline">
+                  {% csrf_token %}
+                  <button type="submit" class="act-btn act-ghost">DISMISS</button>
+                </form>
+
+              {% else %}
+                <form method="POST" action="{% url 'mark_as_read' notif.id %}" style="display:inline">
+                  {% csrf_token %}
+                  <button type="submit" class="act-btn act-ghost">MARK AS READ</button>
+                </form>
+              {% endif %}
+
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+
+        <!-- View Earlier -->
+        <div class="view-earlier">
+          <span>VIEW EARLIER NOTIFICATIONS</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+      {% else %}
+        <!-- No Notifications -->
+        <div class="empty-state">
+          <div class="empty-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <p class="empty-title">No new notifications</p>
+          <p class="empty-sub">You're all caught up. Check back later.</p>
+        </div>
+      {% endif %}
+
+    </div>
+
+  </main>
+</div>
+
+<script src="{% static 'js/script-notification.js' %}" defer></script>
+</body>
+</html>
