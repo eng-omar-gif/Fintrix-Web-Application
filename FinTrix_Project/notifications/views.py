@@ -60,7 +60,7 @@ def notification_center(request):
         "archived_count":   archived_qs.count(),
         "active_tab":       tab,
     }
-    return render(request, "notifications/Notification.html", context)
+    return render(request, "notifications.html", context)
 
 
 # ─────────────────────────────────────────────
