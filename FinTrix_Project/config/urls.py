@@ -7,6 +7,7 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('api/', list_transactions, name='list_transactions'),
     path('api/add/', add_transaction, name='add_transaction'),
+    path('transactions/', transactions_page, name='transactions_page'),
     path("goals/", include("goals.urls")),
     path("budgets/", include("budgets.urls")),
 ]
