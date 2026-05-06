@@ -74,7 +74,6 @@ button {
   height: 100vh;
   flex-shrink: 0;
 }
-
 .logo {
   display: flex;
   align-items: center;
@@ -106,7 +105,6 @@ button {
   color: var(--muted);
   font-weight: 500;
 }
-
 .nav {
   display: flex;
   flex-direction: column;
@@ -150,7 +148,6 @@ button {
   min-width: 18px;
   text-align: center;
 }
-
 .sidebar-logout {
   display: flex;
   align-items: center;
@@ -169,13 +166,12 @@ button {
 }
 
 /* ══════════════════════════════════════
-   MAIN
+   MAIN  — no max-width so topbar fills
 ══════════════════════════════════════ */
 .main {
   flex: 1;
   padding: 22px 32px;
   min-width: 0;
-  max-width: 760px;
 }
 
 /* ══════════════════════════════════════
@@ -186,15 +182,18 @@ button {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 28px;
+  width: 100%;
 }
+
+/* pill-shaped search — matches screenshot */
 .search-box {
   display: flex;
   align-items: center;
   gap: 8px;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  border-radius: 999px;
+  padding: 8px 18px;
   width: 280px;
   color: var(--muted);
 }
@@ -209,24 +208,28 @@ button {
 .search-box input::placeholder {
   color: var(--muted);
 }
+
+/* moon icon — plain, no border, pushed to far right */
 .topbar-right {
   display: flex;
   gap: 8px;
+  margin-left: auto;
 }
 .tb-icon {
   width: 34px;
   height: 34px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 50%;
+  background: none;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
   transition: var(--trans);
+  border-radius: 50%;
 }
 .tb-icon:hover {
   background: var(--soft);
+  color: var(--text);
 }
 
 /* ══════════════════════════════════════
@@ -295,7 +298,6 @@ button {
 ══════════════════════════════════════ */
 .tabs {
   display: flex;
-  gap: 0;
   border-bottom: 2px solid var(--border);
   margin-bottom: 0;
 }
@@ -349,7 +351,7 @@ button {
   background: #fafbff;
 }
 
-/* Unread left accent */
+/* Left accent bar */
 .notif-accent {
   position: absolute;
   left: 0;
@@ -362,12 +364,6 @@ button {
 .notif-unread .notif-accent {
   background: var(--danger);
 }
-.notif-unread.notif-budget .notif-accent {
-  background: var(--danger);
-}
-.notif-unread.notif-security .notif-accent {
-  background: var(--danger);
-}
 .notif-unread.notif-transaction .notif-accent {
   background: var(--primary);
 }
@@ -375,7 +371,7 @@ button {
   background: var(--muted);
 }
 
-/* Icon wrapper */
+/* Icon */
 .notif-ico {
   width: 38px;
   height: 38px;
@@ -386,22 +382,10 @@ button {
   flex-shrink: 0;
   margin-top: 2px;
 }
-.notif-ico-security {
-  background: var(--danger-bg);
-  color: var(--danger);
-}
-.notif-ico-budget {
-  background: #fff3e0;
-  color: var(--warn);
-}
-.notif-ico-transaction {
-  background: var(--primary-lt);
-  color: var(--primary);
-}
-.notif-ico-system {
-  background: var(--soft);
-  color: var(--muted);
-}
+.notif-ico-security    { background: var(--danger-bg); color: var(--danger); }
+.notif-ico-budget      { background: #fff3e0;           color: var(--warn);   }
+.notif-ico-transaction { background: var(--primary-lt); color: var(--primary);}
+.notif-ico-system      { background: var(--soft);        color: var(--muted);  }
 
 /* Body */
 .notif-body {
@@ -554,6 +538,5 @@ button {
   }
   .main {
     padding: 16px;
-    max-width: 100%;
   }
 }
