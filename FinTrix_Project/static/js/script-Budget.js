@@ -2,347 +2,260 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ══════════════════════════════════════════════════════
-  //  1. PROGRESS BARS — animate on load
-  // ══════════════════════════════════════════════════════
-  document.querySelectorAll(".progress-fill").forEach(bar => {
+  // ══════════════════════════════════════════
+  //  1. ANIMATE PROGRESS BARS
+  // ══════════════════════════════════════════
+  document.querySelectorAll(".prog-fill").forEach(bar => {
     const target = bar.style.width || "0%";
     bar.style.width = "0%";
-    requestAnimationFrame(() => {
-      setTimeout(() => { bar.style.width = target; }, 80);
-    });
+    requestAnimationFrame(() => setTimeout(() => { bar.style.width = target; }, 80));
   });
 
 
-  // ══════════════════════════════════════════════════════
-  //  2. AUTO-DISMISS Django messages after 4 seconds
-  // ══════════════════════════════════════════════════════
-  document.querySelectorAll(".msg").forEach(msg => {
+  // ══════════════════════════════════════════
+  //  2. AUTO-DISMISS Django messages (4s)
+  // ══════════════════════════════════════════
+  document.querySelectorAll(".dj-msg").forEach(msg => {
     setTimeout(() => {
-      msg.style.transition = "opacity 0.4s ease";
+      msg.style.transition = "opacity 0.4s";
       msg.style.opacity = "0";
       setTimeout(() => msg.remove(), 400);
     }, 4000);
   });
 
 
-  // ══════════════════════════════════════════════════════
-  //  3. ALERT BANNER — dismiss on "Adjust Limit" click
-  //     Scrolls to the Add Category form instead
-  // ══════════════════════════════════════════════════════
-  document.querySelectorAll(".alert-banner .btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const formCard = document.querySelector(".form-card");
-      if (formCard) {
-        formCard.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-  });
+  // ══════════════════════════════════════════
+  //  3. ALERT BANNER — scroll to form
+  // ══════════════════════════════════════════
+  window.scrollToForm = function () {
+    const form = document.getElementById("formSection");
+    if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
 
-  // ══════════════════════════════════════════════════════
-  //  4. GRID / LIST VIEW TOGGLE for category cards
-  // ══════════════════════════════════════════════════════
-  const gridBtn   = document.getElementById("gridView");
-  const listBtn   = document.getElementById("listView");
-  const catContainer = document.getElementById("catContainer");
-
-  if (gridBtn && listBtn && catContainer) {
-    gridBtn.addEventListener("click", () => {
-      catContainer.classList.remove("list-mode");
-      gridBtn.classList.add("active");
-      listBtn.classList.remove("active");
-      localStorage.setItem("budgetView", "grid");
-    });
-
-    listBtn.addEventListener("click", () => {
-      catContainer.classList.add("list-mode");
-      listBtn.classList.add("active");
-      gridBtn.classList.remove("active");
-      localStorage.setItem("budgetView", "list");
-    });
-
-    // Restore last preference
-    if (localStorage.getItem("budgetView") === "list") {
-      listBtn.click();
-    }
+  // ══════════════════════════════════════════
+  //  4. EXPORT BUTTON — window.print()
+  // ══════════════════════════════════════════
+  const exportBtn = document.getElementById("exportBtn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => window.print());
   }
 
 
-  // ══════════════════════════════════════════════════════
-  //  5. THRESHOLD TOGGLE (UI only — value sent via hidden input)
-  // ══════════════════════════════════════════════════════
-  document.querySelectorAll(".threshold-toggle").forEach(group => {
-    const hiddenInput = group.closest("form")?.querySelector("input[name='threshold']");
+  // ══════════════════════════════════════════
+  //  5. GRID / LIST TOGGLE — persisted in localStorage
+  // ══════════════════════════════════════════
+  const gridBtn = document.getElementById("gridBtn");
+  const listBtn = document.getElementById("listBtn");
+  const catGrid = document.getElementById("catGrid");
 
-    group.querySelectorAll(".threshold-opt").forEach(opt => {
+  if (gridBtn && listBtn && catGrid) {
+    const setView = (mode) => {
+      if (mode === "list") {
+        catGrid.classList.add("list-mode");
+        listBtn.classList.add("active");
+        gridBtn.classList.remove("active");
+      } else {
+        catGrid.classList.remove("list-mode");
+        gridBtn.classList.add("active");
+        listBtn.classList.remove("active");
+      }
+      localStorage.setItem("budgetView", mode);
+    };
+
+    gridBtn.addEventListener("click", () => setView("grid"));
+    listBtn.addEventListener("click", () => setView("list"));
+
+    // Restore preference
+    setView(localStorage.getItem("budgetView") || "grid");
+  }
+
+
+  // ══════════════════════════════════════════
+  //  6. THRESHOLD TOGGLE — updates hidden input
+  // ══════════════════════════════════════════
+  document.querySelectorAll(".thresh-row").forEach(row => {
+    const hidden = row.closest("form")?.querySelector("#thresholdVal");
+    row.querySelectorAll(".thresh-opt").forEach(opt => {
       opt.addEventListener("click", () => {
-        group.querySelectorAll(".threshold-opt").forEach(o => o.classList.remove("active"));
+        row.querySelectorAll(".thresh-opt").forEach(o => o.classList.remove("active"));
         opt.classList.add("active");
-
-        // Update hidden input if it exists
-        if (hiddenInput) {
-          hiddenInput.value = opt.textContent.replace("%", "").replace("(Default)", "").trim();
-        }
+        if (hidden) hidden.value = opt.dataset.val;
       });
     });
   });
 
 
-  // ══════════════════════════════════════════════════════
-  //  6. ADD CATEGORY LIMIT FORM — client-side validation
-  //     Form POSTs to Django: add_category_limit view
-  //     Fields: category_name (select), limit (number)
-  // ══════════════════════════════════════════════════════
-  const categoryForm = document.querySelector("form[action*='add-category']");
-
+  // ══════════════════════════════════════════
+  //  7. ADD CATEGORY LIMIT FORM — validation
+  //     POST → add_category_limit view
+  //     Fields: category_name, limit
+  // ══════════════════════════════════════════
+  const categoryForm = document.getElementById("categoryForm");
   if (categoryForm) {
     categoryForm.addEventListener("submit", e => {
-      const categoryName = categoryForm.querySelector("select[name='category_name']")?.value;
-      const limit        = categoryForm.querySelector("input[name='limit']")?.value;
+      clearErrors(categoryForm);
+      let ok = true;
 
-      clearFieldErrors(categoryForm);
+      const cat   = categoryForm.querySelector("select[name='category_name']");
+      const limit = categoryForm.querySelector("input[name='limit']");
 
-      let valid = true;
-
-      if (!categoryName) {
-        showFieldError(categoryForm, "select[name='category_name']", "Please select a category.");
-        valid = false;
+      if (!cat?.value) {
+        showError(cat, "Please select a category."); ok = false;
       }
-
-      if (!limit || parseFloat(limit) <= 0) {
-        showFieldError(categoryForm, "input[name='limit']", "Limit must be greater than 0.");
-        valid = false;
+      if (!limit?.value || parseFloat(limit.value) <= 0) {
+        showError(limit, "Enter a limit greater than 0."); ok = false;
       }
-
-      if (!valid) {
-        e.preventDefault();
-      }
+      if (!ok) e.preventDefault();
     });
   }
 
 
-  // ══════════════════════════════════════════════════════
-  //  7. ADD EXPENSE FORM — client-side validation
-  //     Form POSTs to Django: add_expense view
-  //     Fields: category_name (select), amount (number), date (date)
-  // ══════════════════════════════════════════════════════
-  const expenseForm = document.querySelector("form[action*='add-expense']");
-
+  // ══════════════════════════════════════════
+  //  8. ADD EXPENSE FORM — validation
+  //     POST → add_expense view
+  //     Fields: category_name, amount, date
+  // ══════════════════════════════════════════
+  const expenseForm = document.getElementById("expenseForm");
   if (expenseForm) {
-    expenseForm.addEventListener("submit", e => {
-      const categoryName = expenseForm.querySelector("select[name='category_name']")?.value;
-      const amount       = expenseForm.querySelector("input[name='amount']")?.value;
-      const date         = expenseForm.querySelector("input[name='date']")?.value;
-
-      clearFieldErrors(expenseForm);
-
-      let valid = true;
-
-      if (!categoryName) {
-        showFieldError(expenseForm, "select[name='category_name']", "Please select a category.");
-        valid = false;
-      }
-
-      if (!amount || parseFloat(amount) <= 0) {
-        showFieldError(expenseForm, "input[name='amount']", "Amount must be greater than 0.");
-        valid = false;
-      }
-
-      if (!date) {
-        showFieldError(expenseForm, "input[name='date']", "Please select a date.");
-        valid = false;
-      }
-
-      if (!valid) {
-        e.preventDefault();
-      }
-    });
-
     // Default date to today
-    const dateInput = expenseForm.querySelector("input[name='date']");
+    const dateInput = expenseForm.querySelector("#expenseDate");
     if (dateInput && !dateInput.value) {
       dateInput.value = new Date().toISOString().split("T")[0];
     }
+
+    expenseForm.addEventListener("submit", e => {
+      clearErrors(expenseForm);
+      let ok = true;
+
+      const cat    = expenseForm.querySelector("select[name='category_name']");
+      const amount = expenseForm.querySelector("input[name='amount']");
+      const date   = expenseForm.querySelector("input[name='date']");
+
+      if (!cat?.value)                              { showError(cat,    "Please select a category."); ok = false; }
+      if (!amount?.value || parseFloat(amount.value) <= 0) { showError(amount, "Enter an amount greater than 0."); ok = false; }
+      if (!date?.value)                             { showError(date,   "Please select a date."); ok = false; }
+
+      if (!ok) e.preventDefault();
+    });
   }
 
 
-  // ══════════════════════════════════════════════════════
-  //  8. CREATE BUDGET FORM — client-side validation
-  //     Form POSTs to Django: create_budget view
-  //     Fields: month (date), category_name (select), limit (number)
-  // ══════════════════════════════════════════════════════
-  const createForm = document.querySelector("form[action*='create']");
-
+  // ══════════════════════════════════════════
+  //  9. CREATE BUDGET FORM — validation
+  //     POST → create_budget view
+  //     Fields: month, category_name, limit
+  // ══════════════════════════════════════════
+  const createForm = document.getElementById("createForm");
   if (createForm) {
     createForm.addEventListener("submit", e => {
-      const month        = createForm.querySelector("input[name='month']")?.value;
-      const categoryName = createForm.querySelector("select[name='category_name']")?.value;
-      const limit        = createForm.querySelector("input[name='limit']")?.value;
+      clearErrors(createForm);
+      let ok = true;
 
-      clearFieldErrors(createForm);
+      const month = createForm.querySelector("input[name='month']");
+      const cat   = createForm.querySelector("select[name='category_name']");
+      const limit = createForm.querySelector("input[name='limit']");
 
-      let valid = true;
+      if (!month?.value)                            { showError(month, "Please select a month."); ok = false; }
+      if (!cat?.value)                              { showError(cat,   "Please select a category."); ok = false; }
+      if (!limit?.value || parseFloat(limit.value) <= 0) { showError(limit, "Enter a limit greater than 0."); ok = false; }
 
-      if (!month) {
-        showFieldError(createForm, "input[name='month']", "Please select a month.");
-        valid = false;
-      }
-
-      if (!categoryName) {
-        showFieldError(createForm, "select[name='category_name']", "Please select a category.");
-        valid = false;
-      }
-
-      if (!limit || parseFloat(limit) <= 0) {
-        showFieldError(createForm, "input[name='limit']", "Limit must be greater than 0.");
-        valid = false;
-      }
-
-      if (!valid) {
-        e.preventDefault();
-      }
+      if (!ok) e.preventDefault();
     });
   }
 
 
-  // ══════════════════════════════════════════════════════
-  //  9. SEARCH — filter category cards by name
-  // ══════════════════════════════════════════════════════
-  const searchInput = document.querySelector(".search-wrap input");
-
+  // ══════════════════════════════════════════
+  //  10. SEARCH — filter category & budget cards
+  // ══════════════════════════════════════════
+  const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase().trim();
+      const q = searchInput.value.toLowerCase().trim();
 
-      document.querySelectorAll(".cat-card").forEach(card => {
-        const name = card.querySelector(".cat-name")?.textContent.toLowerCase() || "";
-        card.style.display = name.includes(query) ? "" : "none";
+      document.querySelectorAll(".cat-card[data-name]").forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? "" : "none";
       });
 
-      // Also filter dashboard budget cards
-      document.querySelectorAll(".budget-card").forEach(card => {
-        const month = card.querySelector(".budget-month")?.textContent.toLowerCase() || "";
-        card.style.display = month.includes(query) ? "" : "none";
+      document.querySelectorAll(".dash-card").forEach(card => {
+        const text = card.querySelector(".dash-month")?.textContent.toLowerCase() || "";
+        card.style.display = text.includes(q) ? "" : "none";
       });
     });
   }
 
 
-  // ══════════════════════════════════════════════════════
-  //  10. EXPORT — prints the current budget view
-  // ══════════════════════════════════════════════════════
-  const exportBtn = document.querySelector(".btn.secondary[class*='export'], .title-actions .btn.secondary");
-
-  if (exportBtn && exportBtn.textContent.trim().toLowerCase().includes("export")) {
-    exportBtn.addEventListener("click", () => {
-      window.print();
-    });
-  }
-
-
-  // ══════════════════════════════════════════════════════
-  //  11. + NEW BUDGET button — smooth scroll or navigate
-  // ══════════════════════════════════════════════════════
-  const newBudgetBtn = document.querySelector(".title-actions .btn.primary");
-
-  if (newBudgetBtn && newBudgetBtn.tagName === "A") {
-    // It's a link — Django url 'create_budget', let it navigate naturally
-    // No override needed
-  }
-
-
-  // ══════════════════════════════════════════════════════
-  //  12. MORE BUTTON (⋯) on category cards — placeholder menu
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════
+  //  11. MORE BUTTON (⋯) — contextual dropdown
+  // ══════════════════════════════════════════
   document.querySelectorAll(".more-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       e.stopPropagation();
 
-      // Close any open menus first
-      document.querySelectorAll(".more-menu").forEach(m => m.remove());
+      // Close any open menus
+      document.querySelectorAll(".ctx-menu").forEach(m => m.remove());
 
       const menu = document.createElement("div");
-      menu.className = "more-menu";
+      menu.className = "ctx-menu";
       menu.innerHTML = `
-        <button class="more-menu-item">Edit Limit</button>
-        <button class="more-menu-item danger-item">Remove Category</button>
+        <button class="ctx-item">Edit Limit</button>
+        <button class="ctx-item ctx-danger">Remove Category</button>
       `;
 
-      // Position relative to button
       const rect = btn.getBoundingClientRect();
-      menu.style.cssText = `
-        position: fixed;
-        top: ${rect.bottom + 4}px;
-        left: ${rect.left - 100}px;
-        background: white;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        z-index: 1000;
-        min-width: 140px;
-        overflow: hidden;
-      `;
-
-      const items = menu.querySelectorAll(".more-menu-item");
-      items.forEach(item => {
-        item.style.cssText = `
-          display: block; width: 100%;
-          padding: 10px 14px; font-size: 13px;
-          background: none; border: none; text-align: left;
-          cursor: pointer; color: var(--text);
-          font-family: 'DM Sans', sans-serif;
-        `;
+      Object.assign(menu.style, {
+        position:    "fixed",
+        top:         `${rect.bottom + 4}px`,
+        left:        `${rect.left - 110}px`,
+        background:  "#fff",
+        border:      "1px solid #e2e5f0",
+        borderRadius:"8px",
+        boxShadow:   "0 4px 16px rgba(0,0,0,.12)",
+        zIndex:      "1000",
+        minWidth:    "140px",
+        overflow:    "hidden",
       });
 
-      const dangerItem = menu.querySelector(".danger-item");
-      if (dangerItem) dangerItem.style.color = "var(--danger)";
+      menu.querySelectorAll(".ctx-item").forEach(item => {
+        Object.assign(item.style, {
+          display:"block", width:"100%", padding:"9px 14px",
+          fontSize:"12.5px", background:"none", border:"none",
+          textAlign:"left", cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+          color: item.classList.contains("ctx-danger") ? "#c0392b" : "#1a1d2e",
+        });
+        item.addEventListener("mouseenter", () => item.style.background = "#f0f2f8");
+        item.addEventListener("mouseleave", () => item.style.background = "none");
+      });
 
       document.body.appendChild(menu);
-
-      // Close on outside click
-      setTimeout(() => {
-        document.addEventListener("click", () => menu.remove(), { once: true });
-      }, 0);
+      setTimeout(() => document.addEventListener("click", () => menu.remove(), { once: true }), 0);
     });
   });
 
 
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════
   //  HELPERS
-  // ══════════════════════════════════════════════════════
-
-  /**
-   * Show an inline error message below a field.
-   * @param {HTMLElement} form - the parent form
-   * @param {string} selector - CSS selector for the field
-   * @param {string} message - error text to display
-   */
-  function showFieldError(form, selector, message) {
-    const field = form.querySelector(selector);
+  // ══════════════════════════════════════════
+  function showError(field, message) {
     if (!field) return;
-
-    field.style.borderColor = "var(--danger)";
-    field.style.boxShadow   = "0 0 0 3px rgba(192,57,43,0.12)";
+    // Highlight the field or its wrapper
+    const target = field.closest(".money-input") || field.closest(".select-wrap") || field;
+    target.style.borderColor  = "#c0392b";
+    target.style.boxShadow    = "0 0 0 3px rgba(192,57,43,.12)";
 
     const err = document.createElement("span");
-    err.className = "field-error";
+    err.className   = "field-error";
     err.textContent = message;
-    err.style.cssText = "font-size:11px; color:var(--danger); margin-top:3px; display:block;";
-
-    const parent = field.closest(".input-prefix") || field;
-    parent.insertAdjacentElement("afterend", err);
+    const parent = field.closest(".field");
+    if (parent) parent.appendChild(err);
   }
 
-  /**
-   * Remove all inline errors from a form.
-   * @param {HTMLElement} form
-   */
-  function clearFieldErrors(form) {
+  function clearErrors(form) {
     form.querySelectorAll(".field-error").forEach(e => e.remove());
     form.querySelectorAll("input, select").forEach(el => {
-      el.style.borderColor = "";
-      el.style.boxShadow   = "";
+      const wrap = el.closest(".money-input") || el.closest(".select-wrap") || el;
+      wrap.style.borderColor = "";
+      wrap.style.boxShadow   = "";
     });
   }
 
