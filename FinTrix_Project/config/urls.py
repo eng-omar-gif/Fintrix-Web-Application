@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/add/', add_transaction, name='add_transaction'),
     path("goals/", include("goals.urls")),
     path("budgets/", include("budgets.urls")),
+    path("notifications/", include("notifications.urls")),
 ]
