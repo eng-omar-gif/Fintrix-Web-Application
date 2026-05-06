@@ -1,7 +1,13 @@
 import json
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.csrf import csrf_exempt
 
+def transactions_page(request):
+    return render(request, 'transactions.html')
+
+@csrf_exempt
 @require_POST
 def add_transaction(request):
     from .services import TransactionService
