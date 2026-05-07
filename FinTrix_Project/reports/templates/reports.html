@@ -109,15 +109,16 @@
                     </div>
                     <div class="header-controls">
                         <div class="filter-tabs">
-                            <button class="filter-tab" onclick="setTimeFilter('20days')">Last 20 Days</button>
-                            <button class="filter-tab" onclick="setTimeFilter('quarterly')">Quarterly</button>
-                            <button class="filter-tab active" onclick="setTimeFilter('yearly')">Yearly</button>
+                            <button class="filter-tab" onclick="setTimeFilter(event,'20days')">Last 20 Days</button>
+                            <button class="filter-tab" onclick="setTimeFilter(event,'quarterly')">Quarterly</button>
+                            <button class="filter-tab active" onclick="setTimeFilter(event,'yearly')">Yearly</button>
                         </div>
                         <div class="date-range">
                             <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M1.66667 16.6667C1.20833 16.6667 0.815972 16.5035 0.489583 16.1771C0.163194 15.8507 0 15.4583 0 15V3.33333C0 2.875 0.163194 2.48264 0.489583 2.15625C0.815972 1.82986 1.20833 1.66667 1.66667 1.66667H2.5V0H4.16667V1.66667H10.8333V0H12.5V1.66667H13.3333C13.7917 1.66667 14.184 1.82986 14.5104 2.15625C14.8368 2.48264 15 2.875 15 3.33333V15C15 15.4583 14.8368 15.8507 14.5104 16.1771C14.184 16.5035 13.7917 16.6667 13.3333 16.6667H1.66667ZM1.66667 15H13.3333V6.66667H1.66667V15ZM1.66667 5H13.3333V3.33333H1.66667V5ZM1.66667 5V3.33333V5Z" fill="#94A3B8"/>
                                 </svg>
-                                <span id="dateRange">Oct 01 - Oct 31, 2023</span>
+                                <input type="date" id="tDate">
+                                <button onclick="applyCustomDate()">Apply</button>
                         </div>
                         <button class="export-btn" onclick="exportReport()">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -161,12 +162,9 @@
                     <div class="donut-container">
                         <div class="donut-chart">
                             <svg class="donut-svg" viewBox="0 0 200 200">
-                                <circle cx="100" cy="100" r="80" fill="none" stroke="#8B4513" stroke-width="40" 
-                                    stroke-dasharray="226 226" stroke-dashoffset="0"></circle>
-                                <circle cx="100" cy="100" r="80" fill="none" stroke="#CD853F" stroke-width="40" 
-                                    stroke-dasharray="161 226" stroke-dashoffset="-226"></circle>
-                                <circle cx="100" cy="100" r="80" fill="none" stroke="#DEB887" stroke-width="40" 
-                                    stroke-dasharray="116 226" stroke-dashoffset="-387"></circle>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#8B4513" stroke-width="40"></circle>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#CD853F" stroke-width="40"></circle>
+                                  <circle cx="100" cy="100" r="80" fill="none" stroke="#DEB887" stroke-width="40"></circle>
                             </svg>
                             <div class="donut-center">
                                 <div class="donut-amount">$12,450</div>

@@ -1,226 +1,343 @@
+// ===============================
+// Reports Page JS (script-reports.js)
+// ===============================
 
 
+// ===============================
+// Dark Mode Toggle
+// ===============================
+let darkMode = false;
 
-// Sample transactions data
-const transactions = [
-    {
-        entity: 'AWS Cloud Services',
-        category: 'Infrastructure',
-        date: '2023-10-24',
-        amount: -2450.00,
-        status: 'cleared'
-    },
-    {
-        entity: 'Stripe Payout',
-        category: 'Sales Revenue',
-        date: '2023-10-22',
-        amount: 8800.00,
-        status: 'cleared'
-    },
-    {
-        entity: 'Modern Office Rental',
-        category: 'Fixed Assets',
-        date: '2023-10-05',
-        amount: -4200.00,
-        status: 'pending'
-    },
-    {
-        entity: 'Adobe Creative Suite',
-        category: 'Software',
-        date: '2023-10-18',
-        amount: -599.99,
-        status: 'cleared'
-    },
-    {
-        entity: 'Client Payment - Acme Corp',
-        category: 'Sales Revenue',
-        date: '2023-10-15',
-        amount: 12500.00,
-        status: 'cleared'
-    }
-];
-
-// Format currency
-function formatCurrency(amount) {
-    const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2
-    }).format(Math.abs(amount));
-    
-    return amount < 0 ? `-${formatted}` : `+${formatted}`;
-}
-
-// Format date
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: '2-digit',
-        year: 'numeric'
-    });
-}
-
-// Render transactions
-function renderTransactions() {
-    const tbody = document.getElementById('transactionsTableBody');
-    
-    tbody.innerHTML = transactions.map(tx => `
-        <tr>
-            <td>
-                <div class="entity-name">${tx.entity}</div>
-            </td>
-            <td>
-                <div class="category-badge">${tx.category}</div>
-            </td>
-            <td>
-                <div class="transaction-date">${formatDate(tx.date)}</div>
-            </td>
-            <td>
-                <div class="amount ${tx.amount < 0 ? 'negative' : 'positive'}">
-                    ${formatCurrency(tx.amount)}
-                </div>
-            </td>
-            <td>
-                <span class="status-badge ${tx.status}">
-                    ${tx.status}
-                </span>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Draw Income vs Expenses Chart
-function drawIncomeExpensesChart() {
-    const canvas = document.getElementById('incomeExpensesChart');
-    const ctx = canvas.getContext('2d');
-    
-    // Set canvas size
-    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    
-    const width = canvas.offsetWidth;
-    const height = canvas.offsetHeight;
-    
-    // Sample data for 4 weeks
-    const weeks = ['WEEK 1', 'WEEK 2', 'WEEK 3', 'WEEK 4'];
-    const incomeData = [8500, 9200, 8800, 10500];
-    const expenseData = [6200, 5800, 7100, 6500];
-    
-    const maxValue = Math.max(...incomeData, ...expenseData);
-    const padding = 40;
-    const chartHeight = height - padding * 2;
-    const chartWidth = width - padding * 2;
-    const barWidth = chartWidth / (weeks.length * 2.5);
-    const gap = barWidth * 0.5;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Draw grid lines
-    ctx.strokeStyle = '#f3f4f6';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (chartHeight / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(width - padding / 2, y);
-        ctx.stroke();
-    }
-    
-    // Draw bars
-    weeks.forEach((week, index) => {
-        const x = padding + (barWidth * 2 + gap) * index;
-        
-        // Income bar
-        const incomeHeight = (incomeData[index] / maxValue) * chartHeight;
-        ctx.fillStyle = '#0047AB';
-        ctx.fillRect(x, height - padding - incomeHeight, barWidth, incomeHeight);
-        
-        // Expense bar
-        const expenseHeight = (expenseData[index] / maxValue) * chartHeight;
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(x + barWidth + gap / 2, height - padding - expenseHeight, barWidth, expenseHeight);
-    });
-    
-    // Draw labels
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto';
-    ctx.textAlign = 'center';
-    
-    weeks.forEach((week, index) => {
-        const x = padding + (barWidth * 2 + gap) * index + barWidth;
-        ctx.fillText(week, x, height - 10);
-    });
-}
-
-// Time filter function
-function setTimeFilter(filter) {
-    // Remove active class from all tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Add active class to clicked tab
-    event.target.classList.add('active');
-    
-    // Update date range based on filter
-    const dateRangeElement = document.getElementById('dateRange');
-    const periodElement = document.getElementById('currentPeriod');
-    
-    if (filter === '20days') {
-        dateRangeElement.textContent = 'Oct 12 - Oct 31, 2023';
-        periodElement.textContent = 'the last 20 days';
-    } else if (filter === 'quarterly') {
-        dateRangeElement.textContent = 'Jul 01 - Sep 30, 2023';
-        periodElement.textContent = 'Q3 2023';
-    } else {
-        dateRangeElement.textContent = 'Jan 01 - Dec 31, 2023';
-        periodElement.textContent = '2023';
-    }
-    
-    // In a real app, you would fetch new data here
-    console.log('Filter changed to:', filter);
-}
-
-// Export report function
-function exportReport() {
-    alert('Exporting report as PDF...\n\nIn a real application, this would generate a downloadable PDF report with all your financial data.');
-    
-    // In Django, you would call:
-    // window.location.href = '/api/reports/export/?format=pdf&period=' + currentPeriod;
-}
-
-// Toggle sidebar on mobile
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-}
-
-// Toggle dark mode
 function toggleDarkMode() {
-    alert('Dark mode feature coming soon!');
-    // In a real app, you would toggle a dark mode class on the body
+  darkMode = !darkMode;
+
+  if (darkMode) {
+    document.body.style.background = "#121826";
+    document.body.style.color = "white";
+  } else {
+    document.body.style.background = "#f5f7fb";
+    document.body.style.color = "#111";
+  }
 }
 
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', function(e) {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('menuToggle');
-    
-    if (window.innerWidth <= 1024 && 
-        !sidebar.contains(e.target) && 
-        !menuToggle.contains(e.target) &&
-        sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
+
+// ===============================
+// Sidebar Toggle (Mobile)
+// ===============================
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
+}
+
+
+// ===============================
+// Export Button
+// ===============================
+function exportReport() {
+  alert("Export Report will be connected later!");
+}
+
+
+// ===============================
+// Render Transactions Table
+// ===============================
+function renderTransactionsFromAPI(transactions) {
+  const tbody = document.getElementById("transactionsTableBody");
+  tbody.innerHTML = "";
+
+  if (!transactions || transactions.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center; padding:20px; color:#64748b;">
+          No transactions found in this period
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  transactions.forEach((tx) => {
+    const isIncome = tx.amount > 0;
+
+    tbody.innerHTML += `
+      <tr>
+        <td class="entity-name">${tx.entity || "N/A"}</td>
+        <td class="category-badge">${tx.category || "N/A"}</td>
+        <td class="transaction-date">${tx.date || "N/A"}</td>
+        <td class="amount ${isIncome ? "positive" : "negative"}">
+          ${isIncome ? "+" : "-"}$${Math.abs(Number(tx.amount)).toFixed(2)}
+        </td>
+        <td>
+          <span class="status-badge ${tx.status}">
+            ${tx.status.toUpperCase()}
+          </span>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+  transactions.forEach((tx) => {
+    const isIncome = tx.kind === "income";
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${tx.description || "N/A"}</td>
+        <td>${tx.category || "N/A"}</td>
+        <td>${tx.date || "N/A"}</td>
+        <td class="${isIncome ? "positive" : "negative"}">
+          ${isIncome ? "+" : "-"}$${Number(tx.amount).toFixed(2)}
+        </td>
+        <td>
+          <span class="status-badge ${isIncome ? "cleared" : "pending"}">
+            ${isIncome ? "CLEARED" : "PENDING"}
+          </span>
+        </td>
+      </tr>
+    `;
+  });
+
+
+
+// ===============================
+// Draw Income vs Expenses Chart (Weekly)
+// ===============================
+function drawIncomeExpensesChartFromAPI(weeklyChart) {
+  const canvas = document.getElementById("incomeExpensesChart");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const padding = 40;
+
+  ctx.clearRect(0, 0, width, height);
+
+  if (!weeklyChart || weeklyChart.length === 0) {
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "16px Arial";
+    ctx.fillText("No chart data", width / 2 - 50, height / 2);
+    return;
+  }
+
+  const chartHeight = height - padding * 2;
+  const chartWidth = width - padding * 2;
+
+  const maxValue = Math.max(
+    ...weeklyChart.map((x) => x.income),
+    ...weeklyChart.map((x) => x.expense),
+    1
+  );
+
+  // Grid Lines
+  ctx.strokeStyle = "#e5e7eb";
+  ctx.lineWidth = 1;
+
+  for (let i = 0; i <= 5; i++) {
+    const y = padding + (chartHeight / 5) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(width - padding / 2, y);
+    ctx.stroke();
+  }
+
+  // Bars
+  const barWidth = chartWidth / (weeklyChart.length * 2.5);
+  const gap = barWidth * 0.5;
+
+  weeklyChart.forEach((item, index) => {
+    const x = padding + (barWidth * 2 + gap) * index;
+
+    // Income
+    const incomeHeight = (item.income / maxValue) * chartHeight;
+    ctx.fillStyle = "#0047AB"; // نفس لون البروجيكت
+    ctx.fillRect(x, height - padding - incomeHeight, barWidth, incomeHeight);
+
+    // Expense
+    const expenseHeight = (item.expense / maxValue) * chartHeight;
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillRect(
+      x + barWidth + gap / 2,
+      height - padding - expenseHeight,
+      barWidth,
+      expenseHeight
+    );
+
+    // Week Label
+    ctx.fillStyle = "#64748b";
+    ctx.font = "11px Arial";
+    ctx.fillText(item.label, x, height - padding + 15);
+  });
+}
+
+
+// ===============================
+// Update Expense Allocation Donut + Legend
+// ===============================
+function updateExpenseAllocation(expenseAllocation) {
+  const donutAmount = document.querySelector(".donut-amount");
+  const legendDiv = document.querySelector(".expense-legend");
+
+  const circles = document.querySelectorAll(".donut-svg circle");
+
+  if (!expenseAllocation || expenseAllocation.length === 0) {
+    donutAmount.innerText = "$0";
+    const circles = document.querySelectorAll(".donut-svg circle");
+
+if (circles.length >= 3) {
+  const total = totalSpent || 1;
+
+  let offset = 0;
+
+  expenseAllocation.slice(0, 3).forEach((item, index) => {
+    const percent = item.amount / total;
+
+    const circumference = 502;
+    const dash = circumference * percent;
+
+    circles[index].setAttribute(
+      "stroke-dasharray",
+      `${dash} ${circumference}`
+    );
+
+    circles[index].setAttribute(
+      "stroke-dashoffset",
+      `-${offset}`
+    );
+
+    offset += dash;
+  });
+}
+    legendDiv.innerHTML = `<p style="color:#64748b;">No expense allocation</p>`;
+
+    circles.forEach(c => {
+      c.style.strokeDasharray = `0 1000`;
+      c.style.strokeDashoffset = 0;
+    });
+
+    return;
+  }
+
+  const totalSpent = expenseAllocation.reduce((sum, item) => sum + item.amount, 0);
+  donutAmount.innerText = `$${totalSpent.toFixed(2)}`;
+
+  legendDiv.innerHTML = "";
+
+  const colors = ["#8B4513", "#CD853F", "#DEB887", "#A0522D", "#D2B48C"];
+
+  const radius = 80;
+  const circumference = 2 * Math.PI * radius;
+
+  let offset = 0;
+
+  expenseAllocation.slice(0, circles.length).forEach((item, index) => {
+    const percent = totalSpent === 0 ? 0 : item.amount / totalSpent;
+    const dash = percent * circumference;
+
+    circles[index].setAttribute("stroke", colors[index % colors.length]);
+    circles[index].style.strokeDasharray = `${dash} ${circumference}`;
+    circles[index].style.strokeDashoffset = -offset;
+
+    offset += dash;
+
+    legendDiv.innerHTML += `
+      <div class="expense-item">
+        <div class="expense-name">
+          <span class="expense-dot" style="background:${colors[index % colors.length]};"></span>
+          <span>${item.category}</span>
+        </div>
+        <span class="expense-percentage">${(percent * 100).toFixed(0)}%</span>
+      </div>
+    `;
+  });
+
+  for (let i = expenseAllocation.length; i < circles.length; i++) {
+    circles[i].style.strokeDasharray = `0 ${circumference}`;
+    circles[i].style.strokeDashoffset = 0;
+  }
+}
+
+
+// ===============================
+// Fetch Report Data From Backend API
+// ===============================
+async function loadReportData(startDate, endDate) {
+  try {
+    const response = await fetch(
+      `/reports/api/summary/?start_date=${startDate}&end_date=${endDate}`
+    );
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error(data.error);
+      return;
     }
-});
 
-// Initialize page
-renderTransactions();
-drawIncomeExpensesChart();
+    // Update table
+    renderTransactionsFromAPI(data.largest_transactions);
 
-// Redraw chart on window resize
-window.addEventListener('resize', () => {
-    drawIncomeExpensesChart();
-});
+    // Update chart
+    drawIncomeExpensesChartFromAPI(data.weekly_chart);
+
+    // Update donut
+    updateExpenseAllocation(data.expense_allocation);
+
+  } catch (error) {
+    console.error("Error loading report data:", error);
+  }
+}
+
+
+// ===============================
+// Filter Tabs (Last 20 Days / Quarterly / Yearly)
+// ===============================
+function setTimeFilter(event, filter) {
+  document.querySelectorAll(".filter-tab").forEach(tab => tab.classList.remove("active"));
+  event.target.classList.add("active");
+
+  const today = new Date();
+  let startDate = new Date();
+  let endDate = today;
+
+  if (filter === "20days") {
+    startDate.setDate(today.getDate() - 20);
+  } else if (filter === "quarterly") {
+    startDate.setMonth(today.getMonth() - 3);
+  } else if (filter === "yearly") {
+    startDate.setFullYear(today.getFullYear() - 1);
+  }
+
+  const formatDate = (d) => d.toISOString().split("T")[0];
+
+  
+
+  loadReportData(formatDate(startDate), formatDate(endDate));
+}
+
+function applyCustomDate() {
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+
+  if (!start || !end) {
+    alert("Please select both start and end date");
+    return;
+  }
+
+  loadReportData(start, end);
+}
+
+// ===============================
+// Run on Page Load
+// ===============================
+window.onload = function () {
+  const today = new Date();
+  const startDate = new Date();
+  startDate.setFullYear(today.getFullYear() - 1);
+
+  const formatDate = (d) => d.toISOString().split("T")[0];
+
+  loadReportData(formatDate(startDate), formatDate(today));
+};
