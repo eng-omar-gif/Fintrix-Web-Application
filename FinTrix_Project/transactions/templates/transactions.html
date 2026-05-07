@@ -1,164 +1,164 @@
 {% load static %}
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transactions - FinTrix</title>
+    <title>Transactions – FinTrix</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- CSS - Django Static -->
     <link rel="stylesheet" href="{% static 'css/transactions.css' %}">
-    
 </head>
 <body>
 
+    <div class="app">
 
-    <section class="card">
-        <h2>Add Transaction</h2>
+        <aside class="sidebar">
+            <div class="logo">FinTrix</div>
+            <nav>
+                <a href="{% url 'home' %}">Dashboard</a>
+                <a href="{% url 'transactions_page' %}" class="active">Transactions</a>
+                <a href="/budgets/">Budgets</a>
+                <a href="/goals/">Goals</a>
+                <a href="/reports/">Reports</a>
+                <a href="#">Notifications</a>
+            </nav>
+            <div class="logout">
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </aside>
 
-        <form id="add-transaction-form">
+        <main class="main">
 
-            <div class="toggle-container">
-                <button type="button" id="incomeBtn" class="toggle-btn active" onclick="setTransactionType('income')">Income</button>
-                <button type="button" id="expenseBtn" class="toggle-btn" onclick="setTransactionType('expense')">Expense</button>
-                <input type="hidden" name="transaction_type" id="transactionType" value="income">
+            <div class="breadcrumb">
+                <a href="{% url 'home' %}">FINANCIALS</a> &gt; <span>TRANSACTIONS</span>
             </div>
 
+            <section class="page-title">
+                <h1>Transaction History</h1>
+                <p>Manage your income and expenses.</p>
+            </section>
 
-            <div class="form-group">
-                <label for="amount">Amount</label>
-                <input type="number" id="amount" placeholder="0.00" required />
+            <div class="top-grid">
+
+                <section class="card filter-card">
+                    <h2>Filter Records</h2>
+                    <div class="form-group">
+                        <label for="filter-category">Category</label>
+                        <select id="filter-category">
+                            <option value="all">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <div class="date-inputs">
+                            <input type="date" id="filter-from">
+                            <span>to</span>
+                            <input type="date" id="filter-to">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-type">Transaction Type</label>
+                        <select id="filter-type">
+                            <option value="all">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <button id="apply-filters" class="btn-primary">Apply Filters</button>
+                    <button id="reset-filters" class="btn-secondary" style="margin-top:8px;">Reset</button>
+                </section>
+
+                <section class="card form-card">
+                    <h2>New Transaction</h2>
+
+                    <form id="add-transaction-form">
+                        <div class="toggle-container">
+                            <button type="button" id="incomeBtn" class="toggle-btn active" onclick="setTransactionType('income')">Income</button>
+                            <button type="button" id="expenseBtn" class="toggle-btn" onclick="setTransactionType('expense')">Expense</button>
+                            <input type="hidden" id="transactionType" value="income">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" required>
+                                <option value="" disabled selected>Select Category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-method">Payment Method</label>
+                            <select id="payment-method">
+                                <option value="CASH">Cash</option>
+                                <option value="CREDIT_CARD">Credit Card</option>
+                                <option value="E_WALLET">E-Wallet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" placeholder="Add notes..." rows="2"></textarea>
+                        </div>
+                        <div id="income-source-container" class="form-group" style="display: block;">
+                            <label for="income-source">Income Source</label>
+                            <input type="text" id="income-source" placeholder="Salary, Freelance, etc.">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save Transaction</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </section>
             </div>
 
-
-            <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" required>
-                    <option value="" disabled selected>Select Category</option>
-                </select>
-            </div>
-
-
-            <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" id="date" required />
-            </div>
-
-
-            <div class="form-group">
-                <label for="description">Description (optional)</label>
-                <textarea id="description" placeholder="Short note..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="payment-method">Payment Method</label>
-                <select id="payment-method">
-                    <option value="cash">Cash</option>
-                    <option value="credit card">Credit Card</option>
-                    <option value="e-wallet">E-Wallet</option>
-                </select>
-            </div>
-
-
-            <div id="income-source-container" class="form-group" style="display: block;">
-                <label for="income-source">Income Source</label>
-                <input type="text" id="income-source" placeholder="Salary, Freelance, etc." />
-            </div>
-
-            <div>
-                <button type="submit" class="btn-primary">Save Transaction</button>
-            </div>
-        </form>
-    </section>
-
-
-    <section class="card transaction-history">
-        <h2>Transaction History</h2>
-
-        <div class="filters">
-
-            <div class="filter-group">
-                <label for="filter-category">Category</label>
-                <select id="filter-category">
-                    <option value="all">All Categories</option>
-
-                </select>
-            </div>
-
-
-            <div class="filter-group">
-                <label>Date Range</label>
-                <div class="date-inputs">
-                    <input type="date" id="filter-from" title="From Date" />
-                    <span>to</span>
-                    <input type="date" id="filter-to" title="To Date" />
+            <section class="card summary-card">
+                <div class="summary-item">
+                    <p class="summary-label">Total Net Flow</p>
+                    <h2 id="total-net-flow">$0.00</h2>
+                    <span class="trend neutral">Calculated from transactions</span>
                 </div>
-            </div>
+            </section>
 
+            <section class="card table-card">
+                <div class="table-container">
+                    <table id="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Method</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-tbody"></tbody>
+                    </table>
+                </div>
 
-            <div class="filter-group">
-                <label for="filter-type">Type</label>
-                <select id="filter-type">
-                    <option value="all">All</option>
-                    <option value="income">Income</option>
-                    <option value="expense">Expense</option>
-                </select>
-            </div>
+                <div id="empty-message" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📭</div>
+                    <p>No transactions found for the selected filters.</p>
+                </div>
 
+                <div class="pagination-info" id="pagination-text">
+                    Showing <span id="showing-count">0</span> transactions
+                </div>
+            </section>
 
-            <div class="filter-group">
-                <button type="button" id="apply-filters" class="btn-secondary">Apply</button>
-            </div>
-        </div>
-
-
-
-
-
-
-        <div class="table-container">
-            <table id="transaction-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Payment Method</th>
-                        <th>Source</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="transaction-tbody">
-                </tbody>
-            </table>
-        </div>
-
-
-        <div id="empty-message" class="empty-state" style="display: none;">
-            <p>No transactions found for the selected filters.</p>
-        </div>
-
-
-    </section>
+        </main>
+    </div>
 
     <script src="{% static 'js/transactions.js' %}"></script>
-
 </body>
-
-
-
-
-
-
-
-
-
 </html>

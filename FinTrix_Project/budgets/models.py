@@ -8,6 +8,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def find_or_create_category(cls, name: str) -> "Category":
+        category, _ = cls.objects.get_or_create(name=name.strip())
+        return category
+
 
 class Budget(models.Model):
     month = models.DateField()
@@ -16,52 +21,75 @@ class Budget(models.Model):
     def __str__(self):
         return f"{self.month.strftime('%B')} {self.year}"
 
-    # 🔹 Add category limit
-    def add_category_limit(self, category, limit):
+    def add_category_limit(self, category: "Category", limit: float) -> "CategoryBudget":
         if not self.validate(limit):
             raise ValueError("Limit must be greater than 0")
-
-        CategoryBudget.objects.create(
+        cb = CategoryBudget.objects.create(
             budget=self,
             category=category,
-            limit=limit
+            limit=limit,
+            spent_amount=0.0,
         )
+        return cb
 
-    # 🔹 Total spent
-    def get_total_spent(self):
-        total = self.categories.aggregate(total=Sum('spent_amount'))['total']
-        return total if total else 0
+    def get_total_spent(self) -> float:
+        result = self.category_budgets.aggregate(total=Sum("spent_amount"))["total"]
+        return result if result else 0.0
 
-    # 🔹 Remaining budget
-    def get_remaining(self):
-        total_limit = self.categories.aggregate(total=Sum('limit'))['total'] or 0
+    def get_remaining(self) -> float:
+        total_limit = self.category_budgets.aggregate(total=Sum("limit"))["total"] or 0.0
         return total_limit - self.get_total_spent()
 
-    # 🔹 Validate limit
-    def validate(self, limit):
+    def validate(self, limit: float) -> bool:
         return limit > 0
 
-    # 🔹 Check if budget exists
     @staticmethod
-    def check_budget_exists(month, year):
-        return Budget.objects.filter(month=month, year=year).exists()
+    def check_budget_exists(month, year: int) -> bool:
+        return Budget.objects.filter(
+            month__month=month.month,
+            year=year,
+        ).exists()
 
 
 class CategoryBudget(models.Model):
     budget = models.ForeignKey(
         Budget,
         on_delete=models.CASCADE,
-        related_name='categories'
+        related_name="category_budgets",
     )
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="category_budgets",
+    )
     limit = models.FloatField()
-    spent_amount = models.FloatField(default=0)
-
-    def get_remaining(self):
-        return self.limit - self.spent_amount
-
-    def is_limited(self):
-        return self.spent_amount >= self.limit
+    spent_amount = models.FloatField(default=0.0)
 
     def __str__(self):
-        return f"{self.category.name} - {self.limit}"
+        return f"{self.category.name} — limit: {self.limit}"
+
+    def update_spent(self, amount: float) -> None:
+        self.spent_amount += amount
+        self.save(update_fields=["spent_amount"])
+
+    def get_remaining(self) -> float:
+        return self.limit - self.spent_amount
+
+    def is_limited(self) -> bool:
+        return self.spent_amount >= self.limit
+
+
+class Expense(models.Model):
+    category_budget = models.ForeignKey(
+        CategoryBudget,
+        on_delete=models.CASCADE,
+        related_name="expenses",
+    )
+    amount = models.FloatField()
+    date = models.DateField()
+    description     = models.CharField(max_length=200, blank=True, default="Expense")
+    def __str__(self):
+        return f"{self.amount} on {self.date}"
+
+    def get_amount(self) -> float:
+        return self.amount

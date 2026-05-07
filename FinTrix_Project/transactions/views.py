@@ -1,7 +1,13 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
+def transactions_page(request):
+    return render(request, 'transactions.html')
+
+@csrf_exempt
 @require_POST
 def add_transaction(request):
     from .services import TransactionService
@@ -10,6 +16,7 @@ def add_transaction(request):
     transaction_service = TransactionService(transaction_repository)
 
     data = json.loads(request.body)
+     
     result = transaction_service.process_transaction(data)
     if result:
         return JsonResponse({"message": "Done!"}, status=201)
@@ -46,5 +53,6 @@ def list_transactions(request):
             "description": t.description,
             "date": t.date.isoformat(),
             "category": t.category.name if t.category else None,
+            "payment_method": t.payment_method,  # أضفناه
         })
     return JsonResponse(data, safe=False)

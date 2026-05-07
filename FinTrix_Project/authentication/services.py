@@ -15,7 +15,7 @@ class RegistrationInput:
 
 
 class AuthenticationService:
-    """Domain service: register, validate, and authenticate users."""
+    
 
     _email_re = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
 

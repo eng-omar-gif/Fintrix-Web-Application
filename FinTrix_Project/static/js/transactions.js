@@ -1,18 +1,13 @@
-function setTransactionType(type)
-{
+function setTransactionType(type) {
     document.getElementById('transactionType').value = type;
     document.getElementById('incomeBtn').classList.toggle('active', type === 'income');
     document.getElementById('expenseBtn').classList.toggle('active', type === 'expense');
     document.getElementById('income-source-container').style.display = (type === 'income') ? 'block' : 'none';
+    loadCategories(type);
 }
 
 function showMessage(message, type) {
     alert(type.toUpperCase() + ': ' + message);
-}
-
-function toggleEmptyState(empty) {
-    document.getElementById('transaction-table').style.display = empty ? 'none' : '';
-    document.getElementById('empty-message').style.display = empty ? '' : 'none';
 }
 
 function collectInput() {
@@ -30,76 +25,98 @@ function collectInput() {
 async function addTransaction(event) {
     event.preventDefault();
     const data = collectInput();
-
     try {
-        const response = await fetch('/api/transactions/add/', {
+        const response = await fetch('/api/add/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            showMessage('Transaction added successfully!', 'success');
+            showMessage('Transaction saved!', 'success');
             document.getElementById('add-transaction-form').reset();
             document.getElementById('date').valueAsDate = new Date();
+            setTransactionType('income');
             loadTransactions();
         } else {
-            const error = await response.json();
-            showMessage(error.message || 'Error adding transaction', 'error');
+            const err = await response.json();
+            showMessage(err.error || 'Failed to save', 'error');
         }
     } catch (error) {
-        showMessage('Network error. Please try again.', 'error');
+        showMessage('Network error', 'error');
     }
 }
 
 function displayTransactions(transactions) {
     const tbody = document.getElementById('transaction-tbody');
+    const empty = document.getElementById('empty-message');
+    const table = document.getElementById('transaction-table');
     tbody.innerHTML = '';
 
     if (!transactions || transactions.length === 0) {
-        toggleEmptyState(true);
+        table.style.display = 'none';
+        empty.style.display = 'flex';
+        document.getElementById('showing-count').textContent = '0';
+        updateTotalNetFlow(0);
         return;
     }
 
-    toggleEmptyState(false);
+    table.style.display = '';
+    empty.style.display = 'none';
+    document.getElementById('showing-count').textContent = transactions.length;
 
-    transactions.forEach(trans => {
-        const row = tbody.insertRow();
-        const isIncome = trans.type === 'income' || trans.source;
+    let total = 0;
+    transactions.forEach(t => {
+        const isIncome = t.type === 'Income' || (t.source && t.source.length > 0);
+        const amount = parseFloat(t.amount) || 0;
+        const sign = isIncome ? 1 : -1;
+        total += amount * sign;
 
+        const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${trans.date}</td>
-            <td class="${isIncome ? 'income-type' : 'expense-type'}">${isIncome ? 'Income' : 'Expense'}</td>
-            <td>${isIncome ? '+' : '-'}$${Math.abs(trans.amount).toFixed(2)}</td>
-            <td>${trans.category_name || trans.category}</td>
-            <td>${trans.description || '-'}</td>
-            <td>${trans.payment_method}</td>
-            <td>${trans.source || '-'}</td>
+            <td>${t.date || ''}</td>
+            <td>${t.description || '-'}</td>
+            <td>${t.category || '-'}</td>
+            <td>${t.payment_method || '-'}</td>
+            <td class="${isIncome ? 'amount-income' : 'amount-expense'}">
+                ${isIncome ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
+            </td>
             <td>
-                <button class="action-btn delete" onclick="deleteTransaction(${trans.id}, '${trans.type || 'expense'}')">🗑️</button>
+                <button class="action-btn delete" data-id="${t.id}" data-type="${isIncome ? 'income' : 'expense'}">🗑️</button>
             </td>
         `;
+        row.querySelector('.delete').addEventListener('click', function () {
+            deleteTransaction(this.dataset.id, this.dataset.type);
+        });
+        tbody.appendChild(row);
     });
+    updateTotalNetFlow(total);
+}
+
+function updateTotalNetFlow(total) {
+    const el = document.getElementById('total-net-flow');
+    if (el) {
+        const abs = Math.abs(total).toFixed(2);
+        el.textContent = total >= 0 ? `+$${abs}` : `-$${abs}`;
+        el.style.color = total >= 0 ? 'var(--color-success)' : 'var(--color-error)';
+    }
 }
 
 async function loadTransactions(filters = {}) {
-    let url = '/api/transactions/';
+    let url = '/api/';
     const params = new URLSearchParams();
-
-    if (filters.category) params.append('category_id', filters.category);
+    if (filters.category && filters.category !== 'all') params.append('category_id', filters.category);
     if (filters.date_from) params.append('start_date', filters.date_from);
     if (filters.date_to) params.append('end_date', filters.date_to);
-    if (filters.type) params.append('type', filters.type);
-
-    if (params.toString()) url += '?' + params.toString();
+    if (filters.type && filters.type !== 'all') params.append('type', filters.type);
+    if ([...params].length) url += '?' + params.toString();
 
     try {
-        const response = await fetch(url);
-        const data = await response.json();
+        const res = await fetch(url);
+        const data = await res.json();
         displayTransactions(data.transactions || data);
-    } catch (error) {
-        console.error('Error loading transactions:', error);
-        toggleEmptyState(true);
+    } catch (e) {
+        console.error('Failed to load transactions', e);
+        displayTransactions([]);
     }
 }
 
@@ -110,59 +127,76 @@ function applyFilters() {
         date_to: document.getElementById('filter-to').value,
         type: document.getElementById('filter-type').value
     };
-
-    if (filters.category === 'all') filters.category = '';
-    if (filters.type === 'all') filters.type = '';
-
     loadTransactions(filters);
 }
 
+function resetFilters() {
+    document.getElementById('filter-category').value = 'all';
+    document.getElementById('filter-from').value = '';
+    document.getElementById('filter-to').value = '';
+    document.getElementById('filter-type').value = 'all';
+    loadTransactions();
+}
+
 async function deleteTransaction(id, type) {
-    if (!confirm('Are you sure you want to delete this transaction?')) return;
-
+    if (!confirm('Delete this transaction?')) return;
     try {
-        const response = await fetch(`/api/transactions/${type}/${id}/`, {
-            method: 'DELETE'
-        });
-
-        if (response.ok) {
-            showMessage('Transaction deleted!', 'success');
+        const res = await fetch(`/api/${type}/${id}/`, { method: 'DELETE' });
+        if (res.ok) {
+            showMessage('Deleted!', 'success');
             loadTransactions();
+        } else {
+            showMessage('Delete failed', 'error');
         }
-    } catch (error) {
-        showMessage('Error deleting transaction', 'error');
+    } catch (e) {
+        showMessage('Network error', 'error');
     }
 }
 
-async function loadCategories() {
-    try {
-        const response = await fetch('/api/categories/');
-        const categories = await response.json();
+function loadCategories(type = 'income') {
+    const categorySelect = document.getElementById('category');
+    const filterSelect = document.getElementById('filter-category');
 
-        const categorySelect = document.getElementById('category');
-        const filterCategory = document.getElementById('filter-category');
+    const incomeCategories = [
+        { id: 1, name: 'Salary', type: 'income' },
+        { id: 2, name: 'Freelance', type: 'income' },
+        { id: 3, name: 'Investments', type: 'income' },
+        { id: 4, name: 'Other Income', type: 'income' }
+    ];
+    const expenseCategories = [
+        { id: 5, name: 'Food', type: 'expense' },
+        { id: 6, name: 'Transportation', type: 'expense' },
+        { id: 7, name: 'Housing', type: 'expense' },
+        { id: 8, name: 'Entertainment', type: 'expense' },
+        { id: 9, name: 'Others', type: 'expense' }
+    ];
+    const allCategories = [...incomeCategories, ...expenseCategories];
 
-        categories.forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat.id;
-            option.textContent = cat.name;
-            categorySelect.appendChild(option);
+    categorySelect.innerHTML = '<option value="" disabled selected>Select Category</option>';
+    filterSelect.innerHTML = '<option value="all">All Categories</option>';
 
-            const filterOption = document.createElement('option');
-            filterOption.value = cat.id;
-            filterOption.textContent = cat.name;
-            filterCategory.appendChild(filterOption);
-        });
-    } catch (error) {
-        console.error('Error loading categories:', error);
-    }
+    const cats = (type === 'income') ? incomeCategories : expenseCategories;
+    cats.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        categorySelect.appendChild(opt);
+    });
+
+    allCategories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        filterSelect.appendChild(opt);
+    });
 }
 
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('date').valueAsDate = new Date();
+    loadCategories('income');
+    loadTransactions();
+
     document.getElementById('add-transaction-form').addEventListener('submit', addTransaction);
     document.getElementById('apply-filters').addEventListener('click', applyFilters);
-
-    loadCategories();
-    loadTransactions();
-};
+    document.getElementById('reset-filters').addEventListener('click', resetFilters);
+});
