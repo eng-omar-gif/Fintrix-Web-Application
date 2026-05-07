@@ -1,3 +1,12 @@
 from django.shortcuts import render
+from .models import Report
 
-# Create your views here.
+def reports_page(request):
+
+    reports = Report.objects.all()
+
+    context = {
+        'reports': reports
+    }
+
+    return render(request, 'reports.html', context)
