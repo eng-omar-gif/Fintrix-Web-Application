@@ -652,3 +652,25 @@ body {
 }
 
 
+.date-range input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: #1a202c;
+}
+
+.date-range button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    background: #0047AB;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.date-range button:hover {
+    background: #003580;
+}

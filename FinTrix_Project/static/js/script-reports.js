@@ -77,30 +77,9 @@ function renderTransactionsFromAPI(transactions) {
   });
 }
 
-  transactions.forEach((tx) => {
-    const isIncome = tx.kind === "income";
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${tx.description || "N/A"}</td>
-        <td>${tx.category || "N/A"}</td>
-        <td>${tx.date || "N/A"}</td>
-        <td class="${isIncome ? "positive" : "negative"}">
-          ${isIncome ? "+" : "-"}$${Number(tx.amount).toFixed(2)}
-        </td>
-        <td>
-          <span class="status-badge ${isIncome ? "cleared" : "pending"}">
-            ${isIncome ? "CLEARED" : "PENDING"}
-          </span>
-        </td>
-      </tr>
-    `;
-  });
-
-
 
 // ===============================
-// Draw Income vs Expenses Chart (Weekly)
+// Draw Income vs Expenses Chart
 // ===============================
 function drawIncomeExpensesChartFromAPI(weeklyChart) {
   const canvas = document.getElementById("incomeExpensesChart");
@@ -135,12 +114,14 @@ function drawIncomeExpensesChartFromAPI(weeklyChart) {
   ctx.strokeStyle = "#e5e7eb";
   ctx.lineWidth = 1;
 
-  for (let i = 0; i <= 5; i++) {
+  for (let i = 0; i < 5; i++) {
     const y = padding + (chartHeight / 5) * i;
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding / 2, y);
-    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(x, height - padding);
+    ctx.rotate(-Math.PI / 4);
+    ctx.fillText(label, x, 0);
+    ctx.restore();
   }
 
   // Bars
@@ -152,11 +133,18 @@ function drawIncomeExpensesChartFromAPI(weeklyChart) {
 
     // Income
     const incomeHeight = (item.income / maxValue) * chartHeight;
-    ctx.fillStyle = "#0047AB"; // نفس لون البروجيكت
-    ctx.fillRect(x, height - padding - incomeHeight, barWidth, incomeHeight);
+
+    ctx.fillStyle = "#0047AB";
+    ctx.fillRect(
+      x,
+      height - padding - incomeHeight,
+      barWidth,
+      incomeHeight
+    );
 
     // Expense
     const expenseHeight = (item.expense / maxValue) * chartHeight;
+
     ctx.fillStyle = "#f59e0b";
     ctx.fillRect(
       x + barWidth + gap / 2,
@@ -165,7 +153,7 @@ function drawIncomeExpensesChartFromAPI(weeklyChart) {
       expenseHeight
     );
 
-    // Week Label
+    // Label
     ctx.fillStyle = "#64748b";
     ctx.font = "11px Arial";
     ctx.fillText(item.label, x, height - padding + 15);
@@ -174,7 +162,7 @@ function drawIncomeExpensesChartFromAPI(weeklyChart) {
 
 
 // ===============================
-// Update Expense Allocation Donut + Legend
+// Expense Allocation Donut
 // ===============================
 function updateExpenseAllocation(expenseAllocation) {
   const donutAmount = document.querySelector(".donut-amount");
@@ -184,33 +172,12 @@ function updateExpenseAllocation(expenseAllocation) {
 
   if (!expenseAllocation || expenseAllocation.length === 0) {
     donutAmount.innerText = "$0";
-    const circles = document.querySelectorAll(".donut-svg circle");
 
-if (circles.length >= 3) {
-  const total = totalSpent || 1;
-
-  let offset = 0;
-
-  expenseAllocation.slice(0, 3).forEach((item, index) => {
-    const percent = item.amount / total;
-
-    const circumference = 502;
-    const dash = circumference * percent;
-
-    circles[index].setAttribute(
-      "stroke-dasharray",
-      `${dash} ${circumference}`
-    );
-
-    circles[index].setAttribute(
-      "stroke-dashoffset",
-      `-${offset}`
-    );
-
-    offset += dash;
-  });
-}
-    legendDiv.innerHTML = `<p style="color:#64748b;">No expense allocation</p>`;
+    legendDiv.innerHTML = `
+      <p style="color:#64748b;">
+        No expense allocation
+      </p>
+    `;
 
     circles.forEach(c => {
       c.style.strokeDasharray = `0 1000`;
@@ -220,12 +187,22 @@ if (circles.length >= 3) {
     return;
   }
 
-  const totalSpent = expenseAllocation.reduce((sum, item) => sum + item.amount, 0);
+  const totalSpent = expenseAllocation.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
+
   donutAmount.innerText = `$${totalSpent.toFixed(2)}`;
 
   legendDiv.innerHTML = "";
 
-  const colors = ["#8B4513", "#CD853F", "#DEB887", "#A0522D", "#D2B48C"];
+  const colors = [
+    "#8B4513",
+    "#CD853F",
+    "#DEB887",
+    "#A0522D",
+    "#D2B48C"
+  ];
 
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
@@ -233,11 +210,21 @@ if (circles.length >= 3) {
   let offset = 0;
 
   expenseAllocation.slice(0, circles.length).forEach((item, index) => {
-    const percent = totalSpent === 0 ? 0 : item.amount / totalSpent;
+
+    const percent = totalSpent === 0
+      ? 0
+      : item.amount / totalSpent;
+
     const dash = percent * circumference;
 
-    circles[index].setAttribute("stroke", colors[index % colors.length]);
-    circles[index].style.strokeDasharray = `${dash} ${circumference}`;
+    circles[index].setAttribute(
+      "stroke",
+      colors[index % colors.length]
+    );
+
+    circles[index].style.strokeDasharray =
+      `${dash} ${circumference}`;
+
     circles[index].style.strokeDashoffset = -offset;
 
     offset += dash;
@@ -245,10 +232,16 @@ if (circles.length >= 3) {
     legendDiv.innerHTML += `
       <div class="expense-item">
         <div class="expense-name">
-          <span class="expense-dot" style="background:${colors[index % colors.length]};"></span>
+          <span class="expense-dot"
+            style="background:${colors[index % colors.length]};">
+          </span>
+
           <span>${item.category}</span>
         </div>
-        <span class="expense-percentage">${(percent * 100).toFixed(0)}%</span>
+
+        <span class="expense-percentage">
+          ${(percent * 100).toFixed(0)}%
+        </span>
       </div>
     `;
   });
@@ -261,10 +254,12 @@ if (circles.length >= 3) {
 
 
 // ===============================
-// Fetch Report Data From Backend API
+// Fetch Data From Backend
 // ===============================
 async function loadReportData(startDate, endDate) {
+
   try {
+
     const response = await fetch(
       `/reports/api/summary/?start_date=${startDate}&end_date=${endDate}`
     );
@@ -276,68 +271,97 @@ async function loadReportData(startDate, endDate) {
       return;
     }
 
-    // Update table
     renderTransactionsFromAPI(data.largest_transactions);
 
-    // Update chart
     drawIncomeExpensesChartFromAPI(data.weekly_chart);
 
-    // Update donut
     updateExpenseAllocation(data.expense_allocation);
 
   } catch (error) {
+
     console.error("Error loading report data:", error);
   }
 }
 
 
 // ===============================
-// Filter Tabs (Last 20 Days / Quarterly / Yearly)
+// Filter Tabs
 // ===============================
 function setTimeFilter(event, filter) {
-  document.querySelectorAll(".filter-tab").forEach(tab => tab.classList.remove("active"));
+
+  document
+    .querySelectorAll(".filter-tab")
+    .forEach(tab => tab.classList.remove("active"));
+
   event.target.classList.add("active");
 
   const today = new Date();
+
   let startDate = new Date();
+
   let endDate = today;
 
   if (filter === "20days") {
+
     startDate.setDate(today.getDate() - 20);
+
   } else if (filter === "quarterly") {
+
     startDate.setMonth(today.getMonth() - 3);
+
   } else if (filter === "yearly") {
+
     startDate.setFullYear(today.getFullYear() - 1);
   }
 
-  const formatDate = (d) => d.toISOString().split("T")[0];
+  const formatDate = (d) =>
+    d.toISOString().split("T")[0];
 
-  
-
-  loadReportData(formatDate(startDate), formatDate(endDate));
+  loadReportData(
+    formatDate(startDate),
+    formatDate(endDate)
+  );
 }
 
+
+// ===============================
+// Apply Custom Date
+// ===============================
 function applyCustomDate() {
-  const start = document.getElementById("startDate").value;
-  const end = document.getElementById("endDate").value;
+
+  const start =
+    document.getElementById("startDate").value;
+
+  const end =
+    document.getElementById("endDate").value;
 
   if (!start || !end) {
+
     alert("Please select both start and end date");
+
     return;
   }
 
   loadReportData(start, end);
 }
 
+
 // ===============================
-// Run on Page Load
+// Page Load
 // ===============================
 window.onload = function () {
+
   const today = new Date();
+
   const startDate = new Date();
+
   startDate.setFullYear(today.getFullYear() - 1);
 
-  const formatDate = (d) => d.toISOString().split("T")[0];
+  const formatDate = (d) =>
+    d.toISOString().split("T")[0];
 
-  loadReportData(formatDate(startDate), formatDate(today));
+  loadReportData(
+    formatDate(startDate),
+    formatDate(today)
+  );
 };
