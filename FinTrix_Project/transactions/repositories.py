@@ -2,13 +2,8 @@ from .models import Income, Expense
 
 class TransactionRepository:
     def save(self, transaction):
-        if isinstance(transaction, Income):
-            transaction.save()
-            return True
-        elif isinstance(transaction, Expense):
-            transaction.save()
-            return True
-        return False
+        transaction.save()
+        return True
 
     def find_all(self):
         incomes = list(Income.objects.all())
@@ -21,25 +16,18 @@ class TransactionRepository:
         return incomes + expenses
 
     def find_by_date_range(self, start_date, end_date):
-        incomes = Income.objects.all()
-        expenses = Expense.objects.all()
-        res = []
-        for i in incomes:
-            if start_date <= i.date <= end_date:
-                res.append(i)
-        for i in expenses:
-            if start_date <= i.date <= end_date:
-                res.append(i)
-        return res
+        incomes = Income.objects.filter(date__gte=start_date, date__lte=end_date)
+        expenses = Expense.objects.filter(date__gte=start_date, date__lte=end_date)
+        return list(incomes) + list(expenses)
 
     def delete(self, transaction_id, type):
-        if type == 'INCOME':
+        if type.lower() == 'income':
             Income.objects.get(id=transaction_id).delete()
         else:
             Expense.objects.get(id=transaction_id).delete()
 
     def find_by_type(self, type):
-        if type == 'Income':
-            return Income.objects.all()
+        if type.lower() == 'income':
+            return list(Income.objects.all())
         else:
-            return Expense.objects.all()
+            return list(Expense.objects.all())

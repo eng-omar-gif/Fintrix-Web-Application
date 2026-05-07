@@ -3,34 +3,48 @@ from .models import Income, Expense, Category
 
 class TransactionService:
 
-
     def __init__(self, transaction_repository):
         self.repository = transaction_repository
 
     def validate_transaction(self, data):
-        if (isinstance(data.get('amount'), (int, float, Decimal)) and 
-            data.get('amount', 0) > 0 and
-            data.get('type') in ['INCOME', 'EXPENSE'] and 
-            isinstance(data.get('description', ''), str) and 
-            len(data.get('description', '')) < 255 and 
-            Category.objects.filter(id=data.get('category_id')).exists()):
-            return True
-        return False
+        try:
+            amount = float(data.get('amount', 0))
+        except (ValueError, TypeError):
+            return False
+
+        if amount <= 0:
+            return False
+
+        if data.get('type', '').upper() not in ['INCOME', 'EXPENSE']:
+            return False
+
+        if not Category.objects.filter(id=data.get('category_id', data.get('category'))).exists():
+            return False
+
+        return True
 
     def create_transaction(self, data):
-        if data['type'] == 'INCOME':
+        category = Category.objects.get(id=data.get('category_id', data.get('category')))
+        payment = data.get('payment_method', 'CASH').upper()  # تحويل لل uppercase
+
+        if data['type'].upper() == 'INCOME':
             transaction = Income(
                 amount=data['amount'],
-                description=data['description'],
-                category_id=data['category_id'],
-                source=data.get('source', '')
+                description=data.get('description', ''),
+                category=category,
+                source=data.get('source', ''),
+                payment_method=payment
             )
         else:
             transaction = Expense(
                 amount=data['amount'],
-                description=data['description'],
-                category_id=data['category_id']
+                description=data.get('description', ''),
+                category=category,
+                payment_method=payment
             )
+
+        if data.get('date'):
+            transaction.date = data['date']
         return transaction
 
     def process_transaction(self, data):

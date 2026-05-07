@@ -6,52 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transactions – FinTrix</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/transactions.css' %}">
 </head>
 <body>
 
     <div class="app">
 
-        <!-- === SIDEBAR === -->
         <aside class="sidebar">
             <div class="logo">FinTrix</div>
             <nav>
                 <a href="{% url 'home' %}">Dashboard</a>
                 <a href="{% url 'transactions_page' %}" class="active">Transactions</a>
-                <a href="{% url 'budgets_page' %}">Budgets</a>
-                <a href="{% url 'goals_page' %}">Goals</a>
-                <a href="{% url 'reports_page' %}">Reports</a>
-                <a href="{% url 'notifications_page' %}">Notifications</a>
+                <a href="/budgets/">Budgets</a>
+                <a href="/goals/">Goals</a>
+                <a href="/reports/">Reports</a>
+                <a href="#">Notifications</a>
             </nav>
             <div class="logout">
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
         </aside>
 
-        <!-- === MAIN CONTENT === -->
         <main class="main">
 
-            <!-- Breadcrumb -->
             <div class="breadcrumb">
                 <a href="{% url 'home' %}">FINANCIALS</a> &gt; <span>TRANSACTIONS</span>
             </div>
 
-            <!-- Page Title -->
             <section class="page-title">
                 <h1>Transaction History</h1>
                 <p>Manage your income and expenses.</p>
             </section>
 
-            <!-- Top Grid: Filters + New Transaction Form -->
             <div class="top-grid">
 
-                <!-- Filters Card -->
                 <section class="card filter-card">
                     <h2>Filter Records</h2>
                     <div class="form-group">
@@ -80,12 +72,10 @@
                     <button id="reset-filters" class="btn-secondary" style="margin-top:8px;">Reset</button>
                 </section>
 
-                <!-- New Transaction Form Card -->
                 <section class="card form-card">
                     <h2>New Transaction</h2>
 
                     <form id="add-transaction-form">
-                        <!-- Toggle -->
                         <div class="toggle-container">
                             <button type="button" id="incomeBtn" class="toggle-btn active" onclick="setTransactionType('income')">Income</button>
                             <button type="button" id="expenseBtn" class="toggle-btn" onclick="setTransactionType('expense')">Expense</button>
@@ -105,9 +95,9 @@
                         <div class="form-group">
                             <label for="payment-method">Payment Method</label>
                             <select id="payment-method">
-                                <option value="cash">Cash</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="e_wallet">E‑Wallet</option>
+                                <option value="CASH">Cash</option>
+                                <option value="CREDIT_CARD">Credit Card</option>
+                                <option value="E_WALLET">E-Wallet</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -131,7 +121,6 @@
                 </section>
             </div>
 
-            <!-- Total Net Flow (Summary) -->
             <section class="card summary-card">
                 <div class="summary-item">
                     <p class="summary-label">Total Net Flow</p>
@@ -140,7 +129,6 @@
                 </div>
             </section>
 
-            <!-- Transactions Table -->
             <section class="card table-card">
                 <div class="table-container">
                     <table id="transaction-table">
@@ -171,7 +159,6 @@
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="{% static 'js/transactions.js' %}"></script>
 </body>
 </html>

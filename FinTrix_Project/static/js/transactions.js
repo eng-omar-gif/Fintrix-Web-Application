@@ -66,7 +66,7 @@ function displayTransactions(transactions) {
 
     let total = 0;
     transactions.forEach(t => {
-        const isIncome = t.type === 'income' || (t.source && t.source.length > 0);
+        const isIncome = t.type === 'Income' || (t.source && t.source.length > 0);
         const amount = parseFloat(t.amount) || 0;
         const sign = isIncome ? 1 : -1;
         total += amount * sign;
@@ -75,7 +75,7 @@ function displayTransactions(transactions) {
         row.innerHTML = `
             <td>${t.date || ''}</td>
             <td>${t.description || '-'}</td>
-            <td>${t.category_name || t.category || '-'}</td>
+            <td>${t.category || '-'}</td>
             <td>${t.payment_method || '-'}</td>
             <td class="${isIncome ? 'amount-income' : 'amount-expense'}">
                 ${isIncome ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
@@ -172,7 +172,6 @@ function loadCategories(type = 'income') {
     ];
     const allCategories = [...incomeCategories, ...expenseCategories];
 
-    // Clear previous
     categorySelect.innerHTML = '<option value="" disabled selected>Select Category</option>';
     filterSelect.innerHTML = '<option value="all">All Categories</option>';
 
