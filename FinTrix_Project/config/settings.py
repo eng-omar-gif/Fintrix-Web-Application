@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'notifications',
     'transactions',
     'goals',
+     'reports',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
