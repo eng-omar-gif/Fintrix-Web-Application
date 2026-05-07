@@ -16,7 +16,7 @@ def add_transaction(request):
     transaction_service = TransactionService(transaction_repository)
 
     data = json.loads(request.body)
-    print("DEBUG DATA:", data)  # تتبع مؤقت، امسحه بعد ما يشتغل
+     
     result = transaction_service.process_transaction(data)
     if result:
         return JsonResponse({"message": "Done!"}, status=201)
