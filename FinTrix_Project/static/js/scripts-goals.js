@@ -1,4 +1,4 @@
-let goals = [];
+/*let goals = [];
 let goalCounter = 1;
 
 const goalForm = document.getElementById("goalForm");
@@ -135,4 +135,83 @@ contributionForm.addEventListener("submit", function(event) {
 
 darkModeBtn.addEventListener("click", function() {
     document.body.classList.toggle("dark-mode");
+});*/
+
+// ===============================
+// Goals Page UI Enhancements Only
+// (No backend interference)
+// ===============================
+
+
+// Sidebar toggle (mobile menu)
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+if (menuToggle && sidebar) {
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+}
+
+
+// Highlight active nav item (optional UX improvement)
+const navItems = document.querySelectorAll('.nav-item');
+
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+    });
 });
+
+
+// Smooth scroll behavior (if needed in future sections)
+document.documentElement.style.scrollBehavior = "smooth";
+
+
+// Simple table row hover enhancement (UI feel)
+const rows = document.querySelectorAll('.goals-table tbody tr');
+
+rows.forEach(row => {
+    row.addEventListener('mouseenter', () => {
+        row.style.transform = "scale(1.005)";
+        row.style.transition = "0.2s ease";
+    });
+
+    row.addEventListener('mouseleave', () => {
+        row.style.transform = "scale(1)";
+    });
+});
+
+
+// Auto dismiss Django messages after 5 seconds
+const messages = document.querySelectorAll('.messages-alerts li');
+
+if (messages.length > 0) {
+    setTimeout(() => {
+        messages.forEach(msg => {
+            msg.style.opacity = "0";
+            msg.style.transition = "0.5s ease";
+            setTimeout(() => msg.remove(), 500);
+        });
+    }, 5000);
+}
+
+
+// Optional: highlight completed goals visually
+const goalNames = document.querySelectorAll('.goal-name.completed');
+
+goalNames.forEach(goal => {
+    goal.style.textDecoration = "line-through";
+    goal.style.opacity = "0.7";
+});
+
+
+// Menu button accessibility improvement
+if (menuToggle) {
+    menuToggle.addEventListener('keydown', (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            sidebar.classList.toggle('open');
+        }
+    });
+}
