@@ -23,10 +23,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """
-    Application user: email (unique login), hashed password, display name.
-    Maps to the Auth Module User concept from the domain model.
-    """
+
     username = None
     email = models.EmailField('email address', unique=True)
     name = models.CharField(max_length=150)
