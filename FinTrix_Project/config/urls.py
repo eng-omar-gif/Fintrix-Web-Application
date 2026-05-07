@@ -10,4 +10,5 @@ urlpatterns = [
     path('transactions/', transactions_page, name='transactions_page'),
     path("goals/", include("goals.urls")),
     path("budgets/", include("budgets.urls")),
+    path("notifications/", include("notifications.urls")),
 ]
