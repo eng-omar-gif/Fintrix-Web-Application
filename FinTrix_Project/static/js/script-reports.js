@@ -1,22 +1,51 @@
+/**
+ * @fileoverview Reports page controller for FinTrix.
+ * Manages date-range selection, async report data loading, bar chart rendering,
+ * donut chart rendering, transaction table population, and export functionality.
+ * @module script-reports
+ */
+
 (function () {
+
+  /**
+   * Current date-range state for the report.
+   * @type {{ start: string|null, end: string|null }}
+   */
   var state = { start: null, end: null };
 
-  function el(id) {
-    return document.getElementById(id);
-  }
+  /**
+   * Shorthand for `document.getElementById`.
+   * @param {string} id - Element ID.
+   * @returns {HTMLElement|null}
+   */
+  function el(id) { return document.getElementById(id); }
 
+  /**
+   * Formats a number as a monetary string with exactly 2 decimal places.
+   * @param {number|string} n - The value to format.
+   * @returns {string} Locale-formatted monetary string (e.g. `"1,234.56"`).
+   */
   function fmtMoney(n) {
     var x = Number(n) || 0;
     return x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  /**
+   * Returns today's date as an ISO 8601 string (`YYYY-MM-DD`).
+   * @returns {string}
+   */
   function todayISO() {
     return new Date().toISOString().split("T")[0];
   }
 
+  /**
+   * Updates the `#currentPeriod` element with a human-readable date range
+   * derived from the `#startDate` and `#endDate` input values.
+   * @returns {void}
+   */
   function setPeriodLabel() {
-    var s = el("startDate").value;
-    var e = el("endDate").value;
+    var s  = el("startDate").value;
+    var e  = el("endDate").value;
     var cp = document.getElementById("currentPeriod");
     if (!cp || !s || !e) return;
     var d0 = new Date(s + "T12:00:00");
@@ -27,41 +56,53 @@
       d1.toLocaleString(undefined, { month: "long", day: "numeric", year: "numeric" });
   }
 
+  /**
+   * Returns a colour palette adapted for the current FinTrix theme.
+   * @returns {{ grid: string, income: string, expense: string, label: string }}
+   */
   function chartColors() {
     var dark = document.documentElement.getAttribute("data-theme") === "dark";
     return {
-      grid: dark ? "#334155" : "#e5e7eb",
-      income: "#1e40af",
+      grid:    dark ? "#334155" : "#e5e7eb",
+      income:  "#1e40af",
       expense: "#f59e0b",
-      label: dark ? "#94a3b8" : "#64748b",
+      label:   dark ? "#94a3b8" : "#64748b",
     };
   }
 
+  /**
+   * Draws the grouped bar chart of weekly income vs. expenses on
+   * the `#incomeExpensesChart` canvas.
+   *
+   * @param {Array<{label: string, income: number, expense: number}>|null} weeklyChart
+   *   Weekly data points. If empty or null, a placeholder message is rendered.
+   * @returns {void}
+   */
   function drawIncomeExpensesChart(weeklyChart) {
     var canvas = el("incomeExpensesChart");
     if (!canvas) return;
-    var ctx = canvas.getContext("2d");
-    var rect = canvas.getBoundingClientRect();
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
+    var ctx    = canvas.getContext("2d");
+    var rect   = canvas.getBoundingClientRect();
+    var dpr    = window.devicePixelRatio || 1;
+    canvas.width  = rect.width  * dpr;
     canvas.height = rect.height * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var width = rect.width;
-    var height = rect.height;
+    var width   = rect.width;
+    var height  = rect.height;
     var padding = 36;
     ctx.clearRect(0, 0, width, height);
     var c = chartColors();
 
     if (!weeklyChart || !weeklyChart.length) {
       ctx.fillStyle = c.label;
-      ctx.font = "14px system-ui,sans-serif";
+      ctx.font      = "14px system-ui,sans-serif";
       ctx.fillText("No data for this range", padding, height / 2);
       return;
     }
 
     var chartHeight = height - padding * 2;
-    var chartWidth = width - padding * 2;
-    var maxValue = 1;
+    var chartWidth  = width  - padding * 2;
+    var maxValue    = 1;
     weeklyChart.forEach(function (x) {
       maxValue = Math.max(maxValue, x.income, x.expense);
     });
@@ -75,33 +116,46 @@
       ctx.stroke();
     }
 
-    var n = weeklyChart.length;
+    var n      = weeklyChart.length;
     var groupW = chartWidth / Math.max(1, n);
-    var barW = Math.min(24, groupW * 0.28);
-    var gap = groupW * 0.12;
+    var barW   = Math.min(24, groupW * 0.28);
+    var gap    = groupW * 0.12;
 
     weeklyChart.forEach(function (item, index) {
-      var gx = padding + index * groupW + gap;
-      var incH = (item.income / maxValue) * chartHeight;
+      var gx   = padding + index * groupW + gap;
+      var incH = (item.income  / maxValue) * chartHeight;
       var expH = (item.expense / maxValue) * chartHeight;
       ctx.fillStyle = c.income;
-      ctx.fillRect(gx, height - padding - incH, barW, incH);
+      ctx.fillRect(gx,           height - padding - incH, barW, incH);
       ctx.fillStyle = c.expense;
       ctx.fillRect(gx + barW + 4, height - padding - expH, barW, expH);
 
-      ctx.fillStyle = c.label;
-      ctx.font = "10px system-ui,sans-serif";
-      ctx.textAlign = "center";
+      ctx.fillStyle  = c.label;
+      ctx.font       = "10px system-ui,sans-serif";
+      ctx.textAlign  = "center";
       var short = item.label.split("–")[0].trim().split(" ")[0];
       ctx.fillText(short, gx + barW, height - 10);
     });
   }
 
+  /**
+   * Ordered colour palette for donut chart segments and legend dots.
+   * @type {string[]}
+   */
   var DONUT_COLORS = ["#8B4513", "#CD853F", "#DEB887", "#A0522D", "#0ea5e9", "#6366f1"];
 
+  /**
+   * Renders the expense allocation donut chart in `#allocationDonut` and
+   * populates the `#allocationLegend` with category rows.
+   * Also updates the `#donutTotal` text.
+   *
+   * @param {Array<{category: string, amount: number}>|null} expenseAllocation
+   *   Up to 6 category expense objects.
+   * @returns {void}
+   */
   function renderDonut(expenseAllocation) {
-    var svg = el("allocationDonut");
-    var legend = el("allocationLegend");
+    var svg     = el("allocationDonut");
+    var legend  = el("allocationLegend");
     var totalEl = el("donutTotal");
     if (!svg || !legend || !totalEl) return;
 
@@ -110,24 +164,20 @@
 
     if (!expenseAllocation || !expenseAllocation.length) {
       totalEl.textContent = "$0.00";
-      legend.innerHTML = '<p class="empty-copy">No expenses in range.</p>';
+      legend.innerHTML    = '<p class="empty-copy">No expenses in range.</p>';
       return;
     }
 
-    var total = expenseAllocation.reduce(function (s, x) {
-      return s + x.amount;
-    }, 0);
+    var total  = expenseAllocation.reduce(function (s, x) { return s + x.amount; }, 0);
     totalEl.textContent = "$" + fmtMoney(total);
 
-    var cx = 100,
-      cy = 100,
-      r = 72,
-      stroke = 26;
+    var cx = 100, cy = 100, r = 72, stroke = 26;
     var circum = 2 * Math.PI * r;
     var offset = 0;
+
     expenseAllocation.slice(0, 6).forEach(function (item, i) {
-      var frac = total > 0 ? item.amount / total : 0;
-      var dash = frac * circum;
+      var frac   = total > 0 ? item.amount / total : 0;
+      var dash   = frac * circum;
       var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       circle.setAttribute("cx", cx);
       circle.setAttribute("cy", cy);
@@ -145,16 +195,21 @@
       row.className = "expense-item";
       row.innerHTML =
         '<div class="expense-name"><span class="expense-dot" style="background:' +
-        DONUT_COLORS[i % DONUT_COLORS.length] +
-        '"></span><span>' +
-        item.category +
+        DONUT_COLORS[i % DONUT_COLORS.length] + '"></span><span>' + item.category +
         '</span></div><span class="expense-percentage">' +
-        (total > 0 ? ((item.amount / total) * 100).toFixed(0) : "0") +
-        "%</span>";
+        (total > 0 ? ((item.amount / total) * 100).toFixed(0) : "0") + "%</span>";
       legend.appendChild(row);
     });
   }
 
+  /**
+   * Populates the `#transactionsTableBody` with rows for each transaction.
+   * Shows `#reportEmpty` when there are no transactions.
+   *
+   * @param {Array<{entity: string, category: string, date: string, amount: number, status: string}>} transactions
+   *   Array of transaction objects from the API.
+   * @returns {void}
+   */
   function renderTable(transactions) {
     var tbody = el("transactionsTableBody");
     var empty = el("reportEmpty");
@@ -167,97 +222,108 @@
     if (empty) empty.hidden = true;
 
     transactions.forEach(function (tx) {
-      var tr = document.createElement("tr");
+      var tr  = document.createElement("tr");
       var pos = tx.amount > 0;
       tr.innerHTML =
-        '<td class="entity-name">' +
-        (tx.entity || "—") +
-        '</td><td>' +
-        (tx.category || "—") +
-        '</td><td class="transaction-date">' +
-        (tx.date || "—") +
-        '</td><td class="amount ' +
-        (pos ? "positive" : "negative") +
-        '">' +
-        (pos ? "+" : "") +
-        "$" +
-        fmtMoney(Math.abs(tx.amount)) +
-        '</td><td><span class="status-badge ' +
-        (tx.status || "cleared") +
-        '">' +
-        String(tx.status || "cleared").toUpperCase() +
+        '<td class="entity-name">' + (tx.entity || "—") + '</td>' +
+        '<td>' + (tx.category || "—") + '</td>' +
+        '<td class="transaction-date">' + (tx.date || "—") + '</td>' +
+        '<td class="amount ' + (pos ? "positive" : "negative") + '">' +
+          (pos ? "+" : "") + "$" + fmtMoney(Math.abs(tx.amount)) +
+        '</td>' +
+        '<td><span class="status-badge ' + (tx.status || "cleared") + '">' +
+          String(tx.status || "cleared").toUpperCase() +
         "</span></td>";
       tbody.appendChild(tr);
     });
   }
 
+  /**
+   * Builds a URL query string for export requests using the current
+   * date range and selected category filter.
+   * @returns {string} URL-encoded query string (without leading `?`).
+   */
   function exportQuery() {
     var params = new URLSearchParams();
     params.set("start_date", el("startDate").value);
-    params.set("end_date", el("endDate").value);
+    params.set("end_date",   el("endDate").value);
     var cat = el("exportCategory").value;
     if (cat) params.set("category_id", cat);
     return params.toString();
   }
 
+  /**
+   * Triggers a report export.
+   * - `"print"` → opens the browser print dialog.
+   * - `"csv"` → navigates to `/reports/export/csv/`.
+   * - `"pdf"` → navigates to `/reports/export/pdf/`.
+   * - `"excel"` → navigates to `/reports/export/excel/`.
+   *
+   * @param {"print"|"csv"|"pdf"|"excel"} kind - Export format identifier.
+   * @returns {void}
+   */
   function doExport(kind) {
     var q = exportQuery();
-    if (kind === "print") {
-      window.print();
-      return;
-    }
+    if (kind === "print") { window.print(); return; }
     var path = "/reports/export/csv/";
-    if (kind === "pdf") path = "/reports/export/pdf/";
+    if (kind === "pdf")   path = "/reports/export/pdf/";
     if (kind === "excel") path = "/reports/export/excel/";
     window.location.href = path + "?" + q;
   }
 
+  /**
+   * Fetches available categories from `/api/categories/` and populates
+   * the `#exportCategory` select element.
+   * @async
+   * @returns {Promise<void>}
+   */
   async function loadCategoriesSelect() {
     var sel = el("exportCategory");
     if (!sel) return;
     try {
-      var res = await fetch("/api/categories/");
+      var res  = await fetch("/api/categories/");
       var data = await res.json();
       var cats = data.categories || [];
       cats.forEach(function (c) {
-        var o = document.createElement("option");
-        o.value = c.id;
+        var o      = document.createElement("option");
+        o.value    = c.id;
         o.textContent = c.name;
         sel.appendChild(o);
       });
     } catch (e) {}
   }
 
+  /**
+   * Fetches report summary data from `/reports/api/summary/` for the
+   * currently selected date range and category, then updates:
+   * - `#summaryLine` — income / expense / net text.
+   * - Transaction table via {@link renderTable}.
+   * - Bar chart via {@link drawIncomeExpensesChart}.
+   * - Donut chart via {@link renderDonut}.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async function loadReportData() {
     var start = el("startDate").value;
-    var end = el("endDate").value;
+    var end   = el("endDate").value;
     if (!start || !end) return;
     setPeriodLabel();
     var cat = el("exportCategory").value;
-    var url =
-      "/reports/api/summary/?start_date=" +
-      encodeURIComponent(start) +
-      "&end_date=" +
-      encodeURIComponent(end) +
-      (cat ? "&category_id=" + encodeURIComponent(cat) : "");
+    var url = "/reports/api/summary/?start_date=" + encodeURIComponent(start) +
+              "&end_date=" + encodeURIComponent(end) +
+              (cat ? "&category_id=" + encodeURIComponent(cat) : "");
     try {
-      var res = await fetch(url);
+      var res  = await fetch(url);
       var data = await res.json();
-      if (data.error) {
-        console.error(data.error);
-        return;
-      }
+      if (data.error) { console.error(data.error); return; }
       var sl = el("summaryLine");
-      if (sl)
-        sl.textContent =
-          "Income $" +
-          fmtMoney(data.total_income) +
-          " · Expenses $" +
-          fmtMoney(data.total_expense) +
-          " · Net $" +
-          fmtMoney(data.net);
+      if (sl) sl.textContent =
+        "Income $" + fmtMoney(data.total_income) +
+        " · Expenses $" + fmtMoney(data.total_expense) +
+        " · Net $" + fmtMoney(data.net);
       renderTable(data.largest_transactions);
-      window.__reportWeekly = data.weekly_chart;
+      window.__reportWeekly     = data.weekly_chart;
       window.__reportAllocation = data.expense_allocation;
       drawIncomeExpensesChart(data.weekly_chart);
       renderDonut(data.expense_allocation);
@@ -266,17 +332,30 @@
     }
   }
 
+  /**
+   * Applies a date-range preset and reloads the report data.
+   *
+   * @param {"30d"|"quarterly"|"yearly"} preset - Identifier for the preset range.
+   *   - `"30d"` — last 30 days.
+   *   - `"quarterly"` — last 3 months.
+   *   - `"yearly"` — last 12 months.
+   * @returns {void}
+   */
   function applyPreset(preset) {
-    var end = new Date();
+    var end   = new Date();
     var start = new Date();
-    if (preset === "30d") start.setDate(end.getDate() - 29);
+    if (preset === "30d")       start.setDate(end.getDate() - 29);
     else if (preset === "quarterly") start.setMonth(end.getMonth() - 3);
-    else start.setFullYear(end.getFullYear() - 1);
+    else                             start.setFullYear(end.getFullYear() - 1);
     el("startDate").value = start.toISOString().split("T")[0];
-    el("endDate").value = end.toISOString().split("T")[0];
+    el("endDate").value   = end.toISOString().split("T")[0];
     loadReportData();
   }
 
+  /**
+   * Toggles the `.open` class on `#sidebar` to show or hide the mobile sidebar.
+   * @returns {void}
+   */
   function toggleSidebar() {
     var s = document.getElementById("sidebar");
     if (s) s.classList.toggle("open");
@@ -292,30 +371,26 @@
 
     document.querySelectorAll(".filter-tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
-        document.querySelectorAll(".filter-tab").forEach(function (t) {
-          t.classList.remove("active");
-        });
+        document.querySelectorAll(".filter-tab").forEach(function (t) { t.classList.remove("active"); });
         tab.classList.add("active");
         applyPreset(tab.getAttribute("data-preset"));
       });
     });
 
     el("applyRangeBtn").addEventListener("click", function () {
-      document.querySelectorAll(".filter-tab").forEach(function (t) {
-        t.classList.remove("active");
-      });
+      document.querySelectorAll(".filter-tab").forEach(function (t) { t.classList.remove("active"); });
       loadReportData();
     });
 
     el("exportCategory").addEventListener("change", loadReportData);
 
     var menuBtn = el("exportMenuBtn");
-    var menu = el("exportMenu");
+    var menu    = el("exportMenu");
     if (menuBtn && menu) {
       menuBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         var willShow = menu.hidden;
-        menu.hidden = !willShow;
+        menu.hidden  = !willShow;
         menuBtn.setAttribute("aria-expanded", willShow ? "true" : "false");
       });
       document.addEventListener("click", function (e) {
@@ -337,7 +412,9 @@
     });
   });
 
+  /** Redraws the bar chart when the FinTrix theme changes. */
   document.addEventListener("FinTrixThemeChanged", function () {
     if (window.__reportWeekly) drawIncomeExpensesChart(window.__reportWeekly);
   });
+
 })();

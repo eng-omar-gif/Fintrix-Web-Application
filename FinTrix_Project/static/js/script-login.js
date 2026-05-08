@@ -1,18 +1,36 @@
-// Password visibility toggle
+/**
+ * @fileoverview Login page controller for FinTrix.
+ * Handles password visibility toggle, CSRF token retrieval,
+ * inline error display, and async form submission against
+ * the `/api/auth/login/` endpoint.
+ * @module script-login
+ */
+
+/**
+ * Toggles the `#password` input between `type="password"` and `type="text"`,
+ * and updates the adjacent toggle icon accordingly.
+ * @returns {void}
+ */
 function togglePassword() {
     const passwordInput = document.getElementById('password');
-    const toggleIcon = document.querySelector('.password-toggle');
+    const toggleIcon    = document.querySelector('.password-toggle');
     if (!passwordInput || !toggleIcon) return;
 
     if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
+        passwordInput.type    = 'text';
         toggleIcon.textContent = '👁️‍🗨️';
     } else {
-        passwordInput.type = 'password';
+        passwordInput.type    = 'password';
         toggleIcon.textContent = '👁';
     }
 }
 
+/**
+ * Reads a cookie value by name from `document.cookie`.
+ *
+ * @param {string} name - The cookie name to look up.
+ * @returns {string|null} The decoded cookie value, or `null` if not found.
+ */
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -28,6 +46,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ * Displays an error banner (`#errorMessage`) with the given text,
+ * then auto-hides it after 5 seconds.
+ *
+ * @param {string} message - The error message to display.
+ * @returns {void}
+ */
 function showError(message) {
     const errorMessage = document.getElementById('errorMessage');
     errorMessage.textContent = message;
@@ -37,23 +62,43 @@ function showError(message) {
     }, 5000);
 }
 
+/**
+ * Resets the submit button to its default (non-loading) state.
+ *
+ * @param {HTMLButtonElement} submitBtn - The form submit button.
+ * @param {HTMLElement}       btnText   - The element containing the button label.
+ * @param {HTMLElement}       btnIcon   - The element containing the button icon.
+ * @returns {void}
+ */
 function resetSubmitButton(submitBtn, btnText, btnIcon) {
     submitBtn.classList.remove('loading');
     btnText.textContent = 'Login';
     btnIcon.textContent = '→';
 }
 
+/**
+ * Handles `#loginForm` submission asynchronously.
+ *
+ * Validates that email and password are present and that the email is
+ * well-formed, then POSTs credentials to `/api/auth/login/` as JSON
+ * (with CSRF token header). On success, redirects to `data.redirect`.
+ * On failure, shows an error banner and restores the submit button.
+ *
+ * @async
+ * @listens HTMLFormElement#submit
+ * @returns {Promise<void>}
+ */
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const submitBtn = document.getElementById('submitBtn');
-    const btnText = document.getElementById('btnText');
-    const btnIcon = document.getElementById('btnIcon');
+    const submitBtn   = document.getElementById('submitBtn');
+    const btnText     = document.getElementById('btnText');
+    const btnIcon     = document.getElementById('btnIcon');
     const errorMessage = document.getElementById('errorMessage');
-    const rememberEl = document.getElementById('remember');
+    const rememberEl  = document.getElementById('remember');
 
     const formData = {
-        email: document.getElementById('email').value,
+        email:    document.getElementById('email').value,
         password: document.getElementById('password').value,
         remember: rememberEl ? rememberEl.checked : false,
     };
@@ -70,8 +115,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     }
 
     submitBtn.classList.add('loading');
-    btnText.textContent = 'Signing in';
-    btnIcon.innerHTML = '<div class="spinner"></div>';
+    btnText.textContent  = 'Signing in';
+    btnIcon.innerHTML    = '<div class="spinner"></div>';
     errorMessage.classList.remove('show');
 
     const csrfToken = getCookie('csrftoken');
@@ -83,10 +128,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                 ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
             },
             credentials: 'same-origin',
-            body: JSON.stringify({
-                email: formData.email,
-                password: formData.password,
-            }),
+            body: JSON.stringify({ email: formData.email, password: formData.password }),
         });
 
         const data = await response.json().catch(() => ({}));
@@ -104,12 +146,20 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     }
 });
 
+/**
+ * Clears the `#errorMessage` banner whenever the user types in any input field.
+ * @listens HTMLInputElement#input
+ */
 document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('input', function () {
         document.getElementById('errorMessage').classList.remove('show');
     });
 });
 
+/**
+ * Submits the login form when the Enter key is pressed inside any input.
+ * @listens HTMLInputElement#keypress
+ */
 document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {

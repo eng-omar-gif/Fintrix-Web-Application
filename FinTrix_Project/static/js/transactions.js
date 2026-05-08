@@ -1,7 +1,26 @@
+/**
+ * @fileoverview Transactions page controller for FinTrix.
+ * Manages transaction listing with pagination and filtering,
+ * add/delete operations via the REST API, category loading,
+ * net-flow display, and CSV export.
+ * @module transactions
+ */
+
+/** @type {number} */
 let currentPage = 1;
+
+/** @type {Object} */
 let currentFilters = {};
+
+/** @type {number} */
 let pageSize = 10;
 
+/**
+ * Reads a cookie value by name from `document.cookie`.
+ *
+ * @param {string} name - Cookie name to look up.
+ * @returns {string|null} The decoded cookie value, or `null` if not found.
+ */
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -9,20 +28,30 @@ function getCookie(name) {
     return null;
 }
 
+/**
+ * Parses a US-format date string (`MM/DD/YYYY`) into ISO 8601 (`YYYY-MM-DD`).
+ *
+ * @param {string} value - Date string in `MM/DD/YYYY` format.
+ * @returns {string|null} ISO date string, or `null` if parsing fails.
+ */
 function parseUsDate(value) {
     if (!value) return null;
     const parts = value.trim().split('/');
     if (parts.length !== 3) return null;
     const [mm, dd, yyyy] = parts.map(p => p.trim());
     if (!mm || !dd || !yyyy) return null;
-    const m = parseInt(mm, 10);
-    const d = parseInt(dd, 10);
-    const y = parseInt(yyyy, 10);
+    const m = parseInt(mm, 10), d = parseInt(dd, 10), y = parseInt(yyyy, 10);
     if (!Number.isFinite(m) || !Number.isFinite(d) || !Number.isFinite(y)) return null;
-    const iso = `${y.toString().padStart(4, '0')}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-    return iso;
+    return `${y.toString().padStart(4, '0')}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
 }
 
+/**
+ * Parses a date string that may be in ISO 8601 (`YYYY-MM-DD`) or
+ * US (`MM/DD/YYYY`) format.
+ *
+ * @param {string} value - Input date string.
+ * @returns {string|null} ISO date string, or `null` if value is empty/invalid.
+ */
 function parseAnyDate(value) {
     if (!value) return null;
     const v = value.trim();
@@ -30,19 +59,30 @@ function parseAnyDate(value) {
     return parseUsDate(v);
 }
 
+/**
+ * Formats an ISO 8601 date string for display (e.g. `"Jan 15, 2025"`).
+ *
+ * @param {string} iso - ISO date string (`YYYY-MM-DD` or full ISO timestamp).
+ * @returns {string} Locale-formatted date string, or the original string on failure.
+ */
 function formatDisplayDate(iso) {
     if (!iso) return '';
-    const day = iso.split('T')[0];
+    const day   = iso.split('T')[0];
     const parts = day.split('-');
     if (parts.length !== 3) return iso;
-    const y = parseInt(parts[0], 10);
-    const m = parseInt(parts[1], 10);
-    const d = parseInt(parts[2], 10);
+    const y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
     if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return iso;
-    const dt = new Date(y, m - 1, d);
-    return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/**
+ * Updates the UI to reflect the currently selected transaction type
+ * (income or expense), toggling active states and showing/hiding
+ * the income-source field, and reloading categories for the form.
+ *
+ * @param {"income"|"expense"} type - The transaction type to activate.
+ * @returns {void}
+ */
 function setTransactionType(type) {
     document.getElementById('transactionType').value = type;
     document.getElementById('incomeBtn').classList.toggle('active', type === 'income');
@@ -51,41 +91,65 @@ function setTransactionType(type) {
     loadCategoriesForForm(type);
 }
 
+/**
+ * Displays a simple alert message to the user.
+ * @param {string} message - Text to display.
+ * @returns {void}
+ */
 function showMessage(message) {
-    // keep it simple and non-blocking later; for now alert matches existing behavior
     alert(message);
 }
 
+/**
+ * Reads all add-transaction form field values and returns them as a plain object.
+ *
+ * @returns {{
+ *   type: string,
+ *   amount: string,
+ *   category_id: string,
+ *   date: string,
+ *   description: string,
+ *   payment_method: string,
+ *   source: string
+ * }} Collected form input values.
+ */
 function collectInput() {
     const formType = document.getElementById('transactionType').value;
     return {
-        type: formType,
-        amount: document.getElementById('amount').value,
-        category_id: document.getElementById('category').value,
-        date: parseAnyDate(document.getElementById('date').value) || '',
-        description: document.getElementById('description').value,
+        type:           formType,
+        amount:         document.getElementById('amount').value,
+        category_id:    document.getElementById('category').value,
+        date:           parseAnyDate(document.getElementById('date').value) || '',
+        description:    document.getElementById('description').value,
         payment_method: document.getElementById('payment-method').value,
-        source: document.getElementById('income-source').value
+        source:         document.getElementById('income-source').value
     };
 }
 
+/**
+ * Submits a new transaction to `/api/add/` via a POST request.
+ * On success, resets the form, defaults the date to today,
+ * and refreshes the transaction list.
+ *
+ * @async
+ * @param {SubmitEvent} event - The form submit event.
+ * @returns {Promise<void>}
+ */
 async function addTransaction(event) {
     event.preventDefault();
     const data = collectInput();
     try {
         const response = await fetch('/api/add/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify(data)
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body:    JSON.stringify(data)
         });
         if (response.ok) {
             showMessage('Transaction saved!');
             document.getElementById('add-transaction-form').reset();
             const now = new Date();
-            document.getElementById('date').value = `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}/${now.getFullYear()}`;
+            document.getElementById('date').value =
+                `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}/${now.getFullYear()}`;
             setTransactionType('expense');
             currentPage = 1;
             await loadTransactions(currentFilters);
@@ -98,25 +162,53 @@ async function addTransaction(event) {
     }
 }
 
+/**
+ * Returns an HTML `<span>` badge for a category name.
+ * The CSS class is chosen based on keywords in the category name.
+ *
+ * @param {string} name - Category display name.
+ * @returns {string} HTML string containing the badge element.
+ */
 function badgeForCategory(name) {
     if (!name) return '<span class="pill pill-muted">—</span>';
     const key = name.toLowerCase();
-    let cls = 'pill pill-muted';
-    if (key.includes('tech')) cls = 'pill pill-blue';
+    let cls   = 'pill pill-muted';
+    if (key.includes('tech'))                            cls = 'pill pill-blue';
     if (key.includes('service') || key.includes('income')) cls = 'pill pill-green';
-    if (key.includes('operat')) cls = 'pill pill-orange';
-    if (key.includes('equip')) cls = 'pill pill-purple';
+    if (key.includes('operat'))                          cls = 'pill pill-orange';
+    if (key.includes('equip'))                           cls = 'pill pill-purple';
     return `<span class="${cls}">${name}</span>`;
 }
 
+/**
+ * Converts an internal payment method code to a human-readable label.
+ *
+ * @param {string} method - Payment method code (e.g. `"CREDIT_CARD"`, `"E_WALLET"`, `"CASH"`).
+ * @returns {string} Display label (e.g. `"Card"`, `"ACH Transfer"`, `"Cash"`).
+ */
 function methodLabel(method) {
-    if (!method) return '—';
+    if (!method)                return '—';
     if (method === 'CREDIT_CARD') return 'Card';
-    if (method === 'E_WALLET') return 'ACH Transfer';
-    if (method === 'CASH') return 'Cash';
+    if (method === 'E_WALLET')    return 'ACH Transfer';
+    if (method === 'CASH')        return 'Cash';
     return method;
 }
 
+/**
+ * Renders a paginated list of transactions into `#transaction-tbody`.
+ * Shows `#empty-message` when there are no transactions.
+ * Also updates the "showing X–Y of Z" counters and the net-flow display.
+ *
+ * @param {{
+ *   transactions: Array<Object>,
+ *   total: number,
+ *   page: number,
+ *   total_pages: number,
+ *   page_size: number,
+ *   net_flow: number
+ * }} payload - API response object from `/api/`.
+ * @returns {void}
+ */
 function displayTransactions(payload) {
     const transactions = payload?.transactions || [];
     const tbody = document.getElementById('transaction-tbody');
@@ -124,7 +216,7 @@ function displayTransactions(payload) {
     const table = document.getElementById('transaction-table');
     tbody.innerHTML = '';
 
-    if (!transactions || transactions.length === 0) {
+    if (!transactions.length) {
         table.style.display = 'none';
         empty.style.display = 'flex';
         document.getElementById('showing-range').textContent = '0';
@@ -136,20 +228,19 @@ function displayTransactions(payload) {
 
     table.style.display = '';
     empty.style.display = 'none';
-    const total = payload?.total || transactions.length;
-    const page = payload?.page || 1;
+    const total        = payload?.total || transactions.length;
+    const page         = payload?.page  || 1;
     const pageSizeLocal = payload?.page_size || pageSize;
-    const startIdx = (page - 1) * pageSizeLocal + 1;
-    const endIdx = (page - 1) * pageSizeLocal + transactions.length;
+    const startIdx     = (page - 1) * pageSizeLocal + 1;
+    const endIdx       = (page - 1) * pageSizeLocal + transactions.length;
     document.getElementById('showing-range').textContent = `${startIdx}-${endIdx}`;
     document.getElementById('showing-total').textContent = total;
 
     transactions.forEach(t => {
         const isIncome = (t.kind || '').toLowerCase() === 'income';
-        const amount = parseFloat(t.amount) || 0;
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        const amount   = parseFloat(t.amount) || 0;
+        const row      = document.createElement('tr');
+        row.innerHTML  = `
             <td>${formatDisplayDate(t.date)}</td>
             <td>${t.description || '-'}</td>
             <td>${badgeForCategory(t.category)}</td>
@@ -158,43 +249,64 @@ function displayTransactions(payload) {
                 ${isIncome ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
             </td>
             <td>
-                <button class="action-btn delete" data-id="${t.id}" data-type="${isIncome ? 'income' : 'expense'}"><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2.5 15C2.04167 15 1.64931 14.8368 1.32292 14.5104C0.996528 14.184 0.833333 13.7917 0.833333 13.3333V2.5H0V0.833333H4.16667V0H9.16667V0.833333H13.3333V2.5H12.5V13.3333C12.5 13.7917 12.3368 14.184 12.0104 14.5104C11.684 14.8368 11.2917 15 10.8333 15H2.5V15M10.8333 2.5H2.5V13.3333V13.3333V13.3333H10.8333V13.3333V13.3333V2.5V2.5M4.16667 11.6667H5.83333V4.16667H4.16667V11.6667V11.6667M7.5 11.6667H9.16667V4.16667H7.5V11.6667V11.6667M2.5 2.5V2.5V13.3333V13.3333V13.3333V13.3333V13.3333V13.3333V2.5V2.5" fill="#94A3B8"/>
-</svg></button>
-            </td>
-        `;
+                <button class="action-btn delete" data-id="${t.id}" data-type="${isIncome ? 'income' : 'expense'}">
+                  <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.5 15C2.04167 15 1.64931 14.8368 1.32292 14.5104C0.996528 14.184 0.833333 13.7917 0.833333 13.3333V2.5H0V0.833333H4.16667V0H9.16667V0.833333H13.3333V2.5H12.5V13.3333C12.5 13.7917 12.3368 14.184 12.0104 14.5104C11.684 14.8368 11.2917 15 10.8333 15H2.5V15M10.8333 2.5H2.5V13.3333V13.3333V13.3333H10.8333V13.3333V13.3333V2.5V2.5M4.16667 11.6667H5.83333V4.16667H4.16667V11.6667V11.6667M7.5 11.6667H9.16667V4.16667H7.5V11.6667V11.6667M2.5 2.5V2.5V13.3333V13.3333V13.3333V13.3333V13.3333V13.3333V2.5V2.5" fill="#94A3B8"/>
+                  </svg>
+                </button>
+            </td>`;
         row.querySelector('.delete').addEventListener('click', function () {
             deleteTransaction(this.dataset.id, this.dataset.type);
         });
         tbody.appendChild(row);
     });
+
     updateTotalNetFlow(payload?.net_flow || 0);
     renderPagination(payload?.page || 1, payload?.total_pages || 1);
 }
 
+/**
+ * Updates the `#total-net-flow` element with the current net cash flow.
+ * Positive values are coloured with `--color-success`; negative with `--color-error`.
+ *
+ * @param {number} total - Net flow value (positive = net income, negative = net expense).
+ * @returns {void}
+ */
 function updateTotalNetFlow(total) {
     const el = document.getElementById('total-net-flow');
     if (el) {
-        const abs = Math.abs(total).toFixed(2);
+        const abs   = Math.abs(total).toFixed(2);
         el.textContent = total >= 0 ? `+$${abs}` : `-$${abs}`;
         el.style.color = total >= 0 ? 'var(--color-success)' : 'var(--color-error)';
     }
 }
 
+/**
+ * Fetches a page of transactions from `/api/` using the given filters
+ * and renders them via {@link displayTransactions}.
+ *
+ * @async
+ * @param {Object} [filters={}] - Filter parameters to apply.
+ * @param {string} [filters.category_id] - Category ID to filter by.
+ * @param {string} [filters.start_date] - Start date in ISO format.
+ * @param {string} [filters.end_date] - End date in ISO format.
+ * @param {string} [filters.type] - Transaction type: `"income"`, `"expense"`, or `"all"`.
+ * @returns {Promise<void>}
+ */
 async function loadTransactions(filters = {}) {
     currentFilters = filters;
-    let url = '/api/';
+    let url    = '/api/';
     const params = new URLSearchParams();
     if (filters.category_id && filters.category_id !== 'all') params.append('category_id', filters.category_id);
     if (filters.start_date) params.append('start_date', filters.start_date);
-    if (filters.end_date) params.append('end_date', filters.end_date);
+    if (filters.end_date)   params.append('end_date',   filters.end_date);
     if (filters.type && filters.type !== 'all') params.append('type', filters.type);
-    params.append('page', String(currentPage));
+    params.append('page',      String(currentPage));
     params.append('page_size', String(pageSize));
     if ([...params].length) url += '?' + params.toString();
 
     try {
-        const res = await fetch(url);
+        const res  = await fetch(url);
         const data = await res.json();
         displayTransactions(data);
     } catch (e) {
@@ -203,135 +315,189 @@ async function loadTransactions(filters = {}) {
     }
 }
 
+/**
+ * Reads filter controls from the UI and calls {@link loadTransactions}
+ * with the resulting filter object. Resets `currentPage` to 1.
+ * @returns {void}
+ */
 function applyFiltersFromUI() {
-    const cat = document.getElementById('filter-category').value;
+    const cat      = document.getElementById('filter-category').value;
     const startIso = parseAnyDate(document.getElementById('filter-from').value);
-    const endIso = parseAnyDate(document.getElementById('filter-to').value) || startIso;
-
-    const income = document.getElementById('filter-income').checked;
-    const expense = document.getElementById('filter-expense').checked;
+    const endIso   = parseAnyDate(document.getElementById('filter-to').value) || startIso;
+    const income   = document.getElementById('filter-income').checked;
+    const expense  = document.getElementById('filter-expense').checked;
 
     let type = 'all';
-    if (income && !expense) type = 'income';
-    if (!income && expense) type = 'expense';
+    if (income && !expense)  type = 'income';
+    if (!income && expense)  type = 'expense';
     if (!income && !expense) type = 'none';
 
-    const filters = {
-        category_id: cat,
-        start_date: startIso || '',
-        end_date: startIso ? (endIso || startIso) : '',
-        type
-    };
     currentPage = 1;
-    loadTransactions(filters);
+    loadTransactions({ category_id: cat, start_date: startIso || '', end_date: startIso ? (endIso || startIso) : '', type });
 }
 
+/**
+ * Resets all filter controls to their default values and reloads transactions.
+ * @returns {void}
+ */
 function resetFilters() {
-    document.getElementById('filter-category').value = 'all';
-    document.getElementById('filter-from').value = '';
+    document.getElementById('filter-category').value      = 'all';
+    document.getElementById('filter-from').value          = '';
     const toEl = document.getElementById('filter-to');
     if (toEl) toEl.value = '';
-    document.getElementById('filter-income').checked = true;
+    document.getElementById('filter-income').checked  = true;
     document.getElementById('filter-expense').checked = true;
     currentPage = 1;
     loadTransactions({});
 }
 
+/**
+ * Sends a DELETE request to `/api/{type}/{id}/` to remove a transaction.
+ * Prompts the user for confirmation before proceeding.
+ *
+ * @async
+ * @param {string|number} id   - The transaction ID.
+ * @param {"income"|"expense"} type - The transaction type (determines URL path).
+ * @returns {Promise<void>}
+ */
 async function deleteTransaction(id, type) {
     if (!confirm('Delete this transaction?')) return;
     try {
         const res = await fetch(`/api/${type}/${id}/`, {
-            method: 'DELETE',
+            method:  'DELETE',
             headers: { 'X-CSRFToken': getCookie('csrftoken') }
         });
-        if (res.ok) {
-            showMessage('Deleted!');
-            await loadTransactions(currentFilters);
-        } else {
-            showMessage('Delete failed');
-        }
+        if (res.ok) { showMessage('Deleted!'); await loadTransactions(currentFilters); }
+        else showMessage('Delete failed');
     } catch (e) {
         showMessage('Network error');
     }
 }
 
+/**
+ * Fetches all categories from `/api/categories/`.
+ * @async
+ * @returns {Promise<Array<{id: number, name: string, type: "INCOME"|"EXPENSE"}>>} Category array.
+ */
 async function loadCategoriesAll() {
-    const res = await fetch('/api/categories/');
+    const res  = await fetch('/api/categories/');
     const data = await res.json();
     return data.categories || [];
 }
 
+/**
+ * Populates the `#category` select element with categories of the given type.
+ *
+ * @async
+ * @param {"income"|"expense"} [type="expense"] - Filter categories by this type.
+ * @returns {Promise<void>}
+ */
 async function loadCategoriesForForm(type = 'expense') {
     const categorySelect = document.getElementById('category');
-    const categories = await loadCategoriesAll();
-
+    const categories     = await loadCategoriesAll();
     categorySelect.innerHTML = '<option value="" disabled selected>Select Category</option>';
     const wanted = type === 'income' ? 'INCOME' : 'EXPENSE';
     categories.filter(c => c.type === wanted).forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat.id;
+        const opt      = document.createElement('option');
+        opt.value      = cat.id;
         opt.textContent = cat.name;
         categorySelect.appendChild(opt);
     });
 }
 
+/**
+ * Populates the `#filter-category` select element with all available categories.
+ * Adds an "All Categories" option at the top.
+ * @async
+ * @returns {Promise<void>}
+ */
 async function loadCategoriesForFilters() {
     const filterSelect = document.getElementById('filter-category');
-    const categories = await loadCategoriesAll();
+    const categories   = await loadCategoriesAll();
     filterSelect.innerHTML = '<option value="all">All Categories</option>';
     categories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat.id;
+        const opt      = document.createElement('option');
+        opt.value      = cat.id;
         opt.textContent = cat.name;
         filterSelect.appendChild(opt);
     });
 }
 
+/**
+ * Renders a simple pagination control into `#pagination`.
+ * Shows previous/next arrows and up to three page number buttons.
+ *
+ * @param {number} page       - Current page number (1-based).
+ * @param {number} totalPages - Total number of pages.
+ * @returns {void}
+ */
 function renderPagination(page, totalPages) {
     const el = document.getElementById('pagination');
     if (!el) return;
     el.innerHTML = '';
     if (!totalPages || totalPages <= 1) return;
 
+    /**
+     * Creates a single pagination button.
+     * @param {string} label  - Button label text.
+     * @param {number} p      - Page number this button navigates to.
+     * @param {boolean} active - Whether this button represents the current page.
+     * @returns {HTMLButtonElement}
+     */
     const mk = (label, p, active = false) => {
         const b = document.createElement('button');
-        b.type = 'button';
+        b.type      = 'button';
         b.className = 'page-btn' + (active ? ' active' : '');
         b.textContent = label;
-        b.addEventListener('click', () => {
-            currentPage = p;
-            loadTransactions(currentFilters);
-        });
+        b.addEventListener('click', () => { currentPage = p; loadTransactions(currentFilters); });
         return b;
     };
 
     const start = Math.max(1, page - 1);
-    const end = Math.min(totalPages, page + 1);
-
+    const end   = Math.min(totalPages, page + 1);
     if (page > 1) el.appendChild(mk('‹', page - 1));
     for (let p = start; p <= end; p++) el.appendChild(mk(String(p), p, p === page));
     if (page < totalPages) el.appendChild(mk('›', page + 1));
 }
 
+/**
+ * Triggers a CSV export of the current filtered transaction list
+ * by navigating to `/api/export/` with the active filter parameters.
+ * @returns {void}
+ */
 function exportCsv() {
     const params = new URLSearchParams();
     if (currentFilters.category_id && currentFilters.category_id !== 'all') params.append('category_id', currentFilters.category_id);
     if (currentFilters.start_date) params.append('start_date', currentFilters.start_date);
-    if (currentFilters.end_date) params.append('end_date', currentFilters.end_date);
+    if (currentFilters.end_date)   params.append('end_date',   currentFilters.end_date);
     if (currentFilters.type && currentFilters.type !== 'all') params.append('type', currentFilters.type);
-    const url = '/api/export/' + (params.toString() ? `?${params.toString()}` : '');
-    window.location.href = url;
+    window.location.href = '/api/export/' + (params.toString() ? `?${params.toString()}` : '');
 }
 
+/**
+ * Shows or hides the new-transaction card (`#new-transaction-card`).
+ * @param {boolean} open - `true` to show, `false` to hide.
+ * @returns {void}
+ */
 function setNewTxOpen(open) {
     const card = document.getElementById('new-transaction-card');
     if (!card) return;
     card.style.display = open ? '' : 'none';
 }
 
+/**
+ * Initialises the transactions page on DOM ready:
+ * - Sets today's date in the add-transaction form.
+ * - Loads filter categories and default transaction type.
+ * - Loads the initial transaction list.
+ * - Wires all interactive controls (form, filters, buttons).
+ * @listens document#DOMContentLoaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const now = new Date();
-    document.getElementById('date').value = `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}/${now.getFullYear()}`;
+    document.getElementById('date').value =
+        `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}/${now.getFullYear()}`;
+
     loadCategoriesForFilters();
     setTransactionType('expense');
     loadTransactions({});
