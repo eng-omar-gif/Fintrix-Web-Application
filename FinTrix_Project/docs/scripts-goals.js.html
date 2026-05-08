@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: scripts-goals.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: scripts-goals.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Goals page UI enhancements for FinTrix.
+ * Provides sidebar toggle, active nav-item highlighting,
+ * table-row hover effects, auto-dismiss of Django messages,
+ * and visual styling for completed goals.
+ *
+ * @note The original client-side goals logic (add, delete, contribution modal)
+ * is preserved in comments above; this module contains only UI enhancements
+ * that do not interfere with Django's backend goal management.
+ * @module scripts-goals
+ */
+
+/**
+ * Toggles the mobile sidebar by adding/removing the `"open"` class on `#sidebar`.
+ * Also supports keyboard activation (Enter / Space) for accessibility.
+ */
+const menuToggle = document.getElementById('menuToggle');
+const sidebar    = document.getElementById('sidebar');
+
+if (menuToggle &amp;&amp; sidebar) {
+    /** @listens HTMLElement#click */
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
+    /**
+     * Keyboard handler for the menu toggle button.
+     * Activates on Enter or Space to match native button behaviour.
+     * @listens HTMLElement#keydown
+     * @param {KeyboardEvent} e
+     */
+    menuToggle.addEventListener('keydown', (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            sidebar.classList.toggle('open');
+        }
+    });
+}
+
+/**
+ * Highlights the most-recently clicked nav item as active.
+ * Removes the `"active"` class from all siblings before applying it to the target.
+ * @listens HTMLElement#click
+ */
+const navItems = document.querySelectorAll('.nav-item');
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
+
+/**
+ * Enables smooth scrolling for the entire document.
+ * Applied via `document.documentElement.style` for broad browser support.
+ */
+document.documentElement.style.scrollBehavior = "smooth";
+
+/**
+ * Adds a subtle scale-up hover effect to every row in the goals table
+ * (`.goals-table tbody tr`) to improve perceived interactivity.
+ * @listens HTMLElement#mouseenter
+ * @listens HTMLElement#mouseleave
+ */
+const rows = document.querySelectorAll('.goals-table tbody tr');
+rows.forEach(row => {
+    row.addEventListener('mouseenter', () => {
+        row.style.transform  = "scale(1.005)";
+        row.style.transition = "0.2s ease";
+    });
+    row.addEventListener('mouseleave', () => {
+        row.style.transform = "scale(1)";
+    });
+});
+
+/**
+ * Auto-dismisses Django flash messages (`.messages-alerts li`) after 5 seconds
+ * with a 500 ms fade-out transition before DOM removal.
+ */
+const messages = document.querySelectorAll('.messages-alerts li');
+if (messages.length > 0) {
+    setTimeout(() => {
+        messages.forEach(msg => {
+            msg.style.opacity    = "0";
+            msg.style.transition = "0.5s ease";
+            setTimeout(() => msg.remove(), 500);
+        });
+    }, 5000);
+}
+
+/**
+ * Visually styles completed goal name elements (`.goal-name.completed`)
+ * with a strikethrough and reduced opacity to indicate completion.
+ */
+const goalNames = document.querySelectorAll('.goal-name.completed');
+goalNames.forEach(goal => {
+    goal.style.textDecoration = "line-through";
+    goal.style.opacity        = "0.7";
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-script-budget.html">script-budget</a></li><li><a href="module-script-dashboard.html">script-dashboard</a></li><li><a href="module-script-home.html">script-home</a></li><li><a href="module-script-login.html">script-login</a></li><li><a href="module-script-notifications.html">script-notifications</a></li><li><a href="module-script-reports.html">script-reports</a></li><li><a href="module-script-signup.html">script-signup</a></li><li><a href="module-scripts-goals.html">scripts-goals</a></li><li><a href="module-theme.html">theme</a></li><li><a href="module-transactions.html">transactions</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-theme-FinTrixTheme.html">FinTrixTheme</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri May 08 2026 11:49:33 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
