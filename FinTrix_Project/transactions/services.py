@@ -1,5 +1,31 @@
-from decimal import Decimal
-from .models import Income, Expense, Category
+from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
+
+from django.utils import timezone
+
+from .models import Category, Expense, Income, PaymentMethod
+
+
+_VALID_PAYMENT = {c.value for c in PaymentMethod}
+
+
+def _parse_tx_date(val):
+    if val is None or val == "":
+        return timezone.now().date()
+    if isinstance(val, date):
+        return val
+    s = str(val).strip()
+    for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y"):
+        try:
+            return datetime.strptime(s, fmt).date()
+        except ValueError:
+            continue
+    try:
+        return datetime.fromisoformat(s.replace("Z", "")[:19]).date()
+    except ValueError:
+        pass
+    return timezone.now().date()
+
 
 class TransactionService:
 
@@ -8,43 +34,49 @@ class TransactionService:
 
     def validate_transaction(self, data):
         try:
-            amount = float(data.get('amount', 0))
-        except (ValueError, TypeError):
+            amount = Decimal(str(data.get("amount", 0)))
+        except (InvalidOperation, TypeError, ValueError):
             return False
 
         if amount <= 0:
             return False
 
-        if data.get('type', '').upper() not in ['INCOME', 'EXPENSE']:
+        if data.get("type", "").upper() not in ("INCOME", "EXPENSE"):
             return False
 
-        if not Category.objects.filter(id=data.get('category_id', data.get('category'))).exists():
+        cid = data.get("category_id", data.get("category"))
+        if not cid or not Category.objects.filter(id=cid).exists():
             return False
 
         return True
 
     def create_transaction(self, data):
-        category = Category.objects.get(id=data.get('category_id', data.get('category')))
-        payment = data.get('payment_method', 'CASH').upper()  # تحويل لل uppercase
+        category = Category.objects.get(id=data.get("category_id", data.get("category")))
+        payment = (data.get("payment_method") or PaymentMethod.CASH).upper()
+        if payment not in _VALID_PAYMENT:
+            payment = PaymentMethod.CASH
 
-        if data['type'].upper() == 'INCOME':
+        amount = Decimal(str(data["amount"]))
+        tx_date = _parse_tx_date(data.get("date"))
+
+        if data["type"].upper() == "INCOME":
             transaction = Income(
-                amount=data['amount'],
-                description=data.get('description', ''),
+                amount=amount,
+                description=data.get("description", "") or "",
                 category=category,
-                source=data.get('source', ''),
-                payment_method=payment
+                source=data.get("source", "") or "",
+                payment_method=payment,
+                date=tx_date,
             )
         else:
             transaction = Expense(
-                amount=data['amount'],
-                description=data.get('description', ''),
+                amount=amount,
+                description=data.get("description", "") or "",
                 category=category,
-                payment_method=payment
+                payment_method=payment,
+                date=tx_date,
             )
 
-        if data.get('date'):
-            transaction.date = data['date']
         return transaction
 
     def process_transaction(self, data):
@@ -57,8 +89,7 @@ class TransactionService:
     def calculate_impact(self, transaction):
         if isinstance(transaction, Income):
             return transaction.amount
-        else:
-            return transaction.amount * -1
+        return transaction.amount * -1
 
     def get_all_transactions(self):
         return self.repository.find_all()

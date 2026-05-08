@@ -5,6 +5,7 @@ from transactions.views import list_transactions, add_transaction, transactions_
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authentication.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('api/', include('transactions.urls')),
     path('transactions/', transactions_page, name='transactions_page'),
     path("goals/", include("goals.urls")),

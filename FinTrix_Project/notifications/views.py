@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.utils.timesince import timesince
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 from budgets.models import CategoryBudget
@@ -33,6 +33,7 @@ def _annotate_time(notifications):
 #  NotificationController: checkThreshold() for all active CBs
 #  SD2 alt/else: has_notifications drives template branching
 # ─────────────────────────────────────────────
+@login_required
 def notification_center(request):
     # Re-run checkThreshold for all CategoryBudgets (keeps list fresh)
     for cb in CategoryBudget.objects.select_related("category").all():
@@ -67,6 +68,7 @@ def notification_center(request):
 #  mark_as_read
 #  NotificationController.markAsRead(notificationId)
 # ─────────────────────────────────────────────
+@login_required
 def mark_as_read(request, notification_id):
     if request.method == "POST":
         NotificationController.mark_as_read(notification_id)
@@ -77,6 +79,7 @@ def mark_as_read(request, notification_id):
 #  mark_all_as_read
 #  "Mark All as Read" button in NotificationUI
 # ─────────────────────────────────────────────
+@login_required
 def mark_all_as_read(request):
     if request.method == "POST":
         NotificationController.mark_all_as_read()
@@ -88,6 +91,7 @@ def mark_all_as_read(request):
 #  archive_notification
 #  Dismiss button on budget notifications
 # ─────────────────────────────────────────────
+@login_required
 def archive_notification(request, notification_id):
     if request.method == "POST":
         NotificationController.archive(notification_id)
@@ -99,6 +103,7 @@ def archive_notification(request, notification_id):
 #  SD2 opt [Navigate to related screen]:
 #  fetchRelatedBudget(notificationId) → navigateToBudget()
 # ─────────────────────────────────────────────
+@login_required
 def navigate_to_budget(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
 

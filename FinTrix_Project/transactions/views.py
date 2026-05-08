@@ -1,7 +1,8 @@
 import csv
 import json
 from datetime import date
-from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import InvalidPage, Paginator
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from django.shortcuts import render
@@ -9,11 +10,14 @@ from django.views.decorators.csrf import csrf_protect
 
 from .models import Category, CategoryType, Income, Expense
 
+
+@login_required
 def transactions_page(request):
     return render(request, 'transactions.html')
 
 @require_POST
 @csrf_protect
+@login_required
 def add_transaction(request):
     from .services import TransactionService
     from .repositories import TransactionRepository
@@ -32,14 +36,33 @@ def add_transaction(request):
         return JsonResponse({"error": "Bad Data"}, status=400)
 
 @require_GET
+@login_required
 def list_transactions(request):
     cat_id = request.GET.get('category_id')
     start = request.GET.get('start_date')
     end = request.GET.get('end_date')
     t_type = (request.GET.get('type') or '').lower().strip()
 
-    page = int(request.GET.get('page') or 1)
-    page_size = int(request.GET.get('page_size') or 10)
+    try:
+        page = max(1, int(request.GET.get('page') or 1))
+    except (TypeError, ValueError):
+        page = 1
+    try:
+        page_size = min(100, max(1, int(request.GET.get('page_size') or 10)))
+    except (TypeError, ValueError):
+        page_size = 10
+
+    if t_type in ('none', 'no'):
+        return JsonResponse(
+            {
+                "transactions": [],
+                "page": 1,
+                "page_size": page_size,
+                "total": 0,
+                "total_pages": 1,
+                "net_flow": 0.0,
+            }
+        )
 
     incomes = Income.objects.select_related('category').all()
     expenses = Expense.objects.select_related('category').all()
@@ -87,7 +110,10 @@ def list_transactions(request):
         }
 
     paginator = Paginator(combined, page_size)
-    page_obj = paginator.get_page(page)
+    try:
+        page_obj = paginator.page(page)
+    except InvalidPage:
+        page_obj = paginator.page(1)
 
     items = [serialize(k, o) for (k, o) in page_obj.object_list]
 
@@ -109,6 +135,7 @@ def list_transactions(request):
 
 
 @require_GET
+@login_required
 def list_categories(request):
     if not Category.objects.exists():
         defaults = [
@@ -135,6 +162,7 @@ def list_categories(request):
 
 @require_http_methods(["DELETE"])
 @csrf_protect
+@login_required
 def delete_transaction(request, tx_type, tx_id):
     tx_type = (tx_type or "").lower().strip()
     if tx_type == "income":
@@ -151,6 +179,7 @@ def delete_transaction(request, tx_type, tx_id):
 
 
 @require_GET
+@login_required
 def export_transactions_csv(request):
     cat_id = request.GET.get('category_id')
     start = request.GET.get('start_date')

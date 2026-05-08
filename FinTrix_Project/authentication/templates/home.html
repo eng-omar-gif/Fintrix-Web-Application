@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinTrix - Intuitive Wealth Management</title>
     <link rel="stylesheet" href="{% static 'css/style-home.css' %}">
-    <script src="{% static 'js/script-home.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'css/theme-global.css' %}">
+    <script>
+      (function(){try{var t=localStorage.getItem('fintrix-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+    </script>
+    <script src="{% static 'js/theme.js' %}" defer></script>
 </head>
 <body>
     <nav>
@@ -17,12 +21,14 @@
             </div>
             <div class="nav-links">
                 {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
                     <span class="nav-link">{{ user.name }}</span>
                     <a href="{% url 'logout' %}" class="nav-link">Log out</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="nav-link">Login</a>
                     <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
                 {% endif %}
+                {% include "includes/fintrix_theme_toggle.html" %}
             </div>
         </div>
     </nav>
@@ -180,5 +186,6 @@
             </div>
         </div>
     </footer>
+    <script src="{% static 'js/script-home.js' %}"></script>
 </body>
 </html>

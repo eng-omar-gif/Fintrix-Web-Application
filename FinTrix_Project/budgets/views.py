@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from datetime import date, datetime
 from calendar import monthrange
@@ -8,6 +9,7 @@ from .models import Budget, Category, CategoryBudget, Expense
 
 
 # ── Budget Dashboard ──────────────────────────────────────────────────────────
+@login_required
 def budget_dashboard(request):
     budgets = Budget.objects.all().order_by("-year", "-month")
 
@@ -25,6 +27,7 @@ def budget_dashboard(request):
 
 
 # ── Create Budget (SD1) ───────────────────────────────────────────────────────
+@login_required
 def create_budget(request):
     if request.method == "POST":
         month_str     = request.POST.get("month")
@@ -65,12 +68,14 @@ def create_budget(request):
 
 
 # ── Budget List ───────────────────────────────────────────────────────────────
+@login_required
 def budget_list(request):
     budgets = Budget.objects.all().order_by("-year", "-month")
     return render(request, "Budget.html", {"budgets": budgets})
 
 
 # ── Budget Detail ─────────────────────────────────────────────────────────────
+@login_required
 def budget_detail(request, budget_id):
     budget           = get_object_or_404(Budget, id=budget_id)
     category_budgets = budget.category_budgets.select_related("category")
@@ -118,6 +123,7 @@ def budget_detail(request, budget_id):
 
 
 # ── Add Category Limit ────────────────────────────────────────────────────────
+@login_required
 def add_category_limit(request, budget_id):
     budget = get_object_or_404(Budget, id=budget_id)
 
@@ -149,6 +155,7 @@ def add_category_limit(request, budget_id):
 
 
 # ── Add Expense ───────────────────────────────────────────────────────────────
+@login_required
 def add_expense(request, budget_id):
     budget = get_object_or_404(Budget, id=budget_id)
 
@@ -192,6 +199,7 @@ def add_expense(request, budget_id):
     })
 
 # ── Edit Category Limit ───────────────────────────────────────────────────────
+@login_required
 def edit_category_limit(request, budget_id, cb_id):
     cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
 
@@ -215,6 +223,7 @@ def edit_category_limit(request, budget_id, cb_id):
 
 
 # ── Delete Category ───────────────────────────────────────────────────────────
+@login_required
 def delete_category(request, budget_id, cb_id):
     cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
 

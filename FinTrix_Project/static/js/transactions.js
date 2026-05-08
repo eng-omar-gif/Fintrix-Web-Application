@@ -23,6 +23,26 @@ function parseUsDate(value) {
     return iso;
 }
 
+function parseAnyDate(value) {
+    if (!value) return null;
+    const v = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+    return parseUsDate(v);
+}
+
+function formatDisplayDate(iso) {
+    if (!iso) return '';
+    const day = iso.split('T')[0];
+    const parts = day.split('-');
+    if (parts.length !== 3) return iso;
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    const d = parseInt(parts[2], 10);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return iso;
+    const dt = new Date(y, m - 1, d);
+    return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 function setTransactionType(type) {
     document.getElementById('transactionType').value = type;
     document.getElementById('incomeBtn').classList.toggle('active', type === 'income');
@@ -42,7 +62,7 @@ function collectInput() {
         type: formType,
         amount: document.getElementById('amount').value,
         category_id: document.getElementById('category').value,
-        date: parseUsDate(document.getElementById('date').value) || document.getElementById('date').value,
+        date: parseAnyDate(document.getElementById('date').value) || '',
         description: document.getElementById('description').value,
         payment_method: document.getElementById('payment-method').value,
         source: document.getElementById('income-source').value
@@ -130,7 +150,7 @@ function displayTransactions(payload) {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${t.date || ''}</td>
+            <td>${formatDisplayDate(t.date)}</td>
             <td>${t.description || '-'}</td>
             <td>${badgeForCategory(t.category)}</td>
             <td>${methodLabel(t.payment_method)}</td>
@@ -138,7 +158,9 @@ function displayTransactions(payload) {
                 ${isIncome ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
             </td>
             <td>
-                <button class="action-btn delete" data-id="${t.id}" data-type="${isIncome ? 'income' : 'expense'}">🗑️</button>
+                <button class="action-btn delete" data-id="${t.id}" data-type="${isIncome ? 'income' : 'expense'}"><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.5 15C2.04167 15 1.64931 14.8368 1.32292 14.5104C0.996528 14.184 0.833333 13.7917 0.833333 13.3333V2.5H0V0.833333H4.16667V0H9.16667V0.833333H13.3333V2.5H12.5V13.3333C12.5 13.7917 12.3368 14.184 12.0104 14.5104C11.684 14.8368 11.2917 15 10.8333 15H2.5V15M10.8333 2.5H2.5V13.3333V13.3333V13.3333H10.8333V13.3333V13.3333V2.5V2.5M4.16667 11.6667H5.83333V4.16667H4.16667V11.6667V11.6667M7.5 11.6667H9.16667V4.16667H7.5V11.6667V11.6667M2.5 2.5V2.5V13.3333V13.3333V13.3333V13.3333V13.3333V13.3333V2.5V2.5" fill="#94A3B8"/>
+</svg></button>
             </td>
         `;
         row.querySelector('.delete').addEventListener('click', function () {
@@ -183,7 +205,8 @@ async function loadTransactions(filters = {}) {
 
 function applyFiltersFromUI() {
     const cat = document.getElementById('filter-category').value;
-    const dateIso = parseUsDate(document.getElementById('filter-from').value);
+    const startIso = parseAnyDate(document.getElementById('filter-from').value);
+    const endIso = parseAnyDate(document.getElementById('filter-to').value) || startIso;
 
     const income = document.getElementById('filter-income').checked;
     const expense = document.getElementById('filter-expense').checked;
@@ -195,8 +218,8 @@ function applyFiltersFromUI() {
 
     const filters = {
         category_id: cat,
-        start_date: dateIso || '',
-        end_date: dateIso || '',
+        start_date: startIso || '',
+        end_date: startIso ? (endIso || startIso) : '',
         type
     };
     currentPage = 1;
@@ -206,6 +229,8 @@ function applyFiltersFromUI() {
 function resetFilters() {
     document.getElementById('filter-category').value = 'all';
     document.getElementById('filter-from').value = '';
+    const toEl = document.getElementById('filter-to');
+    if (toEl) toEl.value = '';
     document.getElementById('filter-income').checked = true;
     document.getElementById('filter-expense').checked = true;
     currentPage = 1;
@@ -315,6 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reset-filters').addEventListener('click', resetFilters);
     document.getElementById('filter-category').addEventListener('change', applyFiltersFromUI);
     document.getElementById('filter-from').addEventListener('change', applyFiltersFromUI);
+    const filterTo = document.getElementById('filter-to');
+    if (filterTo) filterTo.addEventListener('change', applyFiltersFromUI);
     document.getElementById('filter-income').addEventListener('change', applyFiltersFromUI);
     document.getElementById('filter-expense').addEventListener('change', applyFiltersFromUI);
 

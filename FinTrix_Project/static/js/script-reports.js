@@ -1,367 +1,343 @@
-// ===============================
-// Reports Page JS (script-reports.js)
-// ===============================
+(function () {
+  var state = { start: null, end: null };
 
-
-// ===============================
-// Dark Mode Toggle
-// ===============================
-let darkMode = false;
-
-function toggleDarkMode() {
-  darkMode = !darkMode;
-
-  if (darkMode) {
-    document.body.style.background = "#121826";
-    document.body.style.color = "white";
-  } else {
-    document.body.style.background = "#f5f7fb";
-    document.body.style.color = "#111";
-  }
-}
-
-
-// ===============================
-// Sidebar Toggle (Mobile)
-// ===============================
-function toggleSidebar() {
-  const sidebar = document.getElementById("sidebar");
-  sidebar.classList.toggle("open");
-}
-
-
-// ===============================
-// Export Button
-// ===============================
-function exportReport() {
-  alert("Export Report will be connected later!");
-}
-
-
-// ===============================
-// Render Transactions Table
-// ===============================
-function renderTransactionsFromAPI(transactions) {
-  const tbody = document.getElementById("transactionsTableBody");
-  tbody.innerHTML = "";
-
-  if (!transactions || transactions.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align:center; padding:20px; color:#64748b;">
-          No transactions found in this period
-        </td>
-      </tr>
-    `;
-    return;
+  function el(id) {
+    return document.getElementById(id);
   }
 
-  transactions.forEach((tx) => {
-    const isIncome = tx.amount > 0;
-
-    tbody.innerHTML += `
-      <tr>
-        <td class="entity-name">${tx.entity || "N/A"}</td>
-        <td class="category-badge">${tx.category || "N/A"}</td>
-        <td class="transaction-date">${tx.date || "N/A"}</td>
-        <td class="amount ${isIncome ? "positive" : "negative"}">
-          ${isIncome ? "+" : "-"}$${Math.abs(Number(tx.amount)).toFixed(2)}
-        </td>
-        <td>
-          <span class="status-badge ${tx.status}">
-            ${tx.status.toUpperCase()}
-          </span>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-
-// ===============================
-// Draw Income vs Expenses Chart
-// ===============================
-function drawIncomeExpensesChartFromAPI(weeklyChart) {
-  const canvas = document.getElementById("incomeExpensesChart");
-  const ctx = canvas.getContext("2d");
-
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-
-  const width = canvas.width;
-  const height = canvas.height;
-  const padding = 40;
-
-  ctx.clearRect(0, 0, width, height);
-
-  if (!weeklyChart || weeklyChart.length === 0) {
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "16px Arial";
-    ctx.fillText("No chart data", width / 2 - 50, height / 2);
-    return;
+  function fmtMoney(n) {
+    var x = Number(n) || 0;
+    return x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  const chartHeight = height - padding * 2;
-  const chartWidth = width - padding * 2;
-
-  const maxValue = Math.max(
-    ...weeklyChart.map((x) => x.income),
-    ...weeklyChart.map((x) => x.expense),
-    1
-  );
-
-  // Grid Lines
-  ctx.strokeStyle = "#e5e7eb";
-  ctx.lineWidth = 1;
-
-  for (let i = 0; i < 5; i++) {
-    const y = padding + (chartHeight / 5) * i;
-
-    ctx.save();
-    ctx.translate(x, height - padding);
-    ctx.rotate(-Math.PI / 4);
-    ctx.fillText(label, x, 0);
-    ctx.restore();
+  function todayISO() {
+    return new Date().toISOString().split("T")[0];
   }
 
-  // Bars
-  const barWidth = chartWidth / (weeklyChart.length * 2.5);
-  const gap = barWidth * 0.5;
-
-  weeklyChart.forEach((item, index) => {
-    const x = padding + (barWidth * 2 + gap) * index;
-
-    // Income
-    const incomeHeight = (item.income / maxValue) * chartHeight;
-
-    ctx.fillStyle = "#0047AB";
-    ctx.fillRect(
-      x,
-      height - padding - incomeHeight,
-      barWidth,
-      incomeHeight
-    );
-
-    // Expense
-    const expenseHeight = (item.expense / maxValue) * chartHeight;
-
-    ctx.fillStyle = "#f59e0b";
-    ctx.fillRect(
-      x + barWidth + gap / 2,
-      height - padding - expenseHeight,
-      barWidth,
-      expenseHeight
-    );
-
-    // Label
-    ctx.fillStyle = "#64748b";
-    ctx.font = "11px Arial";
-    ctx.fillText(item.label, x, height - padding + 15);
-  });
-}
-
-
-// ===============================
-// Expense Allocation Donut
-// ===============================
-function updateExpenseAllocation(expenseAllocation) {
-  const donutAmount = document.querySelector(".donut-amount");
-  const legendDiv = document.querySelector(".expense-legend");
-
-  const circles = document.querySelectorAll(".donut-svg circle");
-
-  if (!expenseAllocation || expenseAllocation.length === 0) {
-    donutAmount.innerText = "$0";
-
-    legendDiv.innerHTML = `
-      <p style="color:#64748b;">
-        No expense allocation
-      </p>
-    `;
-
-    circles.forEach(c => {
-      c.style.strokeDasharray = `0 1000`;
-      c.style.strokeDashoffset = 0;
-    });
-
-    return;
+  function setPeriodLabel() {
+    var s = el("startDate").value;
+    var e = el("endDate").value;
+    var cp = document.getElementById("currentPeriod");
+    if (!cp || !s || !e) return;
+    var d0 = new Date(s + "T12:00:00");
+    var d1 = new Date(e + "T12:00:00");
+    cp.textContent =
+      d0.toLocaleString(undefined, { month: "long", day: "numeric", year: "numeric" }) +
+      " – " +
+      d1.toLocaleString(undefined, { month: "long", day: "numeric", year: "numeric" });
   }
 
-  const totalSpent = expenseAllocation.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-
-  donutAmount.innerText = `$${totalSpent.toFixed(2)}`;
-
-  legendDiv.innerHTML = "";
-
-  const colors = [
-    "#8B4513",
-    "#CD853F",
-    "#DEB887",
-    "#A0522D",
-    "#D2B48C"
-  ];
-
-  const radius = 80;
-  const circumference = 2 * Math.PI * radius;
-
-  let offset = 0;
-
-  expenseAllocation.slice(0, circles.length).forEach((item, index) => {
-
-    const percent = totalSpent === 0
-      ? 0
-      : item.amount / totalSpent;
-
-    const dash = percent * circumference;
-
-    circles[index].setAttribute(
-      "stroke",
-      colors[index % colors.length]
-    );
-
-    circles[index].style.strokeDasharray =
-      `${dash} ${circumference}`;
-
-    circles[index].style.strokeDashoffset = -offset;
-
-    offset += dash;
-
-    legendDiv.innerHTML += `
-      <div class="expense-item">
-        <div class="expense-name">
-          <span class="expense-dot"
-            style="background:${colors[index % colors.length]};">
-          </span>
-
-          <span>${item.category}</span>
-        </div>
-
-        <span class="expense-percentage">
-          ${(percent * 100).toFixed(0)}%
-        </span>
-      </div>
-    `;
-  });
-
-  for (let i = expenseAllocation.length; i < circles.length; i++) {
-    circles[i].style.strokeDasharray = `0 ${circumference}`;
-    circles[i].style.strokeDashoffset = 0;
+  function chartColors() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    return {
+      grid: dark ? "#334155" : "#e5e7eb",
+      income: "#1e40af",
+      expense: "#f59e0b",
+      label: dark ? "#94a3b8" : "#64748b",
+    };
   }
-}
 
+  function drawIncomeExpensesChart(weeklyChart) {
+    var canvas = el("incomeExpensesChart");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var width = rect.width;
+    var height = rect.height;
+    var padding = 36;
+    ctx.clearRect(0, 0, width, height);
+    var c = chartColors();
 
-// ===============================
-// Fetch Data From Backend
-// ===============================
-async function loadReportData(startDate, endDate) {
-
-  try {
-
-    const response = await fetch(
-      `/reports/api/summary/?start_date=${startDate}&end_date=${endDate}`
-    );
-
-    const data = await response.json();
-
-    if (data.error) {
-      console.error(data.error);
+    if (!weeklyChart || !weeklyChart.length) {
+      ctx.fillStyle = c.label;
+      ctx.font = "14px system-ui,sans-serif";
+      ctx.fillText("No data for this range", padding, height / 2);
       return;
     }
 
-    renderTransactionsFromAPI(data.largest_transactions);
+    var chartHeight = height - padding * 2;
+    var chartWidth = width - padding * 2;
+    var maxValue = 1;
+    weeklyChart.forEach(function (x) {
+      maxValue = Math.max(maxValue, x.income, x.expense);
+    });
 
-    drawIncomeExpensesChartFromAPI(data.weekly_chart);
+    ctx.strokeStyle = c.grid;
+    for (var i = 0; i <= 4; i++) {
+      var y = padding + (chartHeight / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(width - 8, y);
+      ctx.stroke();
+    }
 
-    updateExpenseAllocation(data.expense_allocation);
+    var n = weeklyChart.length;
+    var groupW = chartWidth / Math.max(1, n);
+    var barW = Math.min(24, groupW * 0.28);
+    var gap = groupW * 0.12;
 
-  } catch (error) {
+    weeklyChart.forEach(function (item, index) {
+      var gx = padding + index * groupW + gap;
+      var incH = (item.income / maxValue) * chartHeight;
+      var expH = (item.expense / maxValue) * chartHeight;
+      ctx.fillStyle = c.income;
+      ctx.fillRect(gx, height - padding - incH, barW, incH);
+      ctx.fillStyle = c.expense;
+      ctx.fillRect(gx + barW + 4, height - padding - expH, barW, expH);
 
-    console.error("Error loading report data:", error);
-  }
-}
-
-
-// ===============================
-// Filter Tabs
-// ===============================
-function setTimeFilter(event, filter) {
-
-  document
-    .querySelectorAll(".filter-tab")
-    .forEach(tab => tab.classList.remove("active"));
-
-  event.target.classList.add("active");
-
-  const today = new Date();
-
-  let startDate = new Date();
-
-  let endDate = today;
-
-  if (filter === "20days") {
-
-    startDate.setDate(today.getDate() - 20);
-
-  } else if (filter === "quarterly") {
-
-    startDate.setMonth(today.getMonth() - 3);
-
-  } else if (filter === "yearly") {
-
-    startDate.setFullYear(today.getFullYear() - 1);
+      ctx.fillStyle = c.label;
+      ctx.font = "10px system-ui,sans-serif";
+      ctx.textAlign = "center";
+      var short = item.label.split("–")[0].trim().split(" ")[0];
+      ctx.fillText(short, gx + barW, height - 10);
+    });
   }
 
-  const formatDate = (d) =>
-    d.toISOString().split("T")[0];
+  var DONUT_COLORS = ["#8B4513", "#CD853F", "#DEB887", "#A0522D", "#0ea5e9", "#6366f1"];
 
-  loadReportData(
-    formatDate(startDate),
-    formatDate(endDate)
-  );
-}
+  function renderDonut(expenseAllocation) {
+    var svg = el("allocationDonut");
+    var legend = el("allocationLegend");
+    var totalEl = el("donutTotal");
+    if (!svg || !legend || !totalEl) return;
 
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    legend.innerHTML = "";
 
-// ===============================
-// Apply Custom Date
-// ===============================
-function applyCustomDate() {
+    if (!expenseAllocation || !expenseAllocation.length) {
+      totalEl.textContent = "$0.00";
+      legend.innerHTML = '<p class="empty-copy">No expenses in range.</p>';
+      return;
+    }
 
-  const start =
-    document.getElementById("startDate").value;
+    var total = expenseAllocation.reduce(function (s, x) {
+      return s + x.amount;
+    }, 0);
+    totalEl.textContent = "$" + fmtMoney(total);
 
-  const end =
-    document.getElementById("endDate").value;
+    var cx = 100,
+      cy = 100,
+      r = 72,
+      stroke = 26;
+    var circum = 2 * Math.PI * r;
+    var offset = 0;
+    expenseAllocation.slice(0, 6).forEach(function (item, i) {
+      var frac = total > 0 ? item.amount / total : 0;
+      var dash = frac * circum;
+      var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", cx);
+      circle.setAttribute("cy", cy);
+      circle.setAttribute("r", r);
+      circle.setAttribute("fill", "none");
+      circle.setAttribute("stroke", DONUT_COLORS[i % DONUT_COLORS.length]);
+      circle.setAttribute("stroke-width", stroke);
+      circle.setAttribute("stroke-dasharray", dash + " " + circum);
+      circle.setAttribute("stroke-dashoffset", -offset);
+      circle.setAttribute("transform", "rotate(-90 " + cx + " " + cy + ")");
+      svg.appendChild(circle);
+      offset += dash;
 
-  if (!start || !end) {
-
-    alert("Please select both start and end date");
-
-    return;
+      var row = document.createElement("div");
+      row.className = "expense-item";
+      row.innerHTML =
+        '<div class="expense-name"><span class="expense-dot" style="background:' +
+        DONUT_COLORS[i % DONUT_COLORS.length] +
+        '"></span><span>' +
+        item.category +
+        '</span></div><span class="expense-percentage">' +
+        (total > 0 ? ((item.amount / total) * 100).toFixed(0) : "0") +
+        "%</span>";
+      legend.appendChild(row);
+    });
   }
 
-  loadReportData(start, end);
-}
+  function renderTable(transactions) {
+    var tbody = el("transactionsTableBody");
+    var empty = el("reportEmpty");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    if (!transactions || !transactions.length) {
+      if (empty) empty.hidden = false;
+      return;
+    }
+    if (empty) empty.hidden = true;
 
+    transactions.forEach(function (tx) {
+      var tr = document.createElement("tr");
+      var pos = tx.amount > 0;
+      tr.innerHTML =
+        '<td class="entity-name">' +
+        (tx.entity || "—") +
+        '</td><td>' +
+        (tx.category || "—") +
+        '</td><td class="transaction-date">' +
+        (tx.date || "—") +
+        '</td><td class="amount ' +
+        (pos ? "positive" : "negative") +
+        '">' +
+        (pos ? "+" : "") +
+        "$" +
+        fmtMoney(Math.abs(tx.amount)) +
+        '</td><td><span class="status-badge ' +
+        (tx.status || "cleared") +
+        '">' +
+        String(tx.status || "cleared").toUpperCase() +
+        "</span></td>";
+      tbody.appendChild(tr);
+    });
+  }
 
-// ===============================
-// Page Load
-// ===============================
-window.onload = function () {
+  function exportQuery() {
+    var params = new URLSearchParams();
+    params.set("start_date", el("startDate").value);
+    params.set("end_date", el("endDate").value);
+    var cat = el("exportCategory").value;
+    if (cat) params.set("category_id", cat);
+    return params.toString();
+  }
 
-  const today = new Date();
+  function doExport(kind) {
+    var q = exportQuery();
+    if (kind === "print") {
+      window.print();
+      return;
+    }
+    var path = "/reports/export/csv/";
+    if (kind === "pdf") path = "/reports/export/pdf/";
+    if (kind === "excel") path = "/reports/export/excel/";
+    window.location.href = path + "?" + q;
+  }
 
-  const startDate = new Date();
+  async function loadCategoriesSelect() {
+    var sel = el("exportCategory");
+    if (!sel) return;
+    try {
+      var res = await fetch("/api/categories/");
+      var data = await res.json();
+      var cats = data.categories || [];
+      cats.forEach(function (c) {
+        var o = document.createElement("option");
+        o.value = c.id;
+        o.textContent = c.name;
+        sel.appendChild(o);
+      });
+    } catch (e) {}
+  }
 
-  startDate.setFullYear(today.getFullYear() - 1);
+  async function loadReportData() {
+    var start = el("startDate").value;
+    var end = el("endDate").value;
+    if (!start || !end) return;
+    setPeriodLabel();
+    var cat = el("exportCategory").value;
+    var url =
+      "/reports/api/summary/?start_date=" +
+      encodeURIComponent(start) +
+      "&end_date=" +
+      encodeURIComponent(end) +
+      (cat ? "&category_id=" + encodeURIComponent(cat) : "");
+    try {
+      var res = await fetch(url);
+      var data = await res.json();
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+      var sl = el("summaryLine");
+      if (sl)
+        sl.textContent =
+          "Income $" +
+          fmtMoney(data.total_income) +
+          " · Expenses $" +
+          fmtMoney(data.total_expense) +
+          " · Net $" +
+          fmtMoney(data.net);
+      renderTable(data.largest_transactions);
+      window.__reportWeekly = data.weekly_chart;
+      window.__reportAllocation = data.expense_allocation;
+      drawIncomeExpensesChart(data.weekly_chart);
+      renderDonut(data.expense_allocation);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-  const formatDate = (d) =>
-    d.toISOString().split("T")[0];
+  function applyPreset(preset) {
+    var end = new Date();
+    var start = new Date();
+    if (preset === "30d") start.setDate(end.getDate() - 29);
+    else if (preset === "quarterly") start.setMonth(end.getMonth() - 3);
+    else start.setFullYear(end.getFullYear() - 1);
+    el("startDate").value = start.toISOString().split("T")[0];
+    el("endDate").value = end.toISOString().split("T")[0];
+    loadReportData();
+  }
 
-  loadReportData(
-    formatDate(startDate),
-    formatDate(today)
-  );
-};
+  function toggleSidebar() {
+    var s = document.getElementById("sidebar");
+    if (s) s.classList.toggle("open");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    el("endDate").value = todayISO();
+    var s = new Date();
+    s.setDate(s.getDate() - 29);
+    el("startDate").value = s.toISOString().split("T")[0];
+    setPeriodLabel();
+    loadCategoriesSelect().then(loadReportData);
+
+    document.querySelectorAll(".filter-tab").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        document.querySelectorAll(".filter-tab").forEach(function (t) {
+          t.classList.remove("active");
+        });
+        tab.classList.add("active");
+        applyPreset(tab.getAttribute("data-preset"));
+      });
+    });
+
+    el("applyRangeBtn").addEventListener("click", function () {
+      document.querySelectorAll(".filter-tab").forEach(function (t) {
+        t.classList.remove("active");
+      });
+      loadReportData();
+    });
+
+    el("exportCategory").addEventListener("change", loadReportData);
+
+    var menuBtn = el("exportMenuBtn");
+    var menu = el("exportMenu");
+    if (menuBtn && menu) {
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var willShow = menu.hidden;
+        menu.hidden = !willShow;
+        menuBtn.setAttribute("aria-expanded", willShow ? "true" : "false");
+      });
+      document.addEventListener("click", function (e) {
+        if (!menu.contains(e.target) && e.target !== menuBtn) menu.hidden = true;
+      });
+      menu.querySelectorAll("[data-export]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          doExport(b.getAttribute("data-export"));
+          menu.hidden = true;
+        });
+      });
+    }
+
+    var mt = el("menuToggle");
+    if (mt) mt.addEventListener("click", toggleSidebar);
+
+    window.addEventListener("resize", function () {
+      if (window.__reportWeekly) drawIncomeExpensesChart(window.__reportWeekly);
+    });
+  });
+
+  document.addEventListener("FinTrixThemeChanged", function () {
+    if (window.__reportWeekly) drawIncomeExpensesChart(window.__reportWeekly);
+  });
+})();

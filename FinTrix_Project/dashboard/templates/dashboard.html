@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} – FinTrix</title>
+  <script>
+    (function(){try{var t=localStorage.getItem('fintrix-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style-dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme-global.css' %}">
+  {{ chart_data|json_script:"dashboard-chart-data" }}
+</head>
+<body>
+  
+  {% include "includes/fintrix_sidebar.html" %}
+  
+  <main class="main-content">
+    <header class="top-header">
+      
+      <div class="header-actions">
+        <a href="{% url 'notification_center' %}" class="header-icon" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20ZM4 15H12V8C12 6.9 11.6083 5.95833 10.825 5.175C10.0417 4.39167 9.1 4 8 4C6.9 4 5.95833 4.39167 5.175 5.175C4.39167 5.95833 4 6.9 4 8V15Z" fill="currentColor"/></svg>
+          <span class="notification-badge" aria-hidden="true"></span>
+        </a>
+        {% include "includes/fintrix_theme_toggle.html" %}
+      </div>
+    </header>
+
+    <div class="page-content">
+      <header class="page-header">
+        <h1>{{ page_title }}</h1>
+        <p>Welcome back, {{ user.name|default:user.email }}. {% if snap.savings_on_track %}Your cash flow is holding steady this cycle.{% else %}Review spending to bring this month back on track.{% endif %}</p>
+      </header>
+
+      <section class="stats-grid" aria-label="Summary metrics">
+        <article class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Total balance</span>
+            <span class="stat-change {% if snap.balance_trend_pct >= 0 %}positive{% else %}negative{% endif %}">
+              {% if snap.balance_trend_pct >= 0 %}+{% endif %}{{ snap.balance_trend_pct|floatformat:1 }}%
+            </span>
+          </div>
+          <p class="stat-value">${{ snap.total_balance|floatformat:2 }}</p>
+          <p class="stat-subtitle">Across {{ snap.connected_accounts }} connected accounts</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Monthly income</span>
+            <span class="stat-change {% if snap.income_trend_pct >= 0 %}positive{% else %}negative{% endif %}">
+              {% if snap.income_trend_pct >= 0 %}+{% endif %}{{ snap.income_trend_pct|floatformat:1 }}%
+            </span>
+          </div>
+          <p class="stat-value">${{ snap.monthly_income|floatformat:2 }}</p>
+          <p class="stat-subtitle">Expected: ${{ snap.expected_income|floatformat:2 }}</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Monthly expense</span>
+            <span class="stat-change {% if snap.expense_trend_pct <= 0 %}positive{% else %}negative{% endif %}">
+              {% if snap.expense_trend_pct >= 0 %}+{% endif %}{{ snap.expense_trend_pct|floatformat:1 }}%
+            </span>
+          </div>
+          <p class="stat-value">${{ snap.monthly_expense|floatformat:2 }}</p>
+          <p class="stat-subtitle">{{ snap.days_in_cycle }} days remaining in cycle</p>
+        </article>
+
+        <article class="stat-card primary">
+          <div class="stat-header">
+            <span class="stat-label">Remaining budget</span>
+            <span class="status-badge">{% if snap.savings_on_track %}On track{% else %}Review{% endif %}</span>
+          </div>
+          <p class="stat-value">${{ snap.remaining_budget|floatformat:2 }}</p>
+          {% if snap.has_budget_period %}
+            <div class="stat-progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="{{ snap.budget_utilization_pct|stringformat:'d' }}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-fill" style="width: {{ snap.budget_utilization_pct|floatformat:0 }}%;"></div>
+              </div>
+              <p class="progress-text">{{ snap.budget_utilization_pct|floatformat:0 }}% of limits used</p>
+            </div>
+          {% else %}
+            <p class="stat-subtitle">No budget for this month — figure shows income minus expenses.</p>
+          {% endif %}
+        </article>
+      </section>
+
+      <div class="content-grid">
+        <section class="card">
+          <div class="card-header">
+            <h3>Monthly overview</h3>
+            <div class="filter-tabs" role="group" aria-label="Chart range">
+              <button type="button" class="filter-tab" id="chart-range-6" data-months="6">6 months</button>
+              <button type="button" class="filter-tab active" id="chart-range-12" data-months="12">12 months</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="monthlyChart" class="chart-canvas" width="800" height="280" aria-label="Income and expense trend"></canvas>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Expenses by category</h3>
+          </div>
+          <div class="donut-chart-container">
+            <div class="donut-chart">
+              <svg class="donut-svg" viewBox="0 0 200 200" id="category-donut" aria-hidden="true"></svg>
+              <div class="donut-center">
+                <div class="donut-label">This month</div>
+                <div class="donut-amount" id="donut-total">${{ snap.category_expense_total|floatformat:2 }}</div>
+              </div>
+            </div>
+            <div class="category-list" id="category-legend">
+              {% if snap.category_expenses %}
+                {% for c in snap.category_expenses %}
+                  <div class="category-item">
+                    <span class="category-name"><span class="category-dot" style="background:#3b82f6;"></span>{{ c.name }}</span>
+                    <span class="category-amount">${{ c.amount|floatformat:2 }}</span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="stat-subtitle">No expense activity this month yet.</p>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="bottom-grid">
+        <section class="card">
+          <div class="card-header">
+            <h3>Recent transactions</h3>
+            <a class="view-all-link" href="{% url 'transactions_page' %}">View all</a>
+          </div>
+          <div class="transactions-table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th scope="col">Transaction</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in snap.recent_transactions %}
+                  <tr>
+                    <td class="transaction-name">{{ t.description }}</td>
+                    <td>
+                      {% if t.category_type == 'INCOME' %}
+                        <span class="transaction-category category-income">{{ t.category }}</span>
+                      {% else %}
+                        <span class="transaction-category category-dining">{{ t.category }}</span>
+                      {% endif %}
+                    </td>
+                    <td class="transaction-date">{{ t.date_display }}</td>
+                    <td class="transaction-amount {% if t.amount >= 0 %}amount-positive{% else %}amount-negative{% endif %}">
+                      {% if t.amount > 0 %}+{% endif %}${{ t.amount|floatformat:2 }}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="stat-subtitle" style="text-align:center;padding:1.5rem;">No transactions yet. <a href="{% url 'transactions_page' %}">Add one</a>.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Budget limits</h3>
+            <span class="info-icon" title="Based on the budget period for this calendar month">ⓘ</span>
+          </div>
+          {% if snap.budget_items %}
+            {% for b in snap.budget_items %}
+              <div class="budget-item">
+                <div class="budget-header">
+                  <span class="budget-name">{{ b.name }}</span>
+                  <span class="budget-amounts">${{ b.spent|floatformat:2 }} / ${{ b.limit|floatformat:2 }}</span>
+                </div>
+                <div class="budget-bar">
+                  <div class="budget-fill {% if b.pct >= 90 %}warning{% elif b.pct >= 52 %}caution{% else %}good{% endif %}" style="width: {{ b.pct|floatformat:0 }}%;"></div>
+                </div>
+                <p class="budget-status">{{ b.pct|floatformat:0 }}% used — {% if b.pct >= 90 %}Careful{% elif b.pct >= 52 %}On track{% else %}Healthy{% endif %}</p>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="stat-subtitle">No category limits for this month. <a href="{% url 'budget_dashboard' %}">Open budgets</a>.</p>
+          {% endif %}
+          <a class="manage-budgets-btn" href="{% url 'budget_dashboard' %}">Manage all budgets</a>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+
+  <style>
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  </style>
+  <script src="{% static 'js/theme.js' %}"></script>
+  <script src="{% static 'js/script-dashboard.js' %}"></script>
+</body>
+</html>

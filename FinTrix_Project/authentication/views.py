@@ -58,7 +58,7 @@ def register_api(request):
     return JsonResponse({
         'success': True,
         'message': 'Account created successfully.',
-        'redirect': '/',
+        'redirect': '/dashboard/',
     })
 
 
@@ -87,7 +87,7 @@ def login_api(request):
     return JsonResponse({
         'success': True,
         'message': 'Signed in successfully.',
-        'redirect': '/',
+        'redirect': '/dashboard/',
     })
 
 

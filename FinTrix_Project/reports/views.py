@@ -1,93 +1,210 @@
-from datetime import datetime, timedelta
-from django.http import JsonResponse
+import csv
+import io
+from datetime import datetime
+
+from django.contrib.auth.decorators import login_required
+from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.db.models import Sum
-from transactions.models import Income, Expense, Category
- 
- 
+from django.views.decorators.http import require_GET
+
+from .services import build_report_payload
+
+
+def _parse_dates(request):
+    start = request.GET.get("start_date")
+    end = request.GET.get("end_date")
+    if not start or not end:
+        return None, None, JsonResponse({"error": "start_date and end_date are required"}, status=400)
+    try:
+        start_d = datetime.strptime(start, "%Y-%m-%d").date()
+        end_d = datetime.strptime(end, "%Y-%m-%d").date()
+    except ValueError:
+        return None, None, JsonResponse({"error": "Invalid date format; use YYYY-MM-DD"}, status=400)
+    if end_d < start_d:
+        return None, None, JsonResponse({"error": "end_date must be on or after start_date"}, status=400)
+    return start_d, end_d, None
+
+
+def _category_id(request):
+    raw = request.GET.get("category_id")
+    if not raw:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        return None
+
+
+@login_required
 def reports_page(request):
     return render(request, "reports.html")
- 
- 
+
+
+@login_required
+@require_GET
 def report_summary_api(request):
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
- 
-    if not start_date or not end_date:
-        return JsonResponse({"error": "start_date and end_date are required"}, status=400)
- 
-    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
- 
-    incomes = Income.objects.filter(date__range=[start_date, end_date]).select_related("category")
-    expenses = Expense.objects.filter(date__range=[start_date, end_date]).select_related("category")
- 
-    total_income = incomes.aggregate(total=Sum("amount"))["total"] or 0
-    total_expense = expenses.aggregate(total=Sum("amount"))["total"] or 0
- 
-    # ---------- Weekly Chart Data ----------
-    weekly_data = []
-    current = start_date
- 
-    while current <= end_date:
-        week_end = min(current + timedelta(days=6), end_date)
- 
-        week_income = incomes.filter(date__range=[current, week_end]).aggregate(total=Sum("amount"))["total"] or 0
-        week_expense = expenses.filter(date__range=[current, week_end]).aggregate(total=Sum("amount"))["total"] or 0
- 
-        weekly_data.append({
-            "label": f"{current.strftime('%b %d')} - {week_end.strftime('%b %d')}",
-            "income": float(week_income),
-            "expense": float(week_expense)
-        })
- 
-        current = week_end + timedelta(days=1)
- 
-    # ---------- Expense Allocation ----------
-    expense_allocation = []
-    categories = Category.objects.filter(type="EXPENSE")
- 
-    for cat in categories:
-        cat_total = expenses.filter(category=cat).aggregate(total=Sum("amount"))["total"] or 0
-        if cat_total > 0:
-            expense_allocation.append({
-                "category": cat.name,
-                "amount": float(cat_total)
-            })
- 
-    expense_allocation.sort(key=lambda x: x["amount"], reverse=True)
- 
-    # ---------- Largest Transactions ----------
-    largest_expenses = expenses.order_by("-amount")[:5]
-    largest_incomes = incomes.order_by("-amount")[:5]
- 
-    largest_transactions = []
- 
-    for e in largest_expenses:
-        largest_transactions.append({
-            "entity": e.description,
-            "category": e.category.name,
-            "date": e.date.strftime("%b %d, %Y"),
-            "amount": float(-e.amount),
-            "status": "cleared"
-        })
- 
-    for i in largest_incomes:
-        largest_transactions.append({
-            "entity": i.description,
-            "category": i.category.name,
-            "date": i.date.strftime("%b %d, %Y"),
-            "amount": float(i.amount),
-            "status": "cleared"
-        })
- 
-    largest_transactions.sort(key=lambda x: abs(x["amount"]), reverse=True)
-    largest_transactions = largest_transactions[:5]
- 
-    return JsonResponse({
-        "total_income": float(total_income),
-        "total_expense": float(total_expense),
-        "weekly_chart": weekly_data,
-        "expense_allocation": expense_allocation,
-        "largest_transactions": largest_transactions
-    })
+    start_d, end_d, err = _parse_dates(request)
+    if err:
+        return err
+    cat = _category_id(request)
+    data = build_report_payload(start_d, end_d, cat)
+    return JsonResponse(
+        {
+            "total_income": data["total_income"],
+            "total_expense": data["total_expense"],
+            "net": data["net"],
+            "weekly_chart": data["weekly_chart"],
+            "expense_allocation": data["expense_allocation"],
+            "largest_transactions": data["largest_transactions"],
+        }
+    )
+
+
+@login_required
+@require_GET
+def report_export_csv(request):
+    start_d, end_d, err = _parse_dates(request)
+    if err:
+        return err
+    cat = _category_id(request)
+    data = build_report_payload(start_d, end_d, cat)
+
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["FinTrix Report", data["period_start"], "to", data["period_end"]])
+    w.writerow([])
+    w.writerow(["Total income", f"{data['total_income']:.2f}"])
+    w.writerow(["Total expense", f"{data['total_expense']:.2f}"])
+    w.writerow(["Net", f"{data['net']:.2f}"])
+    w.writerow([])
+    w.writerow(["Week", "Income", "Expense"])
+    for row in data["weekly_chart"]:
+        w.writerow([row["label"], row["income"], row["expense"]])
+    w.writerow([])
+    w.writerow(["Expense category", "Amount"])
+    for row in data["expense_allocation"]:
+        w.writerow([row["category"], row["amount"]])
+    w.writerow([])
+    w.writerow(["Entity", "Category", "Date", "Amount", "Status"])
+    for row in data["largest_transactions"]:
+        w.writerow([row["entity"], row["category"], row["date"], row["amount"], row["status"]])
+
+    resp = HttpResponse(buf.getvalue(), content_type="text/csv; charset=utf-8")
+    resp["Content-Disposition"] = f'attachment; filename="fintrix_report_{start_d}_{end_d}.csv"'
+    return resp
+
+
+@login_required
+@require_GET
+def report_export_excel(request):
+    from openpyxl import Workbook
+    from openpyxl.styles import Font
+
+    start_d, end_d, err = _parse_dates(request)
+    if err:
+        return err
+    cat = _category_id(request)
+    data = build_report_payload(start_d, end_d, cat)
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Summary"
+    ws.append(["FinTrix Report", data["period_start"], "to", data["period_end"]])
+    ws.append([])
+    ws.append(["Total income", data["total_income"]])
+    ws.append(["Total expense", data["total_expense"]])
+    ws.append(["Net", data["net"]])
+    ws.append([])
+    ws.append(["Week", "Income", "Expense"])
+    for row in data["weekly_chart"]:
+        ws.append([row["label"], row["income"], row["expense"]])
+    ws.append([])
+    ws.append(["Expense category", "Amount"])
+    for row in data["expense_allocation"]:
+        ws.append([row["category"], row["amount"]])
+    ws.append([])
+    ws.append(["Entity", "Category", "Date", "Amount", "Status"])
+    for row in data["largest_transactions"]:
+        ws.append([row["entity"], row["category"], row["date"], row["amount"], row["status"]])
+    ws["A1"].font = Font(bold=True)
+
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    return FileResponse(
+        out,
+        as_attachment=True,
+        filename=f"fintrix_report_{start_d}_{end_d}.xlsx",
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
+@login_required
+@require_GET
+def report_export_pdf(request):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    start_d, end_d, err = _parse_dates(request)
+    if err:
+        return err
+    cat = _category_id(request)
+    data = build_report_payload(start_d, end_d, cat)
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=letter, title="FinTrix Report")
+    styles = getSampleStyleSheet()
+    story = [
+        Paragraph(f"<b>FinTrix Report</b> — {data['period_start']} to {data['period_end']}", styles["Title"]),
+        Spacer(1, 12),
+        Paragraph(
+            f"Income: <b>${data['total_income']:,.2f}</b> &nbsp; Expense: <b>${data['total_expense']:,.2f}</b> &nbsp; Net: <b>${data['net']:,.2f}</b>",
+            styles["Normal"],
+        ),
+        Spacer(1, 18),
+    ]
+
+    wdata = [["Week", "Income", "Expense"]]
+    for row in data["weekly_chart"]:
+        wdata.append([row["label"], f"${row['income']:,.2f}", f"${row['expense']:,.2f}"])
+    t1 = Table(wdata, repeatRows=1)
+    t1.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f1f5f9")]),
+            ]
+        )
+    )
+    story.append(t1)
+    story.append(Spacer(1, 16))
+
+    ldata = [["Entity", "Category", "Date", "Amount"]]
+    for row in data["largest_transactions"]:
+        ldata.append([row["entity"][:40], row["category"], row["date"], f"${row['amount']:,.2f}"])
+    t2 = Table(ldata, repeatRows=1)
+    t2.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
+            ]
+        )
+    )
+    story.append(Paragraph("<b>Largest transactions</b>", styles["Heading2"]))
+    story.append(Spacer(1, 6))
+    story.append(t2)
+
+    doc.build(story)
+    buf.seek(0)
+    return FileResponse(
+        buf,
+        as_attachment=True,
+        filename=f"fintrix_report_{start_d}_{end_d}.pdf",
+        content_type="application/pdf",
+    )

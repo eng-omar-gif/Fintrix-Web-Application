@@ -6,73 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notifications FinTrix</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'css/style-notifications.css' %}" />
+  <script>
+    (function(){try{var t=localStorage.getItem('fintrix-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="{% static 'css/style-Budget.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/theme-global.css' %}" />
+
 </head>
 <body>
 <div class="app">
 
-  <!-- ══════════════ SIDEBAR ══════════════ -->
-  <aside class="sidebar">
-
-    <div class="logo">
-      <div class="logo-icon">F</div>
-      <div>
-        <div class="logo-name">FinTrix</div>
-        <div class="logo-sub">INSTITUTIONAL TRUST</div>
-      </div>
-    </div>
-
-    <nav class="nav">
-      <a href="/" class="nav-item">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        Dashboard
-      </a>
-      <a href="/transactions/" class="nav-item">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Transactions
-      </a>
-      <a href="{% url 'budget_dashboard' %}" class="nav-item">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        Budgets
-      </a>
-      <a href="#" class="nav-item">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        Goals
-      </a>
-      <a href="#" class="nav-item">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Reports
-      </a>
-      <a href="{% url 'notification_center' %}" class="nav-item active">
-        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        Notifications
-        {% if unread_count > 0 %}
-        <span class="nav-badge">{{ unread_count }}</span>
-        {% endif %}
-      </a>
-    </nav>
-
-    <a href="#" class="sidebar-logout">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Logout
-    </a>
-
-  </aside>
+  {% include "includes/fintrix_sidebar.html" %}
 
   <!-- ══════════════ MAIN ══════════════ -->
   <main class="main">
 
-    <!-- Top Bar -->
-    <div class="topbar">
-      <div class="search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search insights..." />
-      </div>
-      <div class="topbar-right">
-        <button class="tb-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="17" height="17"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-        </button>
-      </div>
+    <div class="top-header">
+      <a href="{% url 'notification_center' %}" class="header-icon" title="Notifications" aria-label="Notifications" style="text-decoration:none;color:inherit;">
+        <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<path d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20ZM4 15H12V8C12 6.9 11.6083 5.95833 10.825 5.175C10.0417 4.39167 9.1 4 8 4C6.9 4 5.95833 4.39167 5.175 5.175C4.39167 5.95833 4 6.9 4 8V15Z" fill="currentColor"/>
+</svg>
+        <span class="notification-badge"></span>
+      </a>
+      {% include "includes/fintrix_theme_toggle.html" %}
     </div>
 
     <!-- Django Messages -->
@@ -205,6 +161,7 @@
   </main>
 </div>
 
+<script src="{% static 'js/theme.js' %}"></script>
 <script src="{% static 'js/script-notifications.js' %}" defer></script>
 </body>
 </html>
