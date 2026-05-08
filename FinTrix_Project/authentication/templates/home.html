@@ -21,7 +21,6 @@
             </div>
             <div class="nav-links">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
                     <span class="nav-link">{{ user.name }}</span>
                     <a href="{% url 'logout' %}" class="nav-link">Log out</a>
                 {% else %}
@@ -40,9 +39,19 @@
                 <h1>Master Your Money with <span class="highlight">Institutional Trust.</span></h1>
                 <p class="hero-lede">FinTrix transforms complex financial data into a streamlined, high-end digital utility. Experience personal budgeting redesigned for transparency, efficiency, and long-term growth.</p>
                 <div class="hero-buttons">
-                    <a href="{% url 'signup' %}" class="btn btn-primary">Get Started</a>
-                    <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
-                </div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                        Go to Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'signup' %}" class="btn btn-primary">
+                        Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-secondary">
+                        Login
+                    </a>
+                {% endif %}
+            </div>
             </div>
             <div class="hero-image">
                 <div class="hero-image-frame">
