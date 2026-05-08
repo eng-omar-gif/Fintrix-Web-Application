@@ -11,6 +11,15 @@ from .models import Budget, Category, CategoryBudget, Expense
 # ── Budget Dashboard ──────────────────────────────────────────────────────────
 @login_required
 def budget_dashboard(request):
+    """
+    Displays the budget dashboard with spending summaries.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered dashboard page with budget statistics.
+    """
     budgets = Budget.objects.all().order_by("-year", "-month")
 
     dashboard_data = []
@@ -29,6 +38,20 @@ def budget_dashboard(request):
 # ── Create Budget (SD1) ───────────────────────────────────────────────────────
 @login_required
 def create_budget(request):
+    """
+    Creates a new monthly budget and category limit.
+
+    Handles validation for:
+    - budget limit
+    - category name
+    - duplicate monthly budgets
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+
+    Returns:
+        HttpResponse: Redirects or renders the budget creation page.
+    """
     if request.method == "POST":
         month_str     = request.POST.get("month")
         category_name = request.POST.get("category_name", "").strip()
@@ -70,6 +93,15 @@ def create_budget(request):
 # ── Budget List ───────────────────────────────────────────────────────────────
 @login_required
 def budget_list(request):
+    """
+    Displays all available budgets ordered by date.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered budget list page.
+    """
     budgets = Budget.objects.all().order_by("-year", "-month")
     return render(request, "Budget.html", {"budgets": budgets})
 
@@ -77,6 +109,22 @@ def budget_list(request):
 # ── Budget Detail ─────────────────────────────────────────────────────────────
 @login_required
 def budget_detail(request, budget_id):
+    """
+    Displays detailed information for a specific budget.
+
+    Includes:
+    - category spending
+    - utilization percentages
+    - remaining balance
+    - expense history
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        budget_id (int): ID of the selected budget.
+
+    Returns:
+        HttpResponse: Rendered budget detail page.
+    """
     budget           = get_object_or_404(Budget, id=budget_id)
     category_budgets = budget.category_budgets.select_related("category")
 
@@ -125,6 +173,16 @@ def budget_detail(request, budget_id):
 # ── Add Category Limit ────────────────────────────────────────────────────────
 @login_required
 def add_category_limit(request, budget_id):
+    """
+    Adds a spending limit for a category within a budget.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        budget_id (int): ID of the target budget.
+
+    Returns:
+        HttpResponse: Redirects to budget detail page.
+    """
     budget = get_object_or_404(Budget, id=budget_id)
 
     if request.method == "POST":
@@ -157,6 +215,21 @@ def add_category_limit(request, budget_id):
 # ── Add Expense ───────────────────────────────────────────────────────────────
 @login_required
 def add_expense(request, budget_id):
+    """
+    Adds a new expense entry to a budget category.
+
+    Validates:
+    - expense amount
+    - category existence
+    - expense date
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        budget_id (int): ID of the target budget.
+
+    Returns:
+        HttpResponse: Redirects to budget detail page.
+    """
     budget = get_object_or_404(Budget, id=budget_id)
 
     if request.method == "POST":
@@ -201,6 +274,17 @@ def add_expense(request, budget_id):
 # ── Edit Category Limit ───────────────────────────────────────────────────────
 @login_required
 def edit_category_limit(request, budget_id, cb_id):
+    """
+    Updates the spending limit for a budget category.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        budget_id (int): ID of the budget.
+        cb_id (int): ID of the category budget entry.
+
+    Returns:
+        HttpResponse: Redirects to budget detail page.
+    """
     cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
 
     if request.method == "POST":
@@ -225,6 +309,17 @@ def edit_category_limit(request, budget_id, cb_id):
 # ── Delete Category ───────────────────────────────────────────────────────────
 @login_required
 def delete_category(request, budget_id, cb_id):
+    """
+    Removes a category from a budget.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        budget_id (int): ID of the budget.
+        cb_id (int): ID of the category budget entry.
+
+    Returns:
+        HttpResponse: Redirects to budget detail page.
+    """
     cb = get_object_or_404(CategoryBudget, id=cb_id, budget_id=budget_id)
 
     if request.method == "POST":

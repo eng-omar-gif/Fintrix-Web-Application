@@ -11,6 +11,13 @@ from .services import build_report_payload
 
 
 def _parse_dates(request):
+    """
+    Parses the start and end dates from the request.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        tuple: (start_date, end_date, error_response)
+    """
     start = request.GET.get("start_date")
     end = request.GET.get("end_date")
     if not start or not end:
@@ -26,6 +33,15 @@ def _parse_dates(request):
 
 
 def _category_id(request):
+    """
+    Parses the category ID from the request.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+
+    Returns:
+        int or None: The category ID if valid, otherwise None.
+    """
     raw = request.GET.get("category_id")
     if not raw:
         return None
@@ -37,12 +53,25 @@ def _category_id(request):
 
 @login_required
 def reports_page(request):
+    """
+    Renders the reports page.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        HttpResponse: Rendered reports page.
+    """
     return render(request, "reports.html")
 
 
 @login_required
 @require_GET
 def report_summary_api(request):
+    """API endpoint that returns the report summary data as JSON.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        JsonResponse: Report summary data or error message.
+    """
     start_d, end_d, err = _parse_dates(request)
     if err:
         return err
@@ -63,6 +92,12 @@ def report_summary_api(request):
 @login_required
 @require_GET
 def report_export_csv(request):
+    """API endpoint that generates and returns the report as a CSV file.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        HttpResponse: CSV file response or error message.
+    """
     start_d, end_d, err = _parse_dates(request)
     if err:
         return err
@@ -97,6 +132,12 @@ def report_export_csv(request):
 @login_required
 @require_GET
 def report_export_excel(request):
+    """API endpoint that generates and returns the report as an Excel file.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        FileResponse: Excel file response or error message.
+    """
     from openpyxl import Workbook
     from openpyxl.styles import Font
 
@@ -142,6 +183,12 @@ def report_export_excel(request):
 @login_required
 @require_GET
 def report_export_pdf(request):
+    """API endpoint that generates and returns the report as a PDF file.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        FileResponse: PDF file response or error message.
+    """
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.styles import getSampleStyleSheet

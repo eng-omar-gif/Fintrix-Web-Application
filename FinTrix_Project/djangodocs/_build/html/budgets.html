@@ -1,0 +1,819 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>budgets package &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">budgets package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-budgets.admin">budgets.admin module</a></li>
+<li><a class="reference internal" href="#module-budgets.apps">budgets.apps module</a><ul>
+<li><a class="reference internal" href="#budgets.apps.BudgetsConfig"><code class="docutils literal notranslate"><span class="pre">BudgetsConfig</span></code></a><ul>
+<li><a class="reference internal" href="#budgets.apps.BudgetsConfig.name"><code class="docutils literal notranslate"><span class="pre">BudgetsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-budgets.models">budgets.models module</a><ul>
+<li><a class="reference internal" href="#budgets.models.Budget"><code class="docutils literal notranslate"><span class="pre">Budget</span></code></a><ul>
+<li><a class="reference internal" href="#budgets.models.Budget.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Budget.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Budget.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Budget.NotUpdated</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.add_category_limit"><code class="docutils literal notranslate"><span class="pre">Budget.add_category_limit()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.category_budgets"><code class="docutils literal notranslate"><span class="pre">Budget.category_budgets</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.check_budget_exists"><code class="docutils literal notranslate"><span class="pre">Budget.check_budget_exists()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.get_next_by_month"><code class="docutils literal notranslate"><span class="pre">Budget.get_next_by_month()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.get_previous_by_month"><code class="docutils literal notranslate"><span class="pre">Budget.get_previous_by_month()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.get_remaining"><code class="docutils literal notranslate"><span class="pre">Budget.get_remaining()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.get_total_spent"><code class="docutils literal notranslate"><span class="pre">Budget.get_total_spent()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.id"><code class="docutils literal notranslate"><span class="pre">Budget.id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.month"><code class="docutils literal notranslate"><span class="pre">Budget.month</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.objects"><code class="docutils literal notranslate"><span class="pre">Budget.objects</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.validate"><code class="docutils literal notranslate"><span class="pre">Budget.validate()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Budget.year"><code class="docutils literal notranslate"><span class="pre">Budget.year</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#budgets.models.Category"><code class="docutils literal notranslate"><span class="pre">Category</span></code></a><ul>
+<li><a class="reference internal" href="#budgets.models.Category.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Category.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Category.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Category.NotUpdated</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.category_budgets"><code class="docutils literal notranslate"><span class="pre">Category.category_budgets</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.find_or_create_category"><code class="docutils literal notranslate"><span class="pre">Category.find_or_create_category()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.id"><code class="docutils literal notranslate"><span class="pre">Category.id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.name"><code class="docutils literal notranslate"><span class="pre">Category.name</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Category.objects"><code class="docutils literal notranslate"><span class="pre">Category.objects</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget"><code class="docutils literal notranslate"><span class="pre">CategoryBudget</span></code></a><ul>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.NotUpdated"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.NotUpdated</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.budget"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.budget</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.budget_id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.budget_id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.category"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.category</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.category_id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.category_id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.expenses"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.expenses</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.get_remaining"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.get_remaining()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.is_limited"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.is_limited()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.limit"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.limit</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.notifications"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.notifications</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.objects"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.objects</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.spent_amount"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.spent_amount</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.CategoryBudget.update_spent"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.update_spent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#budgets.models.Expense"><code class="docutils literal notranslate"><span class="pre">Expense</span></code></a><ul>
+<li><a class="reference internal" href="#budgets.models.Expense.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Expense.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Expense.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Expense.NotUpdated</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.amount"><code class="docutils literal notranslate"><span class="pre">Expense.amount</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.category_budget"><code class="docutils literal notranslate"><span class="pre">Expense.category_budget</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.category_budget_id"><code class="docutils literal notranslate"><span class="pre">Expense.category_budget_id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.date"><code class="docutils literal notranslate"><span class="pre">Expense.date</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.description"><code class="docutils literal notranslate"><span class="pre">Expense.description</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.get_amount"><code class="docutils literal notranslate"><span class="pre">Expense.get_amount()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.get_next_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_next_by_date()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.get_previous_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_previous_by_date()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.id"><code class="docutils literal notranslate"><span class="pre">Expense.id</span></code></a></li>
+<li><a class="reference internal" href="#budgets.models.Expense.objects"><code class="docutils literal notranslate"><span class="pre">Expense.objects</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-budgets.tests">budgets.tests module</a></li>
+<li><a class="reference internal" href="#module-budgets.urls">budgets.urls module</a></li>
+<li><a class="reference internal" href="#module-budgets.views">budgets.views module</a><ul>
+<li><a class="reference internal" href="#budgets.views.add_category_limit"><code class="docutils literal notranslate"><span class="pre">add_category_limit()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.add_expense"><code class="docutils literal notranslate"><span class="pre">add_expense()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.budget_dashboard"><code class="docutils literal notranslate"><span class="pre">budget_dashboard()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.budget_detail"><code class="docutils literal notranslate"><span class="pre">budget_detail()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.budget_list"><code class="docutils literal notranslate"><span class="pre">budget_list()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.create_budget"><code class="docutils literal notranslate"><span class="pre">create_budget()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.delete_category"><code class="docutils literal notranslate"><span class="pre">delete_category()</span></code></a></li>
+<li><a class="reference internal" href="#budgets.views.edit_category_limit"><code class="docutils literal notranslate"><span class="pre">edit_category_limit()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-budgets">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">budgets package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/budgets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="budgets-package">
+<h1>budgets package<a class="headerlink" href="#budgets-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="budgets.migrations.html">budgets.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="budgets.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0001_initial">budgets.migrations.0001_initial module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0001_initial.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0001_initial.Migration.dependencies"><code class="docutils literal notranslate"><span class="pre">Migration.dependencies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0001_initial.Migration.initial"><code class="docutils literal notranslate"><span class="pre">Migration.initial</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0001_initial.Migration.operations"><code class="docutils literal notranslate"><span class="pre">Migration.operations</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0002_delete_notification">budgets.migrations.0002_delete_notification module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0002_delete_notification.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0002_delete_notification.Migration.dependencies"><code class="docutils literal notranslate"><span class="pre">Migration.dependencies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0002_delete_notification.Migration.operations"><code class="docutils literal notranslate"><span class="pre">Migration.operations</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0003_expense_description">budgets.migrations.0003_expense_description module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0003_expense_description.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0003_expense_description.Migration.dependencies"><code class="docutils literal notranslate"><span class="pre">Migration.dependencies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#budgets.migrations.0003_expense_description.Migration.operations"><code class="docutils literal notranslate"><span class="pre">Migration.operations</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-budgets.admin">
+<span id="budgets-admin-module"></span><h2>budgets.admin module<a class="headerlink" href="#module-budgets.admin" title="Link to this heading"></a></h2>
+</section>
+<section id="module-budgets.apps">
+<span id="budgets-apps-module"></span><h2>budgets.apps module<a class="headerlink" href="#module-budgets.apps" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="budgets.apps.BudgetsConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">budgets.apps.</span></span><span class="sig-name descname"><span class="pre">BudgetsConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/apps.html#BudgetsConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.apps.BudgetsConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.apps.BudgetsConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'budgets'</span></span><a class="headerlink" href="#budgets.apps.BudgetsConfig.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-budgets.models">
+<span id="budgets-models-module"></span><h2>budgets.models module<a class="headerlink" href="#module-budgets.models" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="budgets.models.Budget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">budgets.models.</span></span><span class="sig-name descname"><span class="pre">Budget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/models.html#Budget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Budget.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#budgets.models.Budget.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Budget.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#budgets.models.Budget.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Budget.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#budgets.models.Budget.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.add_category_limit">
+<span class="sig-name descname"><span class="pre">add_category_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#budgets.models.Category" title="budgets.models.Category"><span class="pre">Category</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#budgets.models.CategoryBudget" title="budgets.models.CategoryBudget"><span class="pre">CategoryBudget</span></a></span></span><a class="reference internal" href="_modules/budgets/models.html#Budget.add_category_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget.add_category_limit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Budget.category_budgets">
+<span class="sig-name descname"><span class="pre">category_budgets</span></span><a class="headerlink" href="#budgets.models.Budget.category_budgets" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.check_budget_exists">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">check_budget_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/budgets/models.html#Budget.check_budget_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget.check_budget_exists" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.get_next_by_month">
+<span class="sig-name descname"><span class="pre">get_next_by_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">month&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#budgets.models.Budget.get_next_by_month" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.get_previous_by_month">
+<span class="sig-name descname"><span class="pre">get_previous_by_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">month&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#budgets.models.Budget.get_previous_by_month" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.get_remaining">
+<span class="sig-name descname"><span class="pre">get_remaining</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/budgets/models.html#Budget.get_remaining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget.get_remaining" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.get_total_spent">
+<span class="sig-name descname"><span class="pre">get_total_spent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/budgets/models.html#Budget.get_total_spent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget.get_total_spent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Budget.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#budgets.models.Budget.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Budget.month">
+<span class="sig-name descname"><span class="pre">month</span></span><a class="headerlink" href="#budgets.models.Budget.month" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Budget.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#budgets.models.Budget.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Budget.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/budgets/models.html#Budget.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Budget.validate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Budget.year">
+<span class="sig-name descname"><span class="pre">year</span></span><a class="headerlink" href="#budgets.models.Budget.year" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="budgets.models.Category">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">budgets.models.</span></span><span class="sig-name descname"><span class="pre">Category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/models.html#Category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Category" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Category.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#budgets.models.Category.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Category.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#budgets.models.Category.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Category.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#budgets.models.Category.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Category.category_budgets">
+<span class="sig-name descname"><span class="pre">category_budgets</span></span><a class="headerlink" href="#budgets.models.Category.category_budgets" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Category.find_or_create_category">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">find_or_create_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#budgets.models.Category" title="budgets.models.Category"><span class="pre">Category</span></a></span></span><a class="reference internal" href="_modules/budgets/models.html#Category.find_or_create_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Category.find_or_create_category" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Category.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#budgets.models.Category.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Category.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#budgets.models.Category.name" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Category.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#budgets.models.Category.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">budgets.models.</span></span><span class="sig-name descname"><span class="pre">CategoryBudget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spent_amount</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/models.html#CategoryBudget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.CategoryBudget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.budget">
+<span class="sig-name descname"><span class="pre">budget</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.budget" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.budget_id">
+<span class="sig-name descname"><span class="pre">budget_id</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.budget_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.category" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.category_id">
+<span class="sig-name descname"><span class="pre">category_id</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.category_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.expenses">
+<span class="sig-name descname"><span class="pre">expenses</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.expenses" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.get_remaining">
+<span class="sig-name descname"><span class="pre">get_remaining</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/budgets/models.html#CategoryBudget.get_remaining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.CategoryBudget.get_remaining" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.is_limited">
+<span class="sig-name descname"><span class="pre">is_limited</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/budgets/models.html#CategoryBudget.is_limited"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.CategoryBudget.is_limited" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.limit">
+<span class="sig-name descname"><span class="pre">limit</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.limit" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.notifications">
+<span class="sig-name descname"><span class="pre">notifications</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.notifications" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.spent_amount">
+<span class="sig-name descname"><span class="pre">spent_amount</span></span><a class="headerlink" href="#budgets.models.CategoryBudget.spent_amount" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.CategoryBudget.update_spent">
+<span class="sig-name descname"><span class="pre">update_spent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/budgets/models.html#CategoryBudget.update_spent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.CategoryBudget.update_spent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="budgets.models.Expense">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">budgets.models.</span></span><span class="sig-name descname"><span class="pre">Expense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/models.html#Expense"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Expense" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Expense.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#budgets.models.Expense.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Expense.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#budgets.models.Expense.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="budgets.models.Expense.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#budgets.models.Expense.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><a class="headerlink" href="#budgets.models.Expense.amount" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.category_budget">
+<span class="sig-name descname"><span class="pre">category_budget</span></span><a class="headerlink" href="#budgets.models.Expense.category_budget" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.category_budget_id">
+<span class="sig-name descname"><span class="pre">category_budget_id</span></span><a class="headerlink" href="#budgets.models.Expense.category_budget_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.date">
+<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#budgets.models.Expense.date" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#budgets.models.Expense.description" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Expense.get_amount">
+<span class="sig-name descname"><span class="pre">get_amount</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/budgets/models.html#Expense.get_amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.models.Expense.get_amount" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Expense.get_next_by_date">
+<span class="sig-name descname"><span class="pre">get_next_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#budgets.models.Expense.get_next_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="budgets.models.Expense.get_previous_by_date">
+<span class="sig-name descname"><span class="pre">get_previous_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#budgets.models.Expense.get_previous_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#budgets.models.Expense.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="budgets.models.Expense.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#budgets.models.Expense.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-budgets.tests">
+<span id="budgets-tests-module"></span><h2>budgets.tests module<a class="headerlink" href="#module-budgets.tests" title="Link to this heading"></a></h2>
+</section>
+<section id="module-budgets.urls">
+<span id="budgets-urls-module"></span><h2>budgets.urls module<a class="headerlink" href="#module-budgets.urls" title="Link to this heading"></a></h2>
+</section>
+<section id="module-budgets.views">
+<span id="budgets-views-module"></span><h2>budgets.views module<a class="headerlink" href="#module-budgets.views" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.add_category_limit">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">add_category_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#add_category_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.add_category_limit" title="Link to this definition"></a></dt>
+<dd><p>Adds a spending limit for a category within a budget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p></li>
+<li><p><strong>budget_id</strong> (<em>int</em>) – ID of the target budget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects to budget detail page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.add_expense">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">add_expense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#add_expense"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.add_expense" title="Link to this definition"></a></dt>
+<dd><p>Adds a new expense entry to a budget category.</p>
+<p>Validates:
+- expense amount
+- category existence
+- expense date</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p></li>
+<li><p><strong>budget_id</strong> (<em>int</em>) – ID of the target budget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects to budget detail page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.budget_dashboard">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">budget_dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#budget_dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.budget_dashboard" title="Link to this definition"></a></dt>
+<dd><p>Displays the budget dashboard with spending summaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rendered dashboard page with budget statistics.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.budget_detail">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">budget_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#budget_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.budget_detail" title="Link to this definition"></a></dt>
+<dd><p>Displays detailed information for a specific budget.</p>
+<p>Includes:
+- category spending
+- utilization percentages
+- remaining balance
+- expense history</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p></li>
+<li><p><strong>budget_id</strong> (<em>int</em>) – ID of the selected budget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rendered budget detail page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.budget_list">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">budget_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#budget_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.budget_list" title="Link to this definition"></a></dt>
+<dd><p>Displays all available budgets ordered by date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rendered budget list page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.create_budget">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">create_budget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#create_budget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.create_budget" title="Link to this definition"></a></dt>
+<dd><p>Creates a new monthly budget and category limit.</p>
+<p>Handles validation for:
+- budget limit
+- category name
+- duplicate monthly budgets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects or renders the budget creation page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.delete_category">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">delete_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#delete_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.delete_category" title="Link to this definition"></a></dt>
+<dd><p>Removes a category from a budget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p></li>
+<li><p><strong>budget_id</strong> (<em>int</em>) – ID of the budget.</p></li>
+<li><p><strong>cb_id</strong> (<em>int</em>) – ID of the category budget entry.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects to budget detail page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="budgets.views.edit_category_limit">
+<span class="sig-prename descclassname"><span class="pre">budgets.views.</span></span><span class="sig-name descname"><span class="pre">edit_category_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/budgets/views.html#edit_category_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#budgets.views.edit_category_limit" title="Link to this definition"></a></dt>
+<dd><p>Updates the spending limit for a budget category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – Incoming HTTP request.</p></li>
+<li><p><strong>budget_id</strong> (<em>int</em>) – ID of the budget.</p></li>
+<li><p><strong>cb_id</strong> (<em>int</em>) – ID of the category budget entry.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects to budget detail page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-budgets">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-budgets" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

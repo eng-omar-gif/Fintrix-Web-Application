@@ -11,6 +11,16 @@ from .services import AuthenticationService, RegistrationInput
 
 
 def _parse_json_body(request):
+    """
+    Parses and decodes the JSON body from an HTTP request.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        dict | None: Parsed JSON data as a dictionary, empty dict if body is empty,
+        or None if the JSON is invalid.
+    """
     if not request.body:
         return {}
     try:
@@ -22,23 +32,60 @@ def _parse_json_body(request):
 @ensure_csrf_cookie
 @require_GET
 def home(request):
+    """
+    Renders the home page.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered home page.
+    """
+
     return render(request, 'home.html')
 
 
 @ensure_csrf_cookie
 @require_GET
 def login_page(request):
+    """
+    Renders the login page.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered login page.
+    """
     return render(request, 'login.html')
 
 
 @ensure_csrf_cookie
 @require_GET
 def signup_page(request):
+    """
+    Renders the signup page.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered signup page.
+    """
     return render(request, 'signup.html')
 
 
 @require_http_methods(['POST'])
 def register_api(request):
+    """
+    Registers a new user account and logs the user in.
+
+    Args:
+        request (HttpRequest): HTTP request containing registration data.
+
+    Returns:
+        JsonResponse: Success or error response with redirect information.
+    """
     payload = _parse_json_body(request)
     if payload is None:
         return JsonResponse({'success': False, 'message': 'Invalid JSON body.'}, status=400)
@@ -64,6 +111,15 @@ def register_api(request):
 
 @require_http_methods(['POST'])
 def login_api(request):
+    """
+    Authenticates a user and starts a login session.
+
+    Args:
+        request (HttpRequest): HTTP request containing login data.
+
+    Returns:
+        JsonResponse: Success or error response with redirect information.
+    """
     payload = _parse_json_body(request)
     if payload is None:
         return JsonResponse({'success': False, 'message': 'Invalid JSON body.'}, status=400)
@@ -94,5 +150,14 @@ def login_api(request):
 @require_GET
 @login_required
 def logout_view(request):
+    """
+    Logs out the currently authenticated user.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponseRedirect: Redirects user to the home page.
+    """
     logout(request)
     return redirect('home')

@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>notifications.views &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">notifications.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for notifications.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">budgets.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoryBudget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Notification</span><span class="p">,</span> <span class="n">NotificationController</span>
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  Helper — attach human-readable &quot;time ago&quot; to each notification</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_annotate_time</span><span class="p">(</span><span class="n">notifications</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each notification, calculate how long ago it was created and attach a</span>
+<span class="sd">    human-readable label (e.g. &quot;5 MIN AGO&quot;, &quot;YESTERDAY&quot;) as `time_label`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">notifications</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">n</span><span class="o">.</span><span class="n">created_at</span>
+        <span class="k">if</span> <span class="n">delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
+            <span class="n">time_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="si">}</span><span class="s2"> MIN AGO&quot;</span>
+        <span class="k">elif</span> <span class="n">delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">86400</span><span class="p">:</span>
+            <span class="n">time_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">3600</span><span class="p">)</span><span class="si">}</span><span class="s2"> HOURS AGO&quot;</span>
+        <span class="k">elif</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">time_label</span> <span class="o">=</span> <span class="s2">&quot;YESTERDAY&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">time_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">delta</span><span class="o">.</span><span class="n">days</span><span class="si">}</span><span class="s2"> DAYS AGO&quot;</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">time_label</span> <span class="o">=</span> <span class="n">time_label</span>
+    <span class="k">return</span> <span class="n">notifications</span>
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  notification_center</span>
+<span class="c1">#  NotificationUI: requestNotifications()</span>
+<span class="c1">#  NotificationController: checkThreshold() for all active CBs</span>
+<span class="c1">#  SD2 alt/else: has_notifications drives template branching</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<div class="viewcode-block" id="notification_center">
+<a class="viewcode-back" href="../../notifications.html#notifications.views.notification_center">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">notification_center</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Displays the user&#39;s notifications and handles tab navigation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Rendered notification center page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Re-run checkThreshold for all CategoryBudgets (keeps list fresh)</span>
+    <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="n">CategoryBudget</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">NotificationController</span><span class="o">.</span><span class="n">check_threshold</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span>
+
+    <span class="n">tab</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tab&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span>   <span class="c1"># all | unread | archived</span>
+
+    <span class="n">all_qs</span>      <span class="o">=</span> <span class="n">Notification</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;category_budget__category&quot;</span><span class="p">)</span>
+    <span class="n">unread_qs</span>   <span class="o">=</span> <span class="n">all_qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_read</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_archived</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">archived_qs</span> <span class="o">=</span> <span class="n">all_qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_archived</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tab</span> <span class="o">==</span> <span class="s2">&quot;unread&quot;</span><span class="p">:</span>
+        <span class="n">notifications</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">unread_qs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">tab</span> <span class="o">==</span> <span class="s2">&quot;archived&quot;</span><span class="p">:</span>
+        <span class="n">notifications</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">archived_qs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">notifications</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_archived</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="n">_annotate_time</span><span class="p">(</span><span class="n">notifications</span><span class="p">)</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;notifications&quot;</span><span class="p">:</span>    <span class="n">notifications</span><span class="p">,</span>
+        <span class="s2">&quot;has_notifications&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">notifications</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;unread_count&quot;</span><span class="p">:</span>     <span class="n">unread_qs</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+        <span class="s2">&quot;archived_count&quot;</span><span class="p">:</span>   <span class="n">archived_qs</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+        <span class="s2">&quot;active_tab&quot;</span><span class="p">:</span>       <span class="n">tab</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;notifications.html&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  mark_as_read</span>
+<span class="c1">#  NotificationController.markAsRead(notificationId)</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<div class="viewcode-block" id="mark_as_read">
+<a class="viewcode-back" href="../../notifications.html#notifications.views.mark_as_read">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mark_as_read</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">notification_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Marks a single notification as read.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">        notification_id (int): ID of the notification to mark as read.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Redirects back to the referring page or notification center.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">NotificationController</span><span class="o">.</span><span class="n">mark_as_read</span><span class="p">(</span><span class="n">notification_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_REFERER&quot;</span><span class="p">,</span> <span class="s2">&quot;notification_center&quot;</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  mark_all_as_read</span>
+<span class="c1">#  &quot;Mark All as Read&quot; button in NotificationUI</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<div class="viewcode-block" id="mark_all_as_read">
+<a class="viewcode-back" href="../../notifications.html#notifications.views.mark_all_as_read">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mark_all_as_read</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Marks all notifications as read for the user.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Redirects back to the notification center with a success message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">NotificationController</span><span class="o">.</span><span class="n">mark_all_as_read</span><span class="p">()</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;All notifications marked as read.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;notification_center&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  archive_notification</span>
+<span class="c1">#  Dismiss button on budget notifications</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<div class="viewcode-block" id="archive_notification">
+<a class="viewcode-back" href="../../notifications.html#notifications.views.archive_notification">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">archive_notification</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">notification_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Archives a single notification.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">        notification_id (int): ID of the notification to archive.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Redirects back to the referring page or notification center.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">NotificationController</span><span class="o">.</span><span class="n">archive</span><span class="p">(</span><span class="n">notification_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_REFERER&quot;</span><span class="p">,</span> <span class="s2">&quot;notification_center&quot;</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  navigate_to_budget</span>
+<span class="c1">#  SD2 opt [Navigate to related screen]:</span>
+<span class="c1">#  fetchRelatedBudget(notificationId) → navigateToBudget()</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+<div class="viewcode-block" id="navigate_to_budget">
+<a class="viewcode-back" href="../../notifications.html#notifications.views.navigate_to_budget">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">navigate_to_budget</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">notification_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Navigates the user to the related budget detail page based on the notification.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">        notification_id (int): ID of the notification to navigate from.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Redirects to the related budget detail page or notification center.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">notification</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Notification</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">notification_id</span><span class="p">)</span>
+
+    <span class="c1"># Mark as read on navigation</span>
+    <span class="n">NotificationController</span><span class="o">.</span><span class="n">mark_as_read</span><span class="p">(</span><span class="n">notification_id</span><span class="p">)</span>
+
+    <span class="c1"># Traverse: Notification → CategoryBudget → Budget</span>
+    <span class="k">if</span> <span class="n">notification</span><span class="o">.</span><span class="n">category_budget</span><span class="p">:</span>
+        <span class="n">budget_id</span> <span class="o">=</span> <span class="n">notification</span><span class="o">.</span><span class="n">category_budget</span><span class="o">.</span><span class="n">budget_id</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;budget_detail&quot;</span><span class="p">,</span> <span class="n">budget_id</span><span class="o">=</span><span class="n">budget_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;notification_center&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>authentication &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="authentication package" href="authentication.html" />
+    <link rel="prev" title="FinTrix backend documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">authentication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html">authentication package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html">budgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html">goals package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">notifications package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html">reports package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html">transactions package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">authentication</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="authentication">
+<h1>authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">authentication package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.migrations.html">authentication.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.migrations.html#module-authentication.migrations.0001_initial">authentication.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.migrations.html#module-authentication.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.admin">authentication.admin module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin"><code class="docutils literal notranslate"><span class="pre">UserAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.add_fieldsets"><code class="docutils literal notranslate"><span class="pre">UserAdmin.add_fieldsets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.fieldsets"><code class="docutils literal notranslate"><span class="pre">UserAdmin.fieldsets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.filter_horizontal"><code class="docutils literal notranslate"><span class="pre">UserAdmin.filter_horizontal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.list_display"><code class="docutils literal notranslate"><span class="pre">UserAdmin.list_display</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.media"><code class="docutils literal notranslate"><span class="pre">UserAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.ordering"><code class="docutils literal notranslate"><span class="pre">UserAdmin.ordering</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.readonly_fields"><code class="docutils literal notranslate"><span class="pre">UserAdmin.readonly_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.admin.UserAdmin.search_fields"><code class="docutils literal notranslate"><span class="pre">UserAdmin.search_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.apps">authentication.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.apps.AuthenticationConfig"><code class="docutils literal notranslate"><span class="pre">AuthenticationConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.apps.AuthenticationConfig.name"><code class="docutils literal notranslate"><span class="pre">AuthenticationConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.models">authentication.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">User.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">User.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.NotUpdated"><code class="docutils literal notranslate"><span class="pre">User.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.REQUIRED_FIELDS"><code class="docutils literal notranslate"><span class="pre">User.REQUIRED_FIELDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.USERNAME_FIELD"><code class="docutils literal notranslate"><span class="pre">User.USERNAME_FIELD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.date_joined"><code class="docutils literal notranslate"><span class="pre">User.date_joined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.first_name"><code class="docutils literal notranslate"><span class="pre">User.first_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.get_next_by_date_joined"><code class="docutils literal notranslate"><span class="pre">User.get_next_by_date_joined()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.get_previous_by_date_joined"><code class="docutils literal notranslate"><span class="pre">User.get_previous_by_date_joined()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.goal_set"><code class="docutils literal notranslate"><span class="pre">User.goal_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.groups"><code class="docutils literal notranslate"><span class="pre">User.groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.id"><code class="docutils literal notranslate"><span class="pre">User.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.is_active"><code class="docutils literal notranslate"><span class="pre">User.is_active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.is_staff"><code class="docutils literal notranslate"><span class="pre">User.is_staff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.is_superuser"><code class="docutils literal notranslate"><span class="pre">User.is_superuser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.last_login"><code class="docutils literal notranslate"><span class="pre">User.last_login</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.last_name"><code class="docutils literal notranslate"><span class="pre">User.last_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.logentry_set"><code class="docutils literal notranslate"><span class="pre">User.logentry_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.name"><code class="docutils literal notranslate"><span class="pre">User.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.objects"><code class="docutils literal notranslate"><span class="pre">User.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.password"><code class="docutils literal notranslate"><span class="pre">User.password</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.report_set"><code class="docutils literal notranslate"><span class="pre">User.report_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.user_permissions"><code class="docutils literal notranslate"><span class="pre">User.user_permissions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.User.username"><code class="docutils literal notranslate"><span class="pre">User.username</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.models.UserManager"><code class="docutils literal notranslate"><span class="pre">UserManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.UserManager.create_superuser"><code class="docutils literal notranslate"><span class="pre">UserManager.create_superuser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.models.UserManager.create_user"><code class="docutils literal notranslate"><span class="pre">UserManager.create_user()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.services">authentication.services module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.services.AuthenticationService"><code class="docutils literal notranslate"><span class="pre">AuthenticationService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.AuthenticationService.login_user"><code class="docutils literal notranslate"><span class="pre">AuthenticationService.login_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.AuthenticationService.register_user"><code class="docutils literal notranslate"><span class="pre">AuthenticationService.register_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.AuthenticationService.validate_login"><code class="docutils literal notranslate"><span class="pre">AuthenticationService.validate_login()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.AuthenticationService.validate_registration"><code class="docutils literal notranslate"><span class="pre">AuthenticationService.validate_registration()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.services.RegistrationInput"><code class="docutils literal notranslate"><span class="pre">RegistrationInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.RegistrationInput.email"><code class="docutils literal notranslate"><span class="pre">RegistrationInput.email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.RegistrationInput.name"><code class="docutils literal notranslate"><span class="pre">RegistrationInput.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="authentication.html#authentication.services.RegistrationInput.password"><code class="docutils literal notranslate"><span class="pre">RegistrationInput.password</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.tests">authentication.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.urls">authentication.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication.views">authentication.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.home"><code class="docutils literal notranslate"><span class="pre">home()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.login_api"><code class="docutils literal notranslate"><span class="pre">login_api()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.login_page"><code class="docutils literal notranslate"><span class="pre">login_page()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.logout_view"><code class="docutils literal notranslate"><span class="pre">logout_view()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.register_api"><code class="docutils literal notranslate"><span class="pre">register_api()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="authentication.html#authentication.views.signup_page"><code class="docutils literal notranslate"><span class="pre">signup_page()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="authentication.html#module-authentication">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="budgets.html">budgets package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.migrations.html">budgets.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0001_initial">budgets.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0002_delete_notification">budgets.migrations.0002_delete_notification module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations.0003_expense_description">budgets.migrations.0003_expense_description module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.migrations.html#module-budgets.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.admin">budgets.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.apps">budgets.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.apps.BudgetsConfig"><code class="docutils literal notranslate"><span class="pre">BudgetsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.apps.BudgetsConfig.name"><code class="docutils literal notranslate"><span class="pre">BudgetsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.models">budgets.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.models.Budget"><code class="docutils literal notranslate"><span class="pre">Budget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Budget.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Budget.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Budget.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.add_category_limit"><code class="docutils literal notranslate"><span class="pre">Budget.add_category_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.category_budgets"><code class="docutils literal notranslate"><span class="pre">Budget.category_budgets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.check_budget_exists"><code class="docutils literal notranslate"><span class="pre">Budget.check_budget_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.get_next_by_month"><code class="docutils literal notranslate"><span class="pre">Budget.get_next_by_month()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.get_previous_by_month"><code class="docutils literal notranslate"><span class="pre">Budget.get_previous_by_month()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.get_remaining"><code class="docutils literal notranslate"><span class="pre">Budget.get_remaining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.get_total_spent"><code class="docutils literal notranslate"><span class="pre">Budget.get_total_spent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.id"><code class="docutils literal notranslate"><span class="pre">Budget.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.month"><code class="docutils literal notranslate"><span class="pre">Budget.month</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.objects"><code class="docutils literal notranslate"><span class="pre">Budget.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.validate"><code class="docutils literal notranslate"><span class="pre">Budget.validate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Budget.year"><code class="docutils literal notranslate"><span class="pre">Budget.year</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.models.Category"><code class="docutils literal notranslate"><span class="pre">Category</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Category.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Category.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Category.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.category_budgets"><code class="docutils literal notranslate"><span class="pre">Category.category_budgets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.find_or_create_category"><code class="docutils literal notranslate"><span class="pre">Category.find_or_create_category()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.id"><code class="docutils literal notranslate"><span class="pre">Category.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.name"><code class="docutils literal notranslate"><span class="pre">Category.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Category.objects"><code class="docutils literal notranslate"><span class="pre">Category.objects</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget"><code class="docutils literal notranslate"><span class="pre">CategoryBudget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.NotUpdated"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.budget"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.budget</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.budget_id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.budget_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.category"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.category_id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.category_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.expenses"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.expenses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.get_remaining"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.get_remaining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.id"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.is_limited"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.is_limited()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.limit"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.limit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.notifications"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.notifications</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.objects"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.spent_amount"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.spent_amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.CategoryBudget.update_spent"><code class="docutils literal notranslate"><span class="pre">CategoryBudget.update_spent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.models.Expense"><code class="docutils literal notranslate"><span class="pre">Expense</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Expense.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Expense.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Expense.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.amount"><code class="docutils literal notranslate"><span class="pre">Expense.amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.category_budget"><code class="docutils literal notranslate"><span class="pre">Expense.category_budget</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.category_budget_id"><code class="docutils literal notranslate"><span class="pre">Expense.category_budget_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.date"><code class="docutils literal notranslate"><span class="pre">Expense.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.description"><code class="docutils literal notranslate"><span class="pre">Expense.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.get_amount"><code class="docutils literal notranslate"><span class="pre">Expense.get_amount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.get_next_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_next_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.get_previous_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_previous_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.id"><code class="docutils literal notranslate"><span class="pre">Expense.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="budgets.html#budgets.models.Expense.objects"><code class="docutils literal notranslate"><span class="pre">Expense.objects</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.tests">budgets.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.urls">budgets.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets.views">budgets.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.add_category_limit"><code class="docutils literal notranslate"><span class="pre">add_category_limit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.add_expense"><code class="docutils literal notranslate"><span class="pre">add_expense()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.budget_dashboard"><code class="docutils literal notranslate"><span class="pre">budget_dashboard()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.budget_detail"><code class="docutils literal notranslate"><span class="pre">budget_detail()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.budget_list"><code class="docutils literal notranslate"><span class="pre">budget_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.create_budget"><code class="docutils literal notranslate"><span class="pre">create_budget()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.delete_category"><code class="docutils literal notranslate"><span class="pre">delete_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="budgets.html#budgets.views.edit_category_limit"><code class="docutils literal notranslate"><span class="pre">edit_category_limit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html#module-budgets">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dashboard.html">dashboard package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard.migrations.html">dashboard.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dashboard.migrations.html#module-dashboard.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.admin">dashboard.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.apps">dashboard.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html#dashboard.apps.DashboardConfig"><code class="docutils literal notranslate"><span class="pre">DashboardConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dashboard.html#dashboard.apps.DashboardConfig.name"><code class="docutils literal notranslate"><span class="pre">DashboardConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.models">dashboard.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.services">dashboard.services module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html#dashboard.services.dashboard_json_payload"><code class="docutils literal notranslate"><span class="pre">dashboard_json_payload()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html#dashboard.services.financial_snapshot"><code class="docutils literal notranslate"><span class="pre">financial_snapshot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.tests">dashboard.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.urls">dashboard.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard.views">dashboard.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html#dashboard.views.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#module-dashboard">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="goals.html">goals package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.migrations.html">goals.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="goals.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.migrations.html#module-goals.migrations.0001_initial">goals.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.migrations.html#module-goals.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.admin">goals.admin module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin"><code class="docutils literal notranslate"><span class="pre">GoalAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin.list_display"><code class="docutils literal notranslate"><span class="pre">GoalAdmin.list_display</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin.list_filter"><code class="docutils literal notranslate"><span class="pre">GoalAdmin.list_filter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin.media"><code class="docutils literal notranslate"><span class="pre">GoalAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin.raw_id_fields"><code class="docutils literal notranslate"><span class="pre">GoalAdmin.raw_id_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.admin.GoalAdmin.search_fields"><code class="docutils literal notranslate"><span class="pre">GoalAdmin.search_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.apps">goals.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.apps.GoalsConfig"><code class="docutils literal notranslate"><span class="pre">GoalsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.apps.GoalsConfig.name"><code class="docutils literal notranslate"><span class="pre">GoalsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.forms">goals.forms module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.forms.GoalForm"><code class="docutils literal notranslate"><span class="pre">GoalForm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.Meta"><code class="docutils literal notranslate"><span class="pre">GoalForm.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.base_fields"><code class="docutils literal notranslate"><span class="pre">GoalForm.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.clean"><code class="docutils literal notranslate"><span class="pre">GoalForm.clean()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.clean_target_amount"><code class="docutils literal notranslate"><span class="pre">GoalForm.clean_target_amount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">GoalForm.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.forms.GoalForm.media"><code class="docutils literal notranslate"><span class="pre">GoalForm.media</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.models">goals.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.models.Goal"><code class="docutils literal notranslate"><span class="pre">Goal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Goal.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Goal.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Goal.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.current_savings"><code class="docutils literal notranslate"><span class="pre">Goal.current_savings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.deadline"><code class="docutils literal notranslate"><span class="pre">Goal.deadline</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.get_next_by_deadline"><code class="docutils literal notranslate"><span class="pre">Goal.get_next_by_deadline()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.get_previous_by_deadline"><code class="docutils literal notranslate"><span class="pre">Goal.get_previous_by_deadline()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.id"><code class="docutils literal notranslate"><span class="pre">Goal.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.name"><code class="docutils literal notranslate"><span class="pre">Goal.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.objects"><code class="docutils literal notranslate"><span class="pre">Goal.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.progress"><code class="docutils literal notranslate"><span class="pre">Goal.progress</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.progress_percentage"><code class="docutils literal notranslate"><span class="pre">Goal.progress_percentage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.target_amount"><code class="docutils literal notranslate"><span class="pre">Goal.target_amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.user"><code class="docutils literal notranslate"><span class="pre">Goal.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="goals.html#goals.models.Goal.user_id"><code class="docutils literal notranslate"><span class="pre">Goal.user_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.services">goals.services module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.tests">goals.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.urls">goals.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals.views">goals.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.views.delete_goal"><code class="docutils literal notranslate"><span class="pre">delete_goal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.views.edit_goal"><code class="docutils literal notranslate"><span class="pre">edit_goal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="goals.html#goals.views.goals_page"><code class="docutils literal notranslate"><span class="pre">goals_page()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html#module-goals">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notifications.html">notifications package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="notifications.migrations.html">notifications.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notifications.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.migrations.html#module-notifications.migrations.0001_initial">notifications.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.migrations.html#module-notifications.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.admin">notifications.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.apps">notifications.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.apps.NotificationsConfig"><code class="docutils literal notranslate"><span class="pre">NotificationsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.apps.NotificationsConfig.name"><code class="docutils literal notranslate"><span class="pre">NotificationsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.models">notifications.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.models.Notification"><code class="docutils literal notranslate"><span class="pre">Notification</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Notification.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Notification.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.NOTIFICATION_TYPES"><code class="docutils literal notranslate"><span class="pre">Notification.NOTIFICATION_TYPES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Notification.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.category_budget"><code class="docutils literal notranslate"><span class="pre">Notification.category_budget</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.category_budget_id"><code class="docutils literal notranslate"><span class="pre">Notification.category_budget_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.created_at"><code class="docutils literal notranslate"><span class="pre">Notification.created_at</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.get_next_by_created_at"><code class="docutils literal notranslate"><span class="pre">Notification.get_next_by_created_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.get_notification_type_display"><code class="docutils literal notranslate"><span class="pre">Notification.get_notification_type_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.get_previous_by_created_at"><code class="docutils literal notranslate"><span class="pre">Notification.get_previous_by_created_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.id"><code class="docutils literal notranslate"><span class="pre">Notification.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.is_archived"><code class="docutils literal notranslate"><span class="pre">Notification.is_archived</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.is_read"><code class="docutils literal notranslate"><span class="pre">Notification.is_read</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.message"><code class="docutils literal notranslate"><span class="pre">Notification.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.notification_type"><code class="docutils literal notranslate"><span class="pre">Notification.notification_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.objects"><code class="docutils literal notranslate"><span class="pre">Notification.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.Notification.title"><code class="docutils literal notranslate"><span class="pre">Notification.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.models.NotificationController"><code class="docutils literal notranslate"><span class="pre">NotificationController</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.THRESHOLD_PERCENTAGE"><code class="docutils literal notranslate"><span class="pre">NotificationController.THRESHOLD_PERCENTAGE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.archive"><code class="docutils literal notranslate"><span class="pre">NotificationController.archive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.check_threshold"><code class="docutils literal notranslate"><span class="pre">NotificationController.check_threshold()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.mark_all_as_read"><code class="docutils literal notranslate"><span class="pre">NotificationController.mark_all_as_read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.mark_as_read"><code class="docutils literal notranslate"><span class="pre">NotificationController.mark_as_read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="notifications.html#notifications.models.NotificationController.send_alert"><code class="docutils literal notranslate"><span class="pre">NotificationController.send_alert()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.tests">notifications.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.urls">notifications.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications.views">notifications.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.views.archive_notification"><code class="docutils literal notranslate"><span class="pre">archive_notification()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.views.mark_all_as_read"><code class="docutils literal notranslate"><span class="pre">mark_all_as_read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.views.mark_as_read"><code class="docutils literal notranslate"><span class="pre">mark_as_read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.views.navigate_to_budget"><code class="docutils literal notranslate"><span class="pre">navigate_to_budget()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html#notifications.views.notification_center"><code class="docutils literal notranslate"><span class="pre">notification_center()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html#module-notifications">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">reports package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.migrations.html">reports.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="reports.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.migrations.html#module-reports.migrations.0001_initial">reports.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.migrations.html#module-reports.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.admin">reports.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.apps">reports.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.apps.ReportsConfig"><code class="docutils literal notranslate"><span class="pre">ReportsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.apps.ReportsConfig.name"><code class="docutils literal notranslate"><span class="pre">ReportsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.forms">reports.forms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.models">reports.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.models.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Report.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Report.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Report.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.created_at"><code class="docutils literal notranslate"><span class="pre">Report.created_at</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.get_next_by_created_at"><code class="docutils literal notranslate"><span class="pre">Report.get_next_by_created_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.get_previous_by_created_at"><code class="docutils literal notranslate"><span class="pre">Report.get_previous_by_created_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.id"><code class="docutils literal notranslate"><span class="pre">Report.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.objects"><code class="docutils literal notranslate"><span class="pre">Report.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.title"><code class="docutils literal notranslate"><span class="pre">Report.title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.total_expense"><code class="docutils literal notranslate"><span class="pre">Report.total_expense</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.total_income"><code class="docutils literal notranslate"><span class="pre">Report.total_income</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.user"><code class="docutils literal notranslate"><span class="pre">Report.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports.html#reports.models.Report.user_id"><code class="docutils literal notranslate"><span class="pre">Report.user_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.services">reports.services module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.services.build_report_payload"><code class="docutils literal notranslate"><span class="pre">build_report_payload()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.tests">reports.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.urls">reports.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.views">reports.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.views.report_export_csv"><code class="docutils literal notranslate"><span class="pre">report_export_csv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.views.report_export_excel"><code class="docutils literal notranslate"><span class="pre">report_export_excel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.views.report_export_pdf"><code class="docutils literal notranslate"><span class="pre">report_export_pdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.views.report_summary_api"><code class="docutils literal notranslate"><span class="pre">report_summary_api()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.views.reports_page"><code class="docutils literal notranslate"><span class="pre">reports_page()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html">transactions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.migrations.html">transactions.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#module-transactions.migrations.0001_initial">transactions.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#module-transactions.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.admin">transactions.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.apps">transactions.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.apps.TransactionsConfig"><code class="docutils literal notranslate"><span class="pre">TransactionsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.apps.TransactionsConfig.name"><code class="docutils literal notranslate"><span class="pre">TransactionsConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.models">transactions.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.Category"><code class="docutils literal notranslate"><span class="pre">Category</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Category.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Category.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Category.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.expense_set"><code class="docutils literal notranslate"><span class="pre">Category.expense_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.get_type_display"><code class="docutils literal notranslate"><span class="pre">Category.get_type_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.id"><code class="docutils literal notranslate"><span class="pre">Category.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.income_set"><code class="docutils literal notranslate"><span class="pre">Category.income_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.name"><code class="docutils literal notranslate"><span class="pre">Category.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.objects"><code class="docutils literal notranslate"><span class="pre">Category.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Category.type"><code class="docutils literal notranslate"><span class="pre">Category.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.CategoryType"><code class="docutils literal notranslate"><span class="pre">CategoryType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.CategoryType.EXPENSE"><code class="docutils literal notranslate"><span class="pre">CategoryType.EXPENSE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.CategoryType.INCOME"><code class="docutils literal notranslate"><span class="pre">CategoryType.INCOME</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.Expense"><code class="docutils literal notranslate"><span class="pre">Expense</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Expense.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Expense.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Expense.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.amount"><code class="docutils literal notranslate"><span class="pre">Expense.amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.category"><code class="docutils literal notranslate"><span class="pre">Expense.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.category_id"><code class="docutils literal notranslate"><span class="pre">Expense.category_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.date"><code class="docutils literal notranslate"><span class="pre">Expense.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.description"><code class="docutils literal notranslate"><span class="pre">Expense.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.get_next_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_next_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.get_payment_method_display"><code class="docutils literal notranslate"><span class="pre">Expense.get_payment_method_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.get_previous_by_date"><code class="docutils literal notranslate"><span class="pre">Expense.get_previous_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.id"><code class="docutils literal notranslate"><span class="pre">Expense.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.objects"><code class="docutils literal notranslate"><span class="pre">Expense.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Expense.payment_method"><code class="docutils literal notranslate"><span class="pre">Expense.payment_method</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.Income"><code class="docutils literal notranslate"><span class="pre">Income</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Income.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Income.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.NotUpdated"><code class="docutils literal notranslate"><span class="pre">Income.NotUpdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.amount"><code class="docutils literal notranslate"><span class="pre">Income.amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.category"><code class="docutils literal notranslate"><span class="pre">Income.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.category_id"><code class="docutils literal notranslate"><span class="pre">Income.category_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.date"><code class="docutils literal notranslate"><span class="pre">Income.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.description"><code class="docutils literal notranslate"><span class="pre">Income.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.get_next_by_date"><code class="docutils literal notranslate"><span class="pre">Income.get_next_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.get_payment_method_display"><code class="docutils literal notranslate"><span class="pre">Income.get_payment_method_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.get_previous_by_date"><code class="docutils literal notranslate"><span class="pre">Income.get_previous_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.id"><code class="docutils literal notranslate"><span class="pre">Income.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.objects"><code class="docutils literal notranslate"><span class="pre">Income.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.payment_method"><code class="docutils literal notranslate"><span class="pre">Income.payment_method</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Income.source"><code class="docutils literal notranslate"><span class="pre">Income.source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.PaymentMethod"><code class="docutils literal notranslate"><span class="pre">PaymentMethod</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.PaymentMethod.CASH"><code class="docutils literal notranslate"><span class="pre">PaymentMethod.CASH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.PaymentMethod.CREDIT_CARD"><code class="docutils literal notranslate"><span class="pre">PaymentMethod.CREDIT_CARD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.PaymentMethod.E_WALLET"><code class="docutils literal notranslate"><span class="pre">PaymentMethod.E_WALLET</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.models.Transaction"><code class="docutils literal notranslate"><span class="pre">Transaction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.Meta"><code class="docutils literal notranslate"><span class="pre">Transaction.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.amount"><code class="docutils literal notranslate"><span class="pre">Transaction.amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.category"><code class="docutils literal notranslate"><span class="pre">Transaction.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.category_id"><code class="docutils literal notranslate"><span class="pre">Transaction.category_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.date"><code class="docutils literal notranslate"><span class="pre">Transaction.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.description"><code class="docutils literal notranslate"><span class="pre">Transaction.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.get_next_by_date"><code class="docutils literal notranslate"><span class="pre">Transaction.get_next_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.get_payment_method_display"><code class="docutils literal notranslate"><span class="pre">Transaction.get_payment_method_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.get_previous_by_date"><code class="docutils literal notranslate"><span class="pre">Transaction.get_previous_by_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.models.Transaction.payment_method"><code class="docutils literal notranslate"><span class="pre">Transaction.payment_method</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.repositories">transactions.repositories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository"><code class="docutils literal notranslate"><span class="pre">TransactionRepository</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.delete"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.find_all"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.find_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.find_by_category"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.find_by_category()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.find_by_date_range"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.find_by_date_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.find_by_type"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.find_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.repositories.TransactionRepository.save"><code class="docutils literal notranslate"><span class="pre">TransactionRepository.save()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.services">transactions.services module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.services.TransactionService"><code class="docutils literal notranslate"><span class="pre">TransactionService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.calculate_impact"><code class="docutils literal notranslate"><span class="pre">TransactionService.calculate_impact()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.create_transaction"><code class="docutils literal notranslate"><span class="pre">TransactionService.create_transaction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.delete_transaction"><code class="docutils literal notranslate"><span class="pre">TransactionService.delete_transaction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.get_all_transactions"><code class="docutils literal notranslate"><span class="pre">TransactionService.get_all_transactions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.get_by_category"><code class="docutils literal notranslate"><span class="pre">TransactionService.get_by_category()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.get_by_date_range"><code class="docutils literal notranslate"><span class="pre">TransactionService.get_by_date_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.get_by_type"><code class="docutils literal notranslate"><span class="pre">TransactionService.get_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.process_transaction"><code class="docutils literal notranslate"><span class="pre">TransactionService.process_transaction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.html#transactions.services.TransactionService.validate_transaction"><code class="docutils literal notranslate"><span class="pre">TransactionService.validate_transaction()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.tests">transactions.tests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.urls">transactions.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions.views">transactions.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.add_transaction"><code class="docutils literal notranslate"><span class="pre">add_transaction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.delete_transaction"><code class="docutils literal notranslate"><span class="pre">delete_transaction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.export_transactions_csv"><code class="docutils literal notranslate"><span class="pre">export_transactions_csv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.list_categories"><code class="docutils literal notranslate"><span class="pre">list_categories()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.list_transactions"><code class="docutils literal notranslate"><span class="pre">list_transactions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="transactions.html#transactions.views.transactions_page"><code class="docutils literal notranslate"><span class="pre">transactions_page()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.html#module-transactions">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="FinTrix backend documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="authentication.html" class="btn btn-neutral float-right" title="authentication package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

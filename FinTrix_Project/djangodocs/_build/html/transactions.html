@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>transactions package &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="transactions.migrations package" href="transactions.migrations.html" />
+    <link rel="prev" title="reports.migrations package" href="reports.migrations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">authentication</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="authentication.html">authentication package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="budgets.html">budgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="goals.html">goals package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">notifications package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html">reports package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">transactions package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html">transactions.migrations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.admin">transactions.admin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.apps">transactions.apps module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.apps.TransactionsConfig"><code class="docutils literal notranslate"><span class="pre">TransactionsConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.models">transactions.models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.Category"><code class="docutils literal notranslate"><span class="pre">Category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.CategoryType"><code class="docutils literal notranslate"><span class="pre">CategoryType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.Expense"><code class="docutils literal notranslate"><span class="pre">Expense</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.Income"><code class="docutils literal notranslate"><span class="pre">Income</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.PaymentMethod"><code class="docutils literal notranslate"><span class="pre">PaymentMethod</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.models.Transaction"><code class="docutils literal notranslate"><span class="pre">Transaction</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.repositories">transactions.repositories module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.repositories.TransactionRepository"><code class="docutils literal notranslate"><span class="pre">TransactionRepository</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.services">transactions.services module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.services.TransactionService"><code class="docutils literal notranslate"><span class="pre">TransactionService</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.tests">transactions.tests module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.urls">transactions.urls module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions.views">transactions.views module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.add_transaction"><code class="docutils literal notranslate"><span class="pre">add_transaction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.delete_transaction"><code class="docutils literal notranslate"><span class="pre">delete_transaction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.export_transactions_csv"><code class="docutils literal notranslate"><span class="pre">export_transactions_csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.list_categories"><code class="docutils literal notranslate"><span class="pre">list_categories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.list_transactions"><code class="docutils literal notranslate"><span class="pre">list_transactions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactions.views.transactions_page"><code class="docutils literal notranslate"><span class="pre">transactions_page()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-transactions">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">authentication</a></li>
+      <li class="breadcrumb-item active">transactions package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/transactions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="transactions-package">
+<h1>transactions package<a class="headerlink" href="#transactions-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="transactions.migrations.html">transactions.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transactions.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.migrations.html#module-transactions.migrations.0001_initial">transactions.migrations.0001_initial module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transactions.migrations.html#transactions.migrations.0001_initial.Migration"><code class="docutils literal notranslate"><span class="pre">Migration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#transactions.migrations.0001_initial.Migration.dependencies"><code class="docutils literal notranslate"><span class="pre">Migration.dependencies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#transactions.migrations.0001_initial.Migration.initial"><code class="docutils literal notranslate"><span class="pre">Migration.initial</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="transactions.migrations.html#transactions.migrations.0001_initial.Migration.operations"><code class="docutils literal notranslate"><span class="pre">Migration.operations</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transactions.migrations.html#module-transactions.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-transactions.admin">
+<span id="transactions-admin-module"></span><h2>transactions.admin module<a class="headerlink" href="#module-transactions.admin" title="Link to this heading"></a></h2>
+</section>
+<section id="module-transactions.apps">
+<span id="transactions-apps-module"></span><h2>transactions.apps module<a class="headerlink" href="#module-transactions.apps" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.apps.TransactionsConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.apps.</span></span><span class="sig-name descname"><span class="pre">TransactionsConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/apps.html#TransactionsConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.apps.TransactionsConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.apps.TransactionsConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transactions'</span></span><a class="headerlink" href="#transactions.apps.TransactionsConfig.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-transactions.models">
+<span id="transactions-models-module"></span><h2>transactions.models module<a class="headerlink" href="#module-transactions.models" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.Category">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">Category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#Category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.Category" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Category.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#transactions.models.Category.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Category.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#transactions.models.Category.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Category.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#transactions.models.Category.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.expense_set">
+<span class="sig-name descname"><span class="pre">expense_set</span></span><a class="headerlink" href="#transactions.models.Category.expense_set" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Category.get_type_display">
+<span class="sig-name descname"><span class="pre">get_type_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.CharField:</span> <span class="pre">type&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Category.get_type_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#transactions.models.Category.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.income_set">
+<span class="sig-name descname"><span class="pre">income_set</span></span><a class="headerlink" href="#transactions.models.Category.income_set" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_reverse_many_to_one_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#transactions.models.Category.name" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#transactions.models.Category.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Category.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#transactions.models.Category.type" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.CategoryType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">CategoryType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#CategoryType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.CategoryType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TextChoices</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.CategoryType.EXPENSE">
+<span class="sig-name descname"><span class="pre">EXPENSE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'EXPENSE'</span></span><a class="headerlink" href="#transactions.models.CategoryType.EXPENSE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.CategoryType.INCOME">
+<span class="sig-name descname"><span class="pre">INCOME</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INCOME'</span></span><a class="headerlink" href="#transactions.models.CategoryType.INCOME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.Expense">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">Expense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#Expense"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.Expense" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#transactions.models.Transaction" title="transactions.models.Transaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transaction</span></code></a></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Expense.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#transactions.models.Expense.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Expense.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#transactions.models.Expense.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Expense.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#transactions.models.Expense.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><a class="headerlink" href="#transactions.models.Expense.amount" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#transactions.models.Expense.category" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.category_id">
+<span class="sig-name descname"><span class="pre">category_id</span></span><a class="headerlink" href="#transactions.models.Expense.category_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.date">
+<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#transactions.models.Expense.date" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#transactions.models.Expense.description" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Expense.get_next_by_date">
+<span class="sig-name descname"><span class="pre">get_next_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Expense.get_next_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Expense.get_payment_method_display">
+<span class="sig-name descname"><span class="pre">get_payment_method_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.CharField:</span> <span class="pre">payment_method&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Expense.get_payment_method_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Expense.get_previous_by_date">
+<span class="sig-name descname"><span class="pre">get_previous_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Expense.get_previous_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#transactions.models.Expense.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#transactions.models.Expense.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Expense.payment_method">
+<span class="sig-name descname"><span class="pre">payment_method</span></span><a class="headerlink" href="#transactions.models.Expense.payment_method" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.Income">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">Income</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#Income"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.Income" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#transactions.models.Transaction" title="transactions.models.Transaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transaction</span></code></a></p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Income.DoesNotExist">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#transactions.models.Income.DoesNotExist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Income.MultipleObjectsReturned">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#transactions.models.Income.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="transactions.models.Income.NotUpdated">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#transactions.models.Income.NotUpdated" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectNotUpdated</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><a class="headerlink" href="#transactions.models.Income.amount" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#transactions.models.Income.category" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.category_id">
+<span class="sig-name descname"><span class="pre">category_id</span></span><a class="headerlink" href="#transactions.models.Income.category_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.date">
+<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#transactions.models.Income.date" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#transactions.models.Income.description" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Income.get_next_by_date">
+<span class="sig-name descname"><span class="pre">get_next_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Income.get_next_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Income.get_payment_method_display">
+<span class="sig-name descname"><span class="pre">get_payment_method_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.CharField:</span> <span class="pre">payment_method&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Income.get_payment_method_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Income.get_previous_by_date">
+<span class="sig-name descname"><span class="pre">get_previous_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Income.get_previous_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#transactions.models.Income.id" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#transactions.models.Income.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.payment_method">
+<span class="sig-name descname"><span class="pre">payment_method</span></span><a class="headerlink" href="#transactions.models.Income.payment_method" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Income.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#transactions.models.Income.source" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.PaymentMethod">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">PaymentMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#PaymentMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.PaymentMethod" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TextChoices</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.PaymentMethod.CASH">
+<span class="sig-name descname"><span class="pre">CASH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CASH'</span></span><a class="headerlink" href="#transactions.models.PaymentMethod.CASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.PaymentMethod.CREDIT_CARD">
+<span class="sig-name descname"><span class="pre">CREDIT_CARD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CREDIT_CARD'</span></span><a class="headerlink" href="#transactions.models.PaymentMethod.CREDIT_CARD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.PaymentMethod.E_WALLET">
+<span class="sig-name descname"><span class="pre">E_WALLET</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'E_WALLET'</span></span><a class="headerlink" href="#transactions.models.PaymentMethod.E_WALLET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.Transaction">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.models.</span></span><span class="sig-name descname"><span class="pre">Transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/models.html#Transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.Transaction" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.models.Transaction.Meta">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="_modules/transactions/models.html#Transaction.Meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.models.Transaction.Meta" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.Meta.abstract">
+<span class="sig-name descname"><span class="pre">abstract</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#transactions.models.Transaction.Meta.abstract" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><a class="headerlink" href="#transactions.models.Transaction.amount" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#transactions.models.Transaction.category" title="Link to this definition"></a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.category_id">
+<span class="sig-name descname"><span class="pre">category_id</span></span><a class="headerlink" href="#transactions.models.Transaction.category_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.date">
+<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#transactions.models.Transaction.date" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#transactions.models.Transaction.description" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Transaction.get_next_by_date">
+<span class="sig-name descname"><span class="pre">get_next_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Transaction.get_next_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Transaction.get_payment_method_display">
+<span class="sig-name descname"><span class="pre">get_payment_method_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.CharField:</span> <span class="pre">payment_method&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Transaction.get_payment_method_display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.models.Transaction.get_previous_by_date">
+<span class="sig-name descname"><span class="pre">get_previous_by_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;django.db.models.fields.DateField:</span> <span class="pre">date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transactions.models.Transaction.get_previous_by_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="transactions.models.Transaction.payment_method">
+<span class="sig-name descname"><span class="pre">payment_method</span></span><a class="headerlink" href="#transactions.models.Transaction.payment_method" title="Link to this definition"></a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-transactions.repositories">
+<span id="transactions-repositories-module"></span><h2>transactions.repositories module<a class="headerlink" href="#module-transactions.repositories" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.repositories.</span></span><span class="sig-name descname"><span class="pre">TransactionRepository</span></span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.delete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.find_all">
+<span class="sig-name descname"><span class="pre">find_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.find_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.find_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.find_by_category">
+<span class="sig-name descname"><span class="pre">find_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.find_by_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.find_by_category" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.find_by_date_range">
+<span class="sig-name descname"><span class="pre">find_by_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.find_by_date_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.find_by_date_range" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.find_by_type">
+<span class="sig-name descname"><span class="pre">find_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.find_by_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.find_by_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.repositories.TransactionRepository.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/repositories.html#TransactionRepository.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.repositories.TransactionRepository.save" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-transactions.services">
+<span id="transactions-services-module"></span><h2>transactions.services module<a class="headerlink" href="#module-transactions.services" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="transactions.services.TransactionService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">transactions.services.</span></span><span class="sig-name descname"><span class="pre">TransactionService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction_repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.calculate_impact">
+<span class="sig-name descname"><span class="pre">calculate_impact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.calculate_impact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.calculate_impact" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.create_transaction">
+<span class="sig-name descname"><span class="pre">create_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.create_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.create_transaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.delete_transaction">
+<span class="sig-name descname"><span class="pre">delete_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transaction_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.delete_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.delete_transaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.get_all_transactions">
+<span class="sig-name descname"><span class="pre">get_all_transactions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.get_all_transactions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.get_all_transactions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.get_by_category">
+<span class="sig-name descname"><span class="pre">get_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.get_by_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.get_by_category" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.get_by_date_range">
+<span class="sig-name descname"><span class="pre">get_by_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.get_by_date_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.get_by_date_range" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.get_by_type">
+<span class="sig-name descname"><span class="pre">get_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.get_by_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.get_by_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.process_transaction">
+<span class="sig-name descname"><span class="pre">process_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.process_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.process_transaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transactions.services.TransactionService.validate_transaction">
+<span class="sig-name descname"><span class="pre">validate_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/services.html#TransactionService.validate_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.services.TransactionService.validate_transaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-transactions.tests">
+<span id="transactions-tests-module"></span><h2>transactions.tests module<a class="headerlink" href="#module-transactions.tests" title="Link to this heading"></a></h2>
+</section>
+<section id="module-transactions.urls">
+<span id="transactions-urls-module"></span><h2>transactions.urls module<a class="headerlink" href="#module-transactions.urls" title="Link to this heading"></a></h2>
+</section>
+<section id="module-transactions.views">
+<span id="transactions-views-module"></span><h2>transactions.views module<a class="headerlink" href="#module-transactions.views" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.add_transaction">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">add_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#add_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.add_transaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.delete_transaction">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">delete_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#delete_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.delete_transaction" title="Link to this definition"></a></dt>
+<dd><p>Deletes a transaction by ID and type.
+Args:
+request (HttpRequest): The HTTP request object.
+tx_type (str): The type of transaction (“income” or “expense”).
+tx_id (int): The ID of the transaction to delete.
+Returns:JsonResponse: A JSON response indicating success or failure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.export_transactions_csv">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">export_transactions_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#export_transactions_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.export_transactions_csv" title="Link to this definition"></a></dt>
+<dd><p>Exports transactions to a CSV file.
+Query Parameters:
+- category_id: Filter by category ID.
+- start_date: Filter transactions on or after this date (YYYY-MM-DD).
+- end_date: Filter transactions on or before this date (YYYY-MM-DD).
+- type: Filter by transaction type (“income”, “expense”, “internal”).
+:returns: A response containing the CSV file for download.
+:rtype: HttpResponse</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.list_categories">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">list_categories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#list_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.list_categories" title="Link to this definition"></a></dt>
+<dd><p>Lists all categories. If no categories exist, it creates a default set.
+Returns:
+JsonResponse: A JSON response containing the list of categories.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.list_transactions">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">list_transactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#list_transactions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.list_transactions" title="Link to this definition"></a></dt>
+<dd><p>Lists transactions with optional filtering and pagination.
+Query Parameters:
+- category_id: Filter by category ID.
+- start_date: Filter transactions on or after this date (YYYY-MM-DD).
+- end_date: Filter transactions on or before this date (YYYY-MM-DD).
+- type: Filter by transaction type (“income”, “expense”, “internal”).
+- page: Page number for pagination (default: 1).
+- page_size: Number of items per page (default: 10, max: 100).
+Returns:
+JsonResponse: A JSON response containing the list of transactions and pagination info.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transactions.views.transactions_page">
+<span class="sig-prename descclassname"><span class="pre">transactions.views.</span></span><span class="sig-name descname"><span class="pre">transactions_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/transactions/views.html#transactions_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#transactions.views.transactions_page" title="Link to this definition"></a></dt>
+<dd><p>Displays the transactions page.</p>
+<p>Args:
+request (HttpRequest): The HTTP request object.</p>
+<p>Returns:
+HttpResponse: The rendered transactions page.</p>
+</dd></dl>
+
+</section>
+<section id="module-transactions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-transactions" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reports.migrations.html" class="btn btn-neutral float-left" title="reports.migrations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="transactions.migrations.html" class="btn btn-neutral float-right" title="transactions.migrations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

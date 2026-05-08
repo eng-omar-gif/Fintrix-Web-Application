@@ -13,6 +13,15 @@ from .models import Category, CategoryType, Income, Expense
 
 @login_required
 def transactions_page(request):
+    """
+    Displays the transactions page.
+
+    Args:
+    request (HttpRequest): The HTTP request object.
+
+    Returns:
+    HttpResponse: The rendered transactions page.
+    """
     return render(request, 'transactions.html')
 
 @require_POST
@@ -38,6 +47,18 @@ def add_transaction(request):
 @require_GET
 @login_required
 def list_transactions(request):
+    """
+    Lists transactions with optional filtering and pagination.
+    Query Parameters:
+    - category_id: Filter by category ID.
+    - start_date: Filter transactions on or after this date (YYYY-MM-DD).
+    - end_date: Filter transactions on or before this date (YYYY-MM-DD).
+    - type: Filter by transaction type ("income", "expense", "internal").
+    - page: Page number for pagination (default: 1).
+    - page_size: Number of items per page (default: 10, max: 100).
+    Returns:
+    JsonResponse: A JSON response containing the list of transactions and pagination info.
+    """
     cat_id = request.GET.get('category_id')
     start = request.GET.get('start_date')
     end = request.GET.get('end_date')
@@ -137,6 +158,11 @@ def list_transactions(request):
 @require_GET
 @login_required
 def list_categories(request):
+    """
+    Lists all categories. If no categories exist, it creates a default set.
+    Returns:
+    JsonResponse: A JSON response containing the list of categories.
+    """
     if not Category.objects.exists():
         defaults = [
             ("Salary", CategoryType.INCOME),
@@ -164,6 +190,14 @@ def list_categories(request):
 @csrf_protect
 @login_required
 def delete_transaction(request, tx_type, tx_id):
+    """
+    Deletes a transaction by ID and type.
+    Args:
+    request (HttpRequest): The HTTP request object.
+    tx_type (str): The type of transaction ("income" or "expense").
+    tx_id (int): The ID of the transaction to delete.
+    Returns:JsonResponse: A JSON response indicating success or failure.
+    """
     tx_type = (tx_type or "").lower().strip()
     if tx_type == "income":
         model = Income
@@ -181,6 +215,16 @@ def delete_transaction(request, tx_type, tx_id):
 @require_GET
 @login_required
 def export_transactions_csv(request):
+    """
+    Exports transactions to a CSV file.
+    Query Parameters:
+    - category_id: Filter by category ID.
+    - start_date: Filter transactions on or after this date (YYYY-MM-DD).
+    - end_date: Filter transactions on or before this date (YYYY-MM-DD).
+    - type: Filter by transaction type ("income", "expense", "internal").
+    Returns:
+        HttpResponse: A response containing the CSV file for download.
+    """
     cat_id = request.GET.get('category_id')
     start = request.GET.get('start_date')
     end = request.GET.get('end_date')

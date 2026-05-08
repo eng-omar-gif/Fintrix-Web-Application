@@ -11,6 +11,10 @@ from .models import Notification, NotificationController
 #  Helper — attach human-readable "time ago" to each notification
 # ─────────────────────────────────────────────
 def _annotate_time(notifications):
+    """
+    For each notification, calculate how long ago it was created and attach a
+    human-readable label (e.g. "5 MIN AGO", "YESTERDAY") as `time_label`.
+    """
     now = timezone.now()
     result = []
     for n in notifications:
@@ -35,6 +39,15 @@ def _annotate_time(notifications):
 # ─────────────────────────────────────────────
 @login_required
 def notification_center(request):
+    """
+    Displays the user's notifications and handles tab navigation.
+
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+
+    Returns:
+        HttpResponse: Rendered notification center page.
+    """
     # Re-run checkThreshold for all CategoryBudgets (keeps list fresh)
     for cb in CategoryBudget.objects.select_related("category").all():
         NotificationController.check_threshold(cb)
@@ -70,6 +83,13 @@ def notification_center(request):
 # ─────────────────────────────────────────────
 @login_required
 def mark_as_read(request, notification_id):
+    """Marks a single notification as read.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        notification_id (int): ID of the notification to mark as read.
+    Returns:
+        HttpResponse: Redirects back to the referring page or notification center.
+    """
     if request.method == "POST":
         NotificationController.mark_as_read(notification_id)
     return redirect(request.META.get("HTTP_REFERER", "notification_center"))
@@ -81,6 +101,12 @@ def mark_as_read(request, notification_id):
 # ─────────────────────────────────────────────
 @login_required
 def mark_all_as_read(request):
+    """Marks all notifications as read for the user.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+    Returns:
+        HttpResponse: Redirects back to the notification center with a success message.
+    """
     if request.method == "POST":
         NotificationController.mark_all_as_read()
         messages.success(request, "All notifications marked as read.")
@@ -93,6 +119,13 @@ def mark_all_as_read(request):
 # ─────────────────────────────────────────────
 @login_required
 def archive_notification(request, notification_id):
+    """Archives a single notification.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        notification_id (int): ID of the notification to archive.
+    Returns:
+        HttpResponse: Redirects back to the referring page or notification center.
+    """
     if request.method == "POST":
         NotificationController.archive(notification_id)
     return redirect(request.META.get("HTTP_REFERER", "notification_center"))
@@ -105,6 +138,13 @@ def archive_notification(request, notification_id):
 # ─────────────────────────────────────────────
 @login_required
 def navigate_to_budget(request, notification_id):
+    """Navigates the user to the related budget detail page based on the notification.
+    Args:
+        request (HttpRequest): Incoming HTTP request.
+        notification_id (int): ID of the notification to navigate from.
+    Returns:
+        HttpResponse: Redirects to the related budget detail page or notification center.
+    """
     notification = get_object_or_404(Notification, id=notification_id)
 
     # Mark as read on navigation

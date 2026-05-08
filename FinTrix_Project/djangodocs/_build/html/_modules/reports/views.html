@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reports.views &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reports.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for reports.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileResponse</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.views.decorators.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">require_GET</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_report_payload</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_dates</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the start and end dates from the request.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (start_date, end_date, error_response)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_date&quot;</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">start</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">end</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;start_date and end_date are required&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_d</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">end_d</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Invalid date format; use YYYY-MM-DD&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">end_d</span> <span class="o">&lt;</span> <span class="n">start_d</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;end_date must be on or after start_date&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_category_id</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the category ID from the request.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int or None: The category ID if valid, otherwise None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category_id&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="reports_page">
+<a class="viewcode-back" href="../../reports.html#reports.views.reports_page">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reports_page</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Renders the reports page.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: Rendered reports page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;reports.html&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="report_summary_api">
+<a class="viewcode-back" href="../../reports.html#reports.views.report_summary_api">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@require_GET</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_summary_api</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that returns the report summary data as JSON.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: Report summary data or error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_parse_dates</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">_category_id</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">build_report_payload</span><span class="p">(</span><span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;total_income&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;total_income&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;total_expense&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;total_expense&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;net&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;net&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;weekly_chart&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;weekly_chart&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;expense_allocation&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;expense_allocation&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;largest_transactions&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;largest_transactions&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="report_export_csv">
+<a class="viewcode-back" href="../../reports.html#reports.views.report_export_csv">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@require_GET</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_export_csv</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that generates and returns the report as a CSV file.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponse: CSV file response or error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_parse_dates</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">_category_id</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">build_report_payload</span><span class="p">(</span><span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;FinTrix Report&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;period_start&quot;</span><span class="p">],</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;period_end&quot;</span><span class="p">]])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Total income&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;total_income&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Total expense&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;total_expense&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Net&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;net&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Week&quot;</span><span class="p">,</span> <span class="s2">&quot;Income&quot;</span><span class="p">,</span> <span class="s2">&quot;Expense&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;weekly_chart&quot;</span><span class="p">]:</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;income&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;expense&quot;</span><span class="p">]])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Expense category&quot;</span><span class="p">,</span> <span class="s2">&quot;Amount&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;expense_allocation&quot;</span><span class="p">]:</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">]])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Entity&quot;</span><span class="p">,</span> <span class="s2">&quot;Category&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;largest_transactions&quot;</span><span class="p">]:</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]])</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/csv; charset=utf-8&quot;</span><span class="p">)</span>
+    <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;attachment; filename=&quot;fintrix_report_</span><span class="si">{</span><span class="n">start_d</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">end_d</span><span class="si">}</span><span class="s1">.csv&quot;&#39;</span>
+    <span class="k">return</span> <span class="n">resp</span></div>
+
+
+
+<div class="viewcode-block" id="report_export_excel">
+<a class="viewcode-back" href="../../reports.html#reports.views.report_export_excel">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@require_GET</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_export_excel</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that generates and returns the report as an Excel file.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        FileResponse: Excel file response or error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workbook</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl.styles</span><span class="w"> </span><span class="kn">import</span> <span class="n">Font</span>
+
+    <span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_parse_dates</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">_category_id</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">build_report_payload</span><span class="p">(</span><span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+
+    <span class="n">wb</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">active</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Summary&quot;</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;FinTrix Report&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;period_start&quot;</span><span class="p">],</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;period_end&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Total income&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;total_income&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Total expense&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;total_expense&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Net&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;net&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Week&quot;</span><span class="p">,</span> <span class="s2">&quot;Income&quot;</span><span class="p">,</span> <span class="s2">&quot;Expense&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;weekly_chart&quot;</span><span class="p">]:</span>
+        <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;income&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;expense&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Expense category&quot;</span><span class="p">,</span> <span class="s2">&quot;Amount&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;expense_allocation&quot;</span><span class="p">]:</span>
+        <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Entity&quot;</span><span class="p">,</span> <span class="s2">&quot;Category&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;largest_transactions&quot;</span><span class="p">]:</span>
+        <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]])</span>
+    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;A1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">Font</span><span class="p">(</span><span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">FileResponse</span><span class="p">(</span>
+        <span class="n">out</span><span class="p">,</span>
+        <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fintrix_report_</span><span class="si">{</span><span class="n">start_d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">end_d</span><span class="si">}</span><span class="s2">.xlsx&quot;</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="report_export_pdf">
+<a class="viewcode-back" href="../../reports.html#reports.views.report_export_pdf">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@require_GET</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_export_pdf</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that generates and returns the report as a PDF file.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): Incoming HTTP request.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        FileResponse: PDF file response or error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reportlab.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reportlab.lib.pagesizes</span><span class="w"> </span><span class="kn">import</span> <span class="n">letter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reportlab.lib.styles</span><span class="w"> </span><span class="kn">import</span> <span class="n">getSampleStyleSheet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reportlab.platypus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Paragraph</span><span class="p">,</span> <span class="n">SimpleDocTemplate</span><span class="p">,</span> <span class="n">Spacer</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableStyle</span>
+
+    <span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_parse_dates</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">_category_id</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">build_report_payload</span><span class="p">(</span><span class="n">start_d</span><span class="p">,</span> <span class="n">end_d</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">SimpleDocTemplate</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">pagesize</span><span class="o">=</span><span class="n">letter</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;FinTrix Report&quot;</span><span class="p">)</span>
+    <span class="n">styles</span> <span class="o">=</span> <span class="n">getSampleStyleSheet</span><span class="p">()</span>
+    <span class="n">story</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Paragraph</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;b&gt;FinTrix Report&lt;/b&gt; — </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;period_start&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;period_end&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]),</span>
+        <span class="n">Spacer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+        <span class="n">Paragraph</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Income: &lt;b&gt;$</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;total_income&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&lt;/b&gt; &amp;nbsp; Expense: &lt;b&gt;$</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;total_expense&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&lt;/b&gt; &amp;nbsp; Net: &lt;b&gt;$</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;net&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+            <span class="n">styles</span><span class="p">[</span><span class="s2">&quot;Normal&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">Spacer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">wdata</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Week&quot;</span><span class="p">,</span> <span class="s2">&quot;Income&quot;</span><span class="p">,</span> <span class="s2">&quot;Expense&quot;</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;weekly_chart&quot;</span><span class="p">]:</span>
+        <span class="n">wdata</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;expense&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">wdata</span><span class="p">,</span> <span class="n">repeatRows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+        <span class="n">TableStyle</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;BACKGROUND&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colors</span><span class="o">.</span><span class="n">HexColor</span><span class="p">(</span><span class="s2">&quot;#1e3a8a&quot;</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">&quot;TEXTCOLOR&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colors</span><span class="o">.</span><span class="n">whitesmoke</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GRID&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">colors</span><span class="o">.</span><span class="n">grey</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;ROWBACKGROUNDS&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="n">colors</span><span class="o">.</span><span class="n">white</span><span class="p">,</span> <span class="n">colors</span><span class="o">.</span><span class="n">HexColor</span><span class="p">(</span><span class="s2">&quot;#f1f5f9&quot;</span><span class="p">)]),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">story</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+    <span class="n">story</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Spacer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="n">ldata</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Entity&quot;</span><span class="p">,</span> <span class="s2">&quot;Category&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Amount&quot;</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;largest_transactions&quot;</span><span class="p">]:</span>
+        <span class="n">ldata</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">][:</span><span class="mi">40</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">ldata</span><span class="p">,</span> <span class="n">repeatRows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+        <span class="n">TableStyle</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;BACKGROUND&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colors</span><span class="o">.</span><span class="n">HexColor</span><span class="p">(</span><span class="s2">&quot;#0f172a&quot;</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">&quot;TEXTCOLOR&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colors</span><span class="o">.</span><span class="n">whitesmoke</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GRID&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">colors</span><span class="o">.</span><span class="n">grey</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">story</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Paragraph</span><span class="p">(</span><span class="s2">&quot;&lt;b&gt;Largest transactions&lt;/b&gt;&quot;</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="s2">&quot;Heading2&quot;</span><span class="p">]))</span>
+    <span class="n">story</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Spacer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">story</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+
+    <span class="n">doc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">story</span><span class="p">)</span>
+    <span class="n">buf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">FileResponse</span><span class="p">(</span>
+        <span class="n">buf</span><span class="p">,</span>
+        <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fintrix_report_</span><span class="si">{</span><span class="n">start_d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">end_d</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/pdf&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

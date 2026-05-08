@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dashboard.services &mdash; FinTrix backend 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            FinTrix backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FinTrix backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dashboard.services</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dashboard.services</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Aggregations and analytics for the main dashboard (transactions + budgets).&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">calendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">monthrange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TruncMonth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">budgets.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Budget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">goals.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Goal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transactions.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expense</span> <span class="k">as</span> <span class="n">TxExpense</span><span class="p">,</span> <span class="n">Income</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_month_start</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">date</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">date</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">date</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_months</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">date</span><span class="p">:</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">month</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">delta</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">m</span> <span class="o">//</span> <span class="mi">12</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">m</span> <span class="o">%</span> <span class="mi">12</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">monthrange</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">date</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pct_change</span><span class="p">(</span><span class="n">current</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">previous</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">100.0</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">((</span><span class="n">current</span> <span class="o">-</span> <span class="n">previous</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="financial_snapshot">
+<a class="viewcode-back" href="../../dashboard.html#dashboard.services.financial_snapshot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">financial_snapshot</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build dashboard metrics from Income/Expense (global) and Budget/Goals.</span>
+<span class="sd">    user: optional — used only for Goal aggregates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">today</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="n">month_start</span> <span class="o">=</span> <span class="n">_month_start</span><span class="p">(</span><span class="n">today</span><span class="p">)</span>
+    <span class="n">last_month_start</span> <span class="o">=</span> <span class="n">_add_months</span><span class="p">(</span><span class="n">month_start</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">last_month_end</span> <span class="o">=</span> <span class="n">month_start</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">inc_base</span> <span class="o">=</span> <span class="n">Income</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+    <span class="n">exp_base</span> <span class="o">=</span> <span class="n">TxExpense</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+
+    <span class="n">total_income_all</span> <span class="o">=</span> <span class="n">inc_base</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">total_expense_all</span> <span class="o">=</span> <span class="n">exp_base</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">total_balance</span> <span class="o">=</span> <span class="n">total_income_all</span> <span class="o">-</span> <span class="n">total_expense_all</span>
+
+    <span class="n">inc_m</span> <span class="o">=</span> <span class="n">inc_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">month_start</span><span class="p">,</span> <span class="n">date__lte</span><span class="o">=</span><span class="n">today</span><span class="p">)</span>
+    <span class="n">exp_m</span> <span class="o">=</span> <span class="n">exp_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">month_start</span><span class="p">,</span> <span class="n">date__lte</span><span class="o">=</span><span class="n">today</span><span class="p">)</span>
+    <span class="n">monthly_income</span> <span class="o">=</span> <span class="n">inc_m</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">monthly_expense</span> <span class="o">=</span> <span class="n">exp_m</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="n">inc_prev</span> <span class="o">=</span> <span class="n">inc_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">last_month_start</span><span class="p">,</span> <span class="n">date__lte</span><span class="o">=</span><span class="n">last_month_end</span><span class="p">)</span>
+    <span class="n">exp_prev</span> <span class="o">=</span> <span class="n">exp_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">last_month_start</span><span class="p">,</span> <span class="n">date__lte</span><span class="o">=</span><span class="n">last_month_end</span><span class="p">)</span>
+    <span class="n">prev_income</span> <span class="o">=</span> <span class="n">inc_prev</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">prev_expense</span> <span class="o">=</span> <span class="n">exp_prev</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="n">income_trend</span> <span class="o">=</span> <span class="n">_pct_change</span><span class="p">(</span><span class="n">monthly_income</span><span class="p">,</span> <span class="n">prev_income</span><span class="p">)</span>
+    <span class="n">expense_trend</span> <span class="o">=</span> <span class="n">_pct_change</span><span class="p">(</span><span class="n">monthly_expense</span><span class="p">,</span> <span class="n">prev_expense</span><span class="p">)</span>
+    <span class="n">balance_month_net</span> <span class="o">=</span> <span class="n">monthly_income</span> <span class="o">-</span> <span class="n">monthly_expense</span>
+    <span class="n">prev_net</span> <span class="o">=</span> <span class="n">prev_income</span> <span class="o">-</span> <span class="n">prev_expense</span>
+    <span class="n">balance_trend</span> <span class="o">=</span> <span class="n">_pct_change</span><span class="p">(</span><span class="n">balance_month_net</span><span class="p">,</span> <span class="n">prev_net</span><span class="p">)</span>
+
+    <span class="c1"># Expected income: trailing 3-month average of income (or previous month if empty)</span>
+    <span class="n">trail_start</span> <span class="o">=</span> <span class="n">_add_months</span><span class="p">(</span><span class="n">month_start</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">trail_income</span> <span class="o">=</span> <span class="n">inc_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">trail_start</span><span class="p">,</span> <span class="n">date__lt</span><span class="o">=</span><span class="n">month_start</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">)</span>
+    <span class="p">)[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">months_in_trail</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">expected_income</span> <span class="o">=</span> <span class="n">trail_income</span> <span class="o">/</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">months_in_trail</span><span class="p">)</span> <span class="k">if</span> <span class="n">months_in_trail</span> <span class="k">else</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expected_income</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">expected_income</span> <span class="o">=</span> <span class="n">prev_income</span>
+
+    <span class="c1"># Monthly overview: last 12 calendar months (income vs expense totals)</span>
+    <span class="n">overview_start</span> <span class="o">=</span> <span class="n">_add_months</span><span class="p">(</span><span class="n">month_start</span><span class="p">,</span> <span class="o">-</span><span class="mi">11</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_month_key</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">date</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">return</span> <span class="n">date</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">inc_by_m</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">_month_key</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]):</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">inc_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">overview_start</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="n">TruncMonth</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">exp_by_m</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">_month_key</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]):</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">exp_base</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">date__gte</span><span class="o">=</span><span class="n">overview_start</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="n">TruncMonth</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">monthly_overview</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+        <span class="n">m0</span> <span class="o">=</span> <span class="n">_add_months</span><span class="p">(</span><span class="n">overview_start</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_month_start</span><span class="p">(</span><span class="n">m0</span><span class="p">)</span>
+        <span class="n">mi</span> <span class="o">=</span> <span class="n">inc_by_m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="n">me</span> <span class="o">=</span> <span class="n">exp_by_m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="n">monthly_overview</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                <span class="s2">&quot;month_iso&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+                <span class="s2">&quot;income&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">mi</span><span class="p">),</span>
+                <span class="s2">&quot;expense&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">me</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Category breakdown (expenses, current month)</span>
+    <span class="n">cat_rows</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">exp_m</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s2">&quot;category_id&quot;</span><span class="p">,</span> <span class="s2">&quot;category__name&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-total&quot;</span><span class="p">)[:</span><span class="mi">12</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">category_expenses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;category__name&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;—&quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">cat_rows</span>
+    <span class="p">]</span>
+    <span class="n">donut_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">category_expenses</span><span class="p">)</span>
+
+    <span class="c1"># Recent transactions (single round-trip: two sliced queries merged)</span>
+    <span class="n">recent_limit</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">incomes_recent</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">inc_base</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-date&quot;</span><span class="p">,</span> <span class="s2">&quot;-id&quot;</span><span class="p">)[:</span><span class="n">recent_limit</span><span class="p">])</span>
+    <span class="n">expenses_recent</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">exp_base</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-date&quot;</span><span class="p">,</span> <span class="s2">&quot;-id&quot;</span><span class="p">)[:</span><span class="n">recent_limit</span><span class="p">])</span>
+    <span class="n">combined</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;income&quot;</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">incomes_recent</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;expense&quot;</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">expenses_recent</span>
+    <span class="p">]</span>
+    <span class="n">combined</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pk</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">recent_transactions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[:</span><span class="n">recent_limit</span><span class="p">]:</span>
+        <span class="n">is_inc</span> <span class="o">=</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;income&quot;</span>
+        <span class="n">recent_transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">&quot;—&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">category</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;category_type&quot;</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">type</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">category</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">date</span><span class="p">,</span>
+                <span class="s2">&quot;date_display&quot;</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b </span><span class="si">%d</span><span class="s2">, %Y&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">date</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">amount</span> <span class="k">if</span> <span class="n">is_inc</span> <span class="k">else</span> <span class="o">-</span><span class="n">o</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Budget for this calendar month</span>
+    <span class="n">budget</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Budget</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">today</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">month__month</span><span class="o">=</span><span class="n">today</span><span class="o">.</span><span class="n">month</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span>
+            <span class="s2">&quot;category_budgets&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;category_budgets__category&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">budget_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_limit</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">total_spent_cb</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">remaining_budget</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">budget_utilization</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">budget</span><span class="p">:</span>
+        <span class="n">cbs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">category_budgets</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cbs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">spent_amount</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]:</span>
+            <span class="n">lim</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cb</span><span class="o">.</span><span class="n">limit</span><span class="p">))</span>
+            <span class="n">spent</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cb</span><span class="o">.</span><span class="n">spent_amount</span><span class="p">))</span>
+            <span class="n">pct</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">spent</span> <span class="o">/</span> <span class="n">lim</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="n">lim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="n">budget_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">cb</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;spent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">spent</span><span class="p">),</span>
+                    <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">lim</span><span class="p">),</span>
+                    <span class="s2">&quot;pct&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">pct</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">total_limit</span> <span class="o">+=</span> <span class="n">lim</span>
+            <span class="n">total_spent_cb</span> <span class="o">+=</span> <span class="n">spent</span>
+        <span class="n">remaining_budget</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">get_remaining</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">total_limit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">budget_utilization</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_spent_cb</span> <span class="o">/</span> <span class="n">total_limit</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">remaining_budget</span> <span class="o">=</span> <span class="n">monthly_income</span> <span class="o">-</span> <span class="n">monthly_expense</span>
+
+    <span class="n">days_in_cycle</span> <span class="o">=</span> <span class="p">(</span><span class="n">date</span><span class="p">(</span><span class="n">today</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">today</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">monthrange</span><span class="p">(</span><span class="n">today</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">today</span><span class="o">.</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">today</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Income</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;payment_method&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">())</span>
+    <span class="n">methods</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">TxExpense</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;payment_method&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">())</span>
+    <span class="n">methods</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">connected_accounts</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">),</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">goals_qs</span> <span class="o">=</span> <span class="n">Goal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span> <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span> <span class="k">else</span> <span class="n">Goal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+    <span class="n">total_goal_target</span> <span class="o">=</span> <span class="n">goals_qs</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;target_amount&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="n">total_goal_saved</span> <span class="o">=</span> <span class="n">goals_qs</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;current_savings&quot;</span><span class="p">))[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="n">savings_hint</span> <span class="o">=</span> <span class="n">monthly_income</span> <span class="o">-</span> <span class="n">monthly_expense</span>
+    <span class="n">on_track</span> <span class="o">=</span> <span class="n">savings_hint</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;today&quot;</span><span class="p">:</span> <span class="n">today</span><span class="p">,</span>
+        <span class="s2">&quot;total_balance&quot;</span><span class="p">:</span> <span class="n">total_balance</span><span class="p">,</span>
+        <span class="s2">&quot;monthly_income&quot;</span><span class="p">:</span> <span class="n">monthly_income</span><span class="p">,</span>
+        <span class="s2">&quot;monthly_expense&quot;</span><span class="p">:</span> <span class="n">monthly_expense</span><span class="p">,</span>
+        <span class="s2">&quot;expected_income&quot;</span><span class="p">:</span> <span class="n">expected_income</span><span class="p">,</span>
+        <span class="s2">&quot;income_trend_pct&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">income_trend</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;expense_trend_pct&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">expense_trend</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;balance_trend_pct&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">balance_trend</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;monthly_overview&quot;</span><span class="p">:</span> <span class="n">monthly_overview</span><span class="p">,</span>
+        <span class="s2">&quot;category_expenses&quot;</span><span class="p">:</span> <span class="n">category_expenses</span><span class="p">,</span>
+        <span class="s2">&quot;category_expense_total&quot;</span><span class="p">:</span> <span class="n">donut_total</span><span class="p">,</span>
+        <span class="s2">&quot;recent_transactions&quot;</span><span class="p">:</span> <span class="n">recent_transactions</span><span class="p">,</span>
+        <span class="s2">&quot;budget_items&quot;</span><span class="p">:</span> <span class="n">budget_items</span><span class="p">,</span>
+        <span class="s2">&quot;remaining_budget&quot;</span><span class="p">:</span> <span class="n">remaining_budget</span><span class="p">,</span>
+        <span class="s2">&quot;budget_utilization_pct&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">budget_utilization</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;has_budget_period&quot;</span><span class="p">:</span> <span class="n">budget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;days_in_cycle&quot;</span><span class="p">:</span> <span class="n">days_in_cycle</span><span class="p">,</span>
+        <span class="s2">&quot;connected_accounts&quot;</span><span class="p">:</span> <span class="n">connected_accounts</span><span class="p">,</span>
+        <span class="s2">&quot;savings_month&quot;</span><span class="p">:</span> <span class="n">savings_hint</span><span class="p">,</span>
+        <span class="s2">&quot;savings_on_track&quot;</span><span class="p">:</span> <span class="n">on_track</span><span class="p">,</span>
+        <span class="s2">&quot;goals_saved_total&quot;</span><span class="p">:</span> <span class="n">total_goal_saved</span><span class="p">,</span>
+        <span class="s2">&quot;goals_target_total&quot;</span><span class="p">:</span> <span class="n">total_goal_target</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="dashboard_json_payload">
+<a class="viewcode-back" href="../../dashboard.html#dashboard.services.dashboard_json_payload">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dashboard_json_payload</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON-serializable subset for charts (embedded in template).&quot;&quot;&quot;</span>
+    <span class="n">mo</span> <span class="o">=</span> <span class="n">snapshot</span><span class="p">[</span><span class="s2">&quot;monthly_overview&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;monthlyOverview&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="s2">&quot;income&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;income&quot;</span><span class="p">],</span> <span class="s2">&quot;expense&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;expense&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mo</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;categoryExpenses&quot;</span><span class="p">:</span> <span class="n">snapshot</span><span class="p">[</span><span class="s2">&quot;category_expenses&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;categoryTotal&quot;</span><span class="p">:</span> <span class="n">snapshot</span><span class="p">[</span><span class="s2">&quot;category_expense_total&quot;</span><span class="p">],</span>
+    <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Omar Mostafa Adham Asmaa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
