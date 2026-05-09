@@ -57,7 +57,6 @@ class NotificationController:
             already_notified = Notification.objects.filter(
                 category_budget=cb,
                 notification_type="budget",
-                is_read=False,
                 is_archived=False,
             ).exists()
 
