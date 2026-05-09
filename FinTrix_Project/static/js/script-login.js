@@ -12,17 +12,16 @@
  * @returns {void}
  */
 function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const toggleIcon    = document.querySelector('.password-toggle');
-    if (!passwordInput || !toggleIcon) return;
+    const input    = document.getElementById('password');
+    const eyeOn    = document.querySelector('.password-toggle .eye-icon');
+    const eyeOff   = document.querySelector('.password-toggle .eye-off-icon');
+    const btn      = document.querySelector('.password-toggle');
 
-    if (passwordInput.type === 'password') {
-        passwordInput.type    = 'text';
-        toggleIcon.textContent = '👁️‍🗨️';
-    } else {
-        passwordInput.type    = 'password';
-        toggleIcon.textContent = '👁';
-    }
+    const isHidden = input.type === 'password';
+    input.type     = isHidden ? 'text' : 'password';
+    eyeOn.style.display  = isHidden ? 'none'  : '';
+    eyeOff.style.display = isHidden ? ''      : 'none';
+    btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
 }
 
 /**

@@ -13,9 +13,16 @@
  * @returns {void}
  */
 function togglePassword(fieldId) {
-    const passwordInput = document.getElementById(fieldId);
-    const toggleIcon    = passwordInput.parentElement.querySelector('.password-toggle');
-    passwordInput.type  = (passwordInput.type === 'password') ? 'text' : 'password';
+    const input  = document.getElementById(fieldId);
+    const btn    = input.parentElement.querySelector('.password-toggle');
+    const eyeOn  = btn.querySelector('.eye-icon');
+    const eyeOff = btn.querySelector('.eye-off-icon');
+
+    const isHidden = input.type === 'password';
+    input.type     = isHidden ? 'text' : 'password';
+    eyeOn.style.display  = isHidden ? 'none' : '';
+    eyeOff.style.display = isHidden ? ''     : 'none';
+    btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
 }
 
 /**
