@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Sum
 
 
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -71,6 +73,8 @@ class CategoryBudget(models.Model):
     def update_spent(self, amount: float) -> None:
         self.spent_amount += amount
         self.save(update_fields=["spent_amount"])
+        from notifications.models import NotificationController
+        NotificationController.check_threshold(self)
 
     def get_remaining(self) -> float:
         return self.limit - self.spent_amount

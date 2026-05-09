@@ -49,8 +49,6 @@ def notification_center(request):
         HttpResponse: Rendered notification center page.
     """
     # Re-run checkThreshold for all CategoryBudgets (keeps list fresh)
-    for cb in CategoryBudget.objects.select_related("category").all():
-        NotificationController.check_threshold(cb)
 
     tab = request.GET.get("tab", "all")   # all | unread | archived
 
